@@ -1,0 +1,18 @@
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        <nav>
+            <li> <a href="{% url 'home_page' %}"> Quotes </a></li>
+            <li> <a href="{% url 'about_page' %}"> About </a></li>
+            <li> <a href="{% url 'showall_page' %}"> Show All </a></li>
+        </nav>
+        {% block content %}
+        {% endblock %}
+        <footer>
+            The page was created by Leigh Brown.
+        </footer>
+    </body>
+</html>

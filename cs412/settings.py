@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hw', #NEW APP
-    #'quotes', # Assignment 1
+    'quotes', # Assignment 1
 ]
 
 MIDDLEWARE = [
