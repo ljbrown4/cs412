@@ -1,0 +1,24 @@
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        <div class="container">
+        <nav class="top-nav">
+            <h2> Restaurant name</h2>
+            <li> <a href="{% url 'main' %}"> Main </a></li>
+            <li> <a href="{% url 'order' %}"> Order </a></li>
+            <li> <a href="{% url 'confirmation' %}"> Confirmation </a></li>
+        </nav>
+        <hr>
+        {% block content %}
+        {% endblock %}
+        </div>
+        <br>
+        <hr>
+        <footer>
+            The page was created by Leigh Brown.
+        </footer>
+    </body>
+</html>
