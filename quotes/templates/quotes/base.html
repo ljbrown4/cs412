@@ -4,13 +4,19 @@
         <link rel="stylesheet" href="{% static 'styles.css' %}">
     </head>
     <body>
-        <nav>
+        <div class="container">
+        <nav class="top-nav">
+            <h2> Dumbledore's Greatest Quotes</h2>
             <li> <a href="{% url 'home_page' %}"> Quotes </a></li>
             <li> <a href="{% url 'about_page' %}"> About </a></li>
             <li> <a href="{% url 'showall_page' %}"> Show All </a></li>
         </nav>
+        <hr>
         {% block content %}
         {% endblock %}
+        </div>
+        <br>
+        <hr>
         <footer>
             The page was created by Leigh Brown.
         </footer>

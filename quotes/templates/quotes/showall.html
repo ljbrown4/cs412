@@ -1,0 +1,19 @@
+{% extends 'quotes/base.html' %}
+{% block title %}  Daily Dumbledore Quotes {% endblock %}
+
+{% block content %}
+<h1> All Quotes and Images</h1>
+<div class="double">
+    <div class="showall-quotes">
+        {% for q in quotes %}
+            <h4><i>{{q}}</i></h4>
+            <h5><i> - Albus Dumbledore</i></h5>
+        {% endfor %}
+    </div>
+    <div class="showall-image">
+        {% for i in images %}
+            <img src="{{i}}">
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

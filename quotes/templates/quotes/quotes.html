@@ -1,4 +1,16 @@
-{% extends 'hw/base.html' %}
+{% extends 'quotes/base.html' %}
 {% block title %}  Daily Dumbledore Quotes {% endblock %}
 
 {% block content %}
+<h1> Quote Generator</h1>
+<div class="double">
+    <div class="quotes">
+        <h2><i>{{quote}}</i></h2>
+        <br>
+        <h3><i> - Albus Dumbledore</i></h3>
+    </div>
+    <div class="image">
+        <img src="{{image}}">
+    </div>
+</div>
+{% endblock %}

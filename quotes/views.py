@@ -15,11 +15,30 @@ images = ['https://static.independent.co.uk/s3fs-public/thumbnails/image/2014/07
 def home_page(request):
     """ respond to url, delegate work to template"""
 
-    template_name = "quotes/home.html"
+    template_name = "quotes/quotes.html"
 
     #dict of ctxt vars
     context = {
         'image': random.choice(images),
         'quote': random.choice(quotes),
+    }
+    return render(request, template_name, context)
+
+def about(request):
+    """ respond to url, delegate work to template"""
+
+    template_name = "quotes/about.html"
+    #dict of ctxt vars
+
+    return render(request, template_name)
+
+def showall(request):
+    """ respond to url, delegate work to template"""
+
+    template_name = "quotes/showall.html"
+    #dict of ctxt vars
+    context = {
+        'quotes':quotes,
+        'images': images,
     }
     return render(request, template_name, context)
