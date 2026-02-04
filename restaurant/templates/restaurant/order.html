@@ -1,0 +1,103 @@
+{% extends 'restaurant/base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <form id="order" action=" {% url 'submit' %}" method="POST">
+    {% csrf_token %}
+    <h2> Customer Inforamtion</h2>
+    <hr>
+    <label for="name"> Name<span class="req">*</span>: <input type="text" name="name" required></label> 
+    <label for="number"> Phone Number<span class="req">*</span>: <input type="number" name="number" required></label> 
+    <label for="email"> Email<span class="req">*</span>: <input type="email" name="email" required></label> 
+
+    <h2 style="color: rgb(108, 22, 22);"> <i> Daily Special: </i></h2>
+    <hr>
+    <label for="daily"> {{dailyspecial}} <input type="checkbox"  name="daily" value="{{dailyspecial}}"></label>
+
+    
+    <h2> Appetizers </h2>
+    <hr>
+    <label for="Garlic Bread"> Garlic Bread ($2.50) <input type="checkbox" name="Garlic Bread" value="Garlic Bread"></label>
+     <div id="sub-itemsBread">
+        <label for="Garlic Bread with Cheese"> with cheese (+ .50¢) <input type="checkbox"  name="Garlic Bread with Cheese" value="Garlic Bread with Cheese"></label>
+    </div>
+    <label for="French Fries"> French Fries ($5.00) <input type="checkbox"  name="French Fries" value="French Fries"></label>
+
+
+
+    <br>
+    <h2> Pizza</h2>
+    <hr>
+    <h3> Pizza by the Slice</h3>
+    <label for="Cheese Slice"> Classic Cheese Slice ($3.00) <input type="checkbox"  name="Cheese Slice" value="Cheese Slice"> </label>
+    <div id="sub-itemsSlice">
+        <p class="sub"><b><i>Toppings:</i></b></p>
+            <label for="pep"> Pepperoni (+ .30¢) <input type="checkbox"  name="pep" value="pep"> </label>
+            <label for="sau"> Sausage (+ .30¢) <input type="checkbox" name="sau" value="sau"> </label>
+            <label for="mush"> Mushrooms (+ .30¢) <input type="checkbox"  name="mush" value="mush"> </label>
+    </div>
+
+
+    <h3> Pizza Pies</h3>
+    <label for="Cheese Pizza"> Classic Cheese Pizza 12in ($13.00) <input type="checkbox"  name="Cheese Pizza" value="Cheese Pizza"> </label>
+    <div id="sub-itemsPizza">
+        <p class="sub"><b><i>Toppings:</i></b></p>
+            <label for="pepP"> Pepperoni (+ $1.00) <input type="checkbox"  name="pepP" value="pepP"> </label>
+            <label for="sauP"> Sausage (+ $1.00) <input type="checkbox" name="sauP" value="sauP"> </label>
+            <label for="mushP"> Mushrooms (+ $1.00) <input type="checkbox" name="mushP" value="mushP"> </label>
+        <p id="sub"><b><i>Size:</i></b></p>
+            <label for="14in"> 14in (+ $2.00) <input type="checkbox"  name="14in" value="14in"> </label>
+            <label for="16in"> 16in (+ $4.00) <input type="checkbox"  name="16in" value="16in"> </label>
+            <label for="18in"> 18in (+ $7.00) <input type="checkbox"  name="18in" value="18in"> </label>
+    </div>
+
+
+    <label for="Sicilian Pizza"> Sicilian Pizza 16in ($20.00) <input type="checkbox"  name="Sicilian Pizza" value="Sicilian Pizza"></label>
+    <label for="Meat Lover's Pizza"> Meat Lover's Pizza 16in ($20.00)<input type="checkbox"  name="Meat Lover's Pizza" value="Meat Lover's Pizza"></label>
+    <br>
+
+
+
+    <h2> Pasta </h2>
+    <hr>
+    <label for="Penne Alla Vodka"> Penne Alla Vodka ($23.00) <input type="checkbox"  name="Penne Alla Vodka" value="Penne Alla Vodka"></label>
+    <label for="Chicken Alfredo"> Chicken Alfredo ($25.00) <input type="checkbox"   name="Chicken Alfredo" value="Chicken Alfredo"></label>
+    <label for="Lasagna"> Lasagna ($22.00) <input type="checkbox" name="Lasagna" value="Lasagna"></label>
+    <br>
+
+    <label for="name"> Special Instructions: </label> <textarea id="special" name="special" rows="4" cols="50"></textarea>
+    <br>
+
+    <button class="submit-btn" type="submit">
+        Place Order
+    </button>
+</div>
+
+<script>
+
+    // added this fn to make sure users can't see or check options if the initial item isn't selected
+    function toggleSubItems(input, sub) {
+        const checkbox = document.querySelector(`input[name="${input}"]`);
+        const subItems = document.querySelector(sub);
+        const subCheckboxes = subItems.querySelectorAll(`input[type="checkbox"]`)
+
+        function show() {
+            if (checkbox.checked) {
+                subItems.style.display = "block";
+            } else {
+                subItems.style.display = "none";
+                subCheckboxes.forEach(cb => cb.checked = false); //make sure to uncheck the options as well
+            }
+        }
+
+        show();
+        parent.addEventListener("change", show);
+    }
+
+    toggleSubItems("Garlic Bread", "#sub-itemsBread");
+    toggleSubItems("Cheese Slice", "#sub-itemsSlice");
+    toggleSubItems("Cheese Pizza", "#sub-itemsPizza");
+</script>
+
+{% endblock %}

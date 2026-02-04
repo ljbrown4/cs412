@@ -1,24 +1,46 @@
 {% load static %}
 <html>
     <head>
-        <link rel="stylesheet" href="{% static 'styles.css' %}">
+        <link rel="stylesheet" href="{% static 'restaurant.css' %}">
+        <title> Peppino's Pizza </title>
     </head>
-    <body>
-        <div class="container">
-        <nav class="top-nav">
-            <h2> Restaurant name</h2>
-            <li> <a href="{% url 'main' %}"> Main </a></li>
-            <li> <a href="{% url 'order' %}"> Order </a></li>
-            <li> <a href="{% url 'confirmation' %}"> Confirmation </a></li>
-        </nav>
-        <hr>
-        {% block content %}
-        {% endblock %}
+    <body>  
+        <div class="content">
+            <nav id="nav-bar" class="nav-bar">
+            <button id="toggle-btn" class="toggle-btn"> ☰ <span> Menu </span> </button>
+                <li> <a href="{% url 'main' %}"> Main </a></li>
+                <li> <a href="{% url 'order' %}"> Order </a></li>
+            
+            </nav>     
+            <div class="container">
+                <div class="header-info">
+                    <div>
+                        <h1><i> Peppino's Pizza</i></h1>
+                    <a href="https://www.google.com/maps/place/Peppinos+Pizza/@40.9036613,-73.8504668,16z/data=!3m1!4b1!4m6!3m5!1s0x89c2f2d1d6a0c407:0x1aa20f78cf18b7a5!8m2!3d40.9036613!4d-73.8504668!16s%2Fg%2F1tw1frys?entry=ttu&g_ep=EgoyMDI2MDEyOC4wIKXMDSoKLDEwMDc5MjA3M0gBUAM%3D"> 
+                        <b>4701 White Plains Rd, Bronx, NY 10470 </b></a>
+                    <h5> (718) 994-7543 </h5>
+                    </div>
+
+                    <img class="logo" src="{{logo}}">
+                </div>
+                <hr>
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
+
+        {% block scripts %}
+        <script>
+            const menuToggle = document.getElementById('toggle-btn');
+            const nav = document.getElementById('nav-bar');
+
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('collapsed');
+            });
+        </script>
+        {% endblock %}
         <br>
         <hr>
-        <footer>
-            The page was created by Leigh Brown.
-        </footer>
+        <footer> This site was created by Leigh Brown. </footer>
     </body>
 </html>

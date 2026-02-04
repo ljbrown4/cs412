@@ -7,5 +7,5 @@ urlpatterns = [
     #path(r'', views.home, name="home"),
     path(r'', views.main, name="main"),
     path(r'order', views.order, name="order"),
-    path(r'confirmation', views.confirmation, name="confirmation"),
+    path(r'submit', views.submit, name="submit"),
 ]

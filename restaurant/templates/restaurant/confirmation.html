@@ -1,0 +1,21 @@
+{% extends 'restaurant/base.html' %}
+
+{% block content %}
+<div>
+<h1 style="text-align: center; color: rgb(108, 22, 22);">Order Confirmation</h1>
+
+<p> Thank you for your Order!</p>
+<p><b> Your order will be ready at: {{readytime}}</b></p>
+<br>
+
+<h2> Ordered Items:</h2>
+{% for item in ordered%}
+<p> {{item}}</p>
+{% endfor %}
+
+<br>
+
+<p> <b>Order Total:</b> {{total}}</p>
+<p> <b>Special Instructions:</b> {{special}}</p>
+</div>
+{% endblock %}
