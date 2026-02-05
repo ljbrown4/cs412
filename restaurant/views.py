@@ -92,7 +92,7 @@ def submit(request):
                      curr += " (" + ", ".join(addon) + ")"
 
 
-                curr += "${:,.2f}".format(price)
+                curr += " ${:,.2f}".format(price)
                 ordered+= [curr]
                 total += price
                 
