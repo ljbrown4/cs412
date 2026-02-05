@@ -96,7 +96,7 @@ def submit(request):
                 ordered+= [curr]
                 total += price
                 
-        dollars = "${:,.2f}".format(total)
+        dollars = " ${:,.2f}".format(total)
         print(ordered)
         
         
