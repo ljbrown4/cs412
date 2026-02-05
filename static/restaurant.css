@@ -104,7 +104,8 @@ a {
 }
 
 .footer {
-  margin: auto;
+  text-align: center;
+  padding: auto;
 }
 
 .submit-btn {
