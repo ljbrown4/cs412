@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'quotes', # Assignment 1
     'formdata', #module 2 examples
     'restaurant', #Assignment 2
+    'blog', # module 3 examples
 ]
 
 MIDDLEWARE = [
