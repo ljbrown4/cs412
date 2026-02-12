@@ -1,5 +1,4 @@
 __pycache__/
 *.pyc
-db.sqlite3
 
 # so they don't keep getting pushed to github
