@@ -1,4 +1,7 @@
-from django.shortcuts import render
+# File: views.py
+# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026
+# Description: create the functions necessary to connect to html templates
+
 from django.views.generic import ListView, DetailView
 from .models import Profile
 

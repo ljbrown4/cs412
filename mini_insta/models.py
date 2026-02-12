@@ -1,3 +1,7 @@
+# File: models.py
+# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026
+# Description: create models and their attributes
+
 from django.db import models
 
 # Create your models here.
