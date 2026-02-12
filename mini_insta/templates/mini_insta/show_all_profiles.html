@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+<h1>Show all Articles</h1>>
+
+{% block content %}
+<main class="grid-container">
+ 
+    {% for p in profiles %}
+    <profile>
+ 
+ 
+        {% if p.profile_image_url %}
+        <a href="{% url 'profile' p.pk %}">
+        <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+        </a>
+        {% endif %}
+        
+        <div>
+        <h2>{{p.display_name}}</h2>
+        <h3>{{p.username}}</h3>
+        </div>
+    </profile>
+ 
+ 
+    {% endfor %}
+</main>
+{% endblock %}

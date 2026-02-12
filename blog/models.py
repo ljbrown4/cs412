@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Article(models.Model):
     '''encapsulate data of blog articles'''
-
+ 
     # data attributes
     title = models.TextField(blank=True)
     author = models.TextField(blank=True)
