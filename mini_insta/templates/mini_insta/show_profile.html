@@ -1,0 +1,35 @@
+{% extends 'mini_insta/base.html' %}
+ 
+{% block content %}
+<!-- scriptlet code to display an individual profile in the database and the associated data  -->
+
+<main class="container">
+    <div class="double">
+        <div class="imgside">
+            {% if profile.profile_image_url %}
+                <img id="personalprofile" src="{{profile.profile_image_url}}" alt="{{p.profile_image_url}}">
+            {% endif %}
+
+            <h5>{{profile.username}}</h5>
+        </div>
+        <div class="profile-info">
+            <h2><i>{{profile.display_name}}</i></h2>
+            <p> {{profile.bio_text}}</p>
+        </div>
+    </div>
+    <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
+    <hr>
+    <div class="post">
+        <h3> Posts </h3>
+        <img src="https://toppng.com/uploads/preview/grid-2-icon-icon-11553414040ugsieibfpj.png" id="postlogo">
+    </div>
+    <hr>
+ 
+    <!-- this is a placeholder until there is a post class and then i'll make this into an if statement -->
+     <div class="noposts">
+        <img id="cam" src="https://www.shutterstock.com/image-vector/no-photography-sign-camera-crossed-600nw-2642188343.jpg">
+        <h2> No posts yet.</h2>
+     </div>
+</main>
+{% endblock %}
+ 
