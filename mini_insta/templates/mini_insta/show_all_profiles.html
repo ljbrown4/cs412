@@ -15,7 +15,9 @@
     <profile class="feed-profile">
  
         {% if p.profile_image_url %}
-        <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+         <a href="{% url 'profile' p.pk %}">
+            <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+         </a>
         {% endif %}
         
         <div>
