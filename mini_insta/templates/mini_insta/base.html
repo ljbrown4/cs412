@@ -11,14 +11,21 @@
     <body>
         <header>
             <h1><i>Mini Instagram</i></h1>
-            
-            <!-- <nav>
-                <ul>
-                    <li><a href="{% url 'show_all_profiles' %}">Home</a></li>
-                     <li><a href="{% url 'random' %}">Random</a></li> 
-                </ul>
-            </nav> -->
-            <a href="{% url 'show_all_profiles' %}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+
+            <div style="gap:60px">
+                {% if back_url %}
+                <a href="{{ back_url }}">
+                    <img id="home" src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg">
+                </a>
+                {% endif %}
+
+                {% if header_profile_img %}
+                    <img id="personalprofileheader" src="{{ header_profile_img }}" alt="profile pic">
+                {% endif %}
+
+                <a href="{% url 'show_all_profiles' %}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+            </div>
+
         </header>
     
     {% block content %}
