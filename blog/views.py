@@ -75,7 +75,7 @@ class CreateCommentView(CreateView):
 
         #call super
         context = super().get_context_data()
-
+ 
         #retrieve pk from url pattern
         pk = self.kwargs['pk']
         article = Article.objects.get(pk=pk)

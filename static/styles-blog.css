@@ -118,6 +118,16 @@ a:hover {
     border-style: solid;
 }
 
+#personalprofileheader {
+    width: 40px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 50%;
+    border-color:#312825;
+    border-width: 2px;
+    border-style: solid;
+}
+
 #cam {
     border-radius: 50%;
 }
@@ -141,6 +151,40 @@ a:hover {
     flex-direction: column;
     text-align: left;
 }
+
+.post-info {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.double2 {
+    display: grid;
+    grid-template-columns: 500px 1fr;              
+    max-width: 1200px;         
+    width: 100%;
+    margin-bottom: 0;
+    align-items: flex-start;   
+    justify-items: start  
+}
+.imgside2 {
+    width: 50%;
+    text-align: center;
+}
+
+.post-page-image {
+    width: 400px;
+    height: auto;
+    padding-bottom: 0px;
+}
+.post-image {
+    width: 200px;
+    aspect-ratio: 1/1;  /* to make it a square */
+    padding-bottom: 0px;
+}
+
+
 
 /* responsive styles: adapt to smaller screen sizes */
 @media screen and (max-width: 980px) {
