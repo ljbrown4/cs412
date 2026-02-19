@@ -8,14 +8,14 @@
 
 <main class="container">
     <div class="double">
-        <div class="imgside">
+        <div class="imgside2">
             {% if profile.profile_image_url %}
                 <img id="personalprofile" src="{{profile.profile_image_url}}" alt="{{p.profile_image_url}}">
             {% endif %}
 
             <h5>{{profile.username}}</h5>
         </div>
-        <div class="profile-info">
+        <div class="post-info">
             <h2><i>{{profile.display_name}}</i></h2>
             <p> {{profile.bio_text}}</p>
         </div>
@@ -28,11 +28,27 @@
     </div>
     <hr>
  
-    <!-- this is a placeholder until there is a post class and then i'll make this into an if statement -->
-     <div class="noposts">
-        <img id="cam" src="https://www.shutterstock.com/image-vector/no-photography-sign-camera-crossed-600nw-2642188343.jpg">
-        <h2> No posts yet.</h2>
+    <!-- showcase posts by user-->
+     {% if profile.get_all_posts %}
+     <div>
+            {% for p in profile.get_all_posts%}
+
+                {% if p.get_all_photos %}
+                    {% with a=p.get_first_photo %}
+                     <a href="{% url 'post' p.pk %}"> 
+                        <img class="post-image" src="{{a.image_url}}">
+                    </a>
+                    {% endwith %}
+                {% endif%}
+            {% endfor %}
      </div>
+     
+     {% else %}
+        <div class="noposts">
+            <img id="cam" src="https://www.shutterstock.com/image-vector/no-photography-sign-camera-crossed-600nw-2642188343.jpg">
+            <h2> No posts yet.</h2>
+        </div>
+    {% endif %}
 </main>
 {% endblock %}
  
