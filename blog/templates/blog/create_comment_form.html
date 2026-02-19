@@ -1,0 +1,10 @@
+{% extends 'blog/base.html' %}
+
+{% block content%}
+<h1> create new comment for {{article.title}}</h1>
+<form method="POST">
+    {%csrf_token%}
+<table>{{form.as_table}}</table>
+<input type="submit" name="submit" value="Submit">
+</form>
+{% endblock %}

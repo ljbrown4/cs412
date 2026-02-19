@@ -152,6 +152,14 @@ a:hover {
         gap: 60px;
         align-items: center;
     }
+    header {
+        padding: auto;
+        margin: 20px 40px;
+    }
+    .container {
+        padding: auto;
+        margin: 20px 40px;
+    }
 }
 
 
@@ -162,4 +170,13 @@ a:hover {
         display: block; 
         margin: 0px 20px;
     }
+    header {
+        padding: auto;
+        margin: 20px 40px;
+    }
+    .container {
+        padding: auto;
+        margin: 20px 40px;
+    }
+
 }

@@ -5,7 +5,7 @@
 {% block content %}
 <main class="grid-container">
     
-    <article class="featured">
+    <article class="feed-profile">
         {% if article.image_url %}
 		<img src="{{article.image_url}}" alt="{{article.image_url}}">
 		{% endif %}
@@ -17,6 +17,20 @@
         {{article.text}}
         </p>
         </div>
+
+    <!-- display comments -->
+     <div>
+        <h2> Comments </h2>
+        <h3><a href="{% url 'create_comment' article.pk %}">Create a comment</a></h3>
+     {% for c in article.get_all_comments %}
+     <article>
+        <div>
+            <strong> by {{c.author}} at {{c.published}} </strong>
+            <p> {{c.text}} </p>
+        </div>
+    </div>
+     </article>
+     {% endfor %}
     </article>
  
  
