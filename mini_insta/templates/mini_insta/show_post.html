@@ -1,0 +1,31 @@
+<!-- # File: show_post.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026
+# Description:-->
+
+{% extends 'mini_insta/base.html' %}
+ 
+{% block content %}
+
+<main class="container">
+    <div class="double2">
+        <div class="imgside2">
+            {% if post.get_all_photos %}
+                    {% for a in post.get_all_photos %}
+                        <img class="post-page-image" src="{{a.image_url}}">
+                    {% endfor %}
+            {% endif%}
+        </div>
+         <!-- showcase post info-->
+        <div class="post-info">
+            <h2> {{post.profile.display_name}}</h2> 
+            <p> {{post.profile.username}} </p>
+            <hr>
+            <p> {{post.caption}}</p>
+            <br><br>
+            <p style="color:gray"> timestamp: {{post.timestamp}}</p>
+        </div>
+    </div>
+     
+</main>
+{% endblock %}
+ 
