@@ -1,9 +1,21 @@
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #f4f6f9;
   color: #312825;
   font-family: sans-serif;
+  overflow-x: hidden;
+}
+
+header,
+.container,
+.grid-container {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 header {
@@ -83,6 +95,7 @@ a:hover {
 /* format image in profile showing */
 .feed-profile img {
     width: 95%;
+    max-width: 100%;
     aspect-ratio: 1/1;  /* to make it a square */
     object-fit: cover;
     align-self: center;
@@ -132,6 +145,26 @@ a:hover {
     border-radius: 50%;
 }
 
+.submit-btn {
+  width: 200px;
+  background-color: #5c3969;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  margin: 20px 0;
+  border-radius:10px;
+}
+
+#cancel {
+  width: 100px;
+  background-color: #b198ba;
+  border-color: #5c3969;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  margin: 20px 10px;
+  border-radius:10px;
+}
 
 .noposts {
     display: flex;
@@ -175,52 +208,137 @@ a:hover {
 
 .post-page-image {
     width: 400px;
+    max-width: 100%;
     height: auto;
     padding-bottom: 0px;
 }
 .post-image {
     width: 200px;
+    max-width: 100%;
     aspect-ratio: 1/1;  /* to make it a square */
     padding-bottom: 0px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    margin: 0 ;
+}
+
+.form textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    font-family: inherit;
+}
+
+.form table tr {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form table th {
+    text-align: left;
+    margin-bottom: 6px;
+    font-weight: 600;
 }
 
 
 
 /* responsive styles: adapt to smaller screen sizes */
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1000px) {
 
-    .feed-profile {
-        grid-column: span 3;
-        display: grid; /* nested grid */
-        grid-template-columns: 1fr 1fr;
-        gap: 60px;
-        align-items: center;
-    }
-    header {
-        padding: auto;
-        margin: 20px 40px;
-    }
-    .container {
-        padding: auto;
-        margin: 20px 40px;
-    }
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    margin: 20px 24px;
+  }
+
+  header {
+    margin: 20px 24px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .container {
+    margin: 20px 24px;
+  }
+
+  .double,
+  .double2 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .imgside,
+  .imgside2,
+  .profile-info,
+  .post-info {
+    width: 100%;
+    text-align: left;
+  }
+
+  .post-page-image {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .post-image {
+    width: 100%;
+    max-width: 220px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  #cancel {
+    width: 100%;
+    max-width: 160px;
+    margin-left: 0;
+  }
 }
 
-
 @media screen and (max-width: 760px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    margin: 16px;
+    gap: 12px;
+  }
 
-   .feed-profile {
-        
-        display: block; 
-        margin: 0px 20px;
-    }
-    header {
-        padding: auto;
-        margin: 20px 40px;
-    }
-    .container {
-        padding: auto;
-        margin: 20px 40px;
-    }
+  header {
+    margin: 16px;
+  }
 
+  .container {
+    margin: 16px;
+  }
+
+  .feed-profile {
+    margin: 0;
+  }
+
+ 
+  #home { 
+    width: 32px; 
+  }
+
+  #personalprofileheader { 
+    width: 32px; 
+  }
+
+  .form textarea {
+    width: 100%;
+  }
+
+ 
+  .submit-btn, #cancel {
+    width: 100%;
+    max-width: none;
+    margin: 12px 0;
+  }
 }
