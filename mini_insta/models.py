@@ -3,7 +3,7 @@
 # Description: create models and their attributes (profile, post, photo)
 
 from django.db import models
-
+from django.urls import reverse
 # Create your models here.
 
 class Profile(models.Model):
@@ -45,6 +45,11 @@ class Post(models.Model):
         '''get 1st photo for a post'''
         photos = Photo.objects.filter(post=self).first() #googled this
         return photos
+    
+    def get_absolute_url(self):
+        '''return a url to display one instance of this mdel
+        used to deal with config error when adding articles using form'''
+        return reverse('post', kwargs={'pk':self.pk})
 
 class Photo(models.Model):
     '''class that encapsulates data for a user's uploaded photos associated with a post '''
