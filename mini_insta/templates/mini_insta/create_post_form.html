@@ -1,0 +1,33 @@
+<!-- # File: create_post_form.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/19/2026
+# Description: scriptlet code to display form for post creation -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content%}
+<main class="container">
+    <h3 style="text-align: center;"> New Post</h3>
+    <form action="{% url 'create_post' profile.pk %}" method="POST">
+        
+        {%csrf_token%}
+
+        <div class="form">
+            <table>{{form.as_table}}</table>
+
+            <label for="id_image_url"><b>Image URL:</b></label><br>
+            <input type="url" name="image_url" id="id_image_url">
+
+            <br>
+            <button class="submit-btn" type="submit">
+                    Post
+            </button>
+            <button id="cancel">Cancel</button>
+        </div>
+
+        <script>
+        document.getElementById('cancel').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.href = "{% url 'profile' profile.pk %}";});
+        </script>
+    </form>
+</main>
+{% endblock %}
