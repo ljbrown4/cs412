@@ -16,4 +16,4 @@ class CreateCommentForm(forms.ModelForm):
     class Meta:
         '''assoc this form with a model from our database'''
         model = Comment
-        fields = ['author', 'text']
+        fields = ['author', 'text'] 
