@@ -38,7 +38,7 @@ class ProfileDetailView(DetailView):
         return context
 
 class PostDetailView(DetailView):
-    '''Show the information for one profle.'''
+    '''Show the information for one post.'''
     model = Post
     template_name = 'mini_insta/show_post.html'
     context_object_name = 'post'
@@ -99,11 +99,11 @@ class CreatePostView(CreateView):
  
         # retrieve pk from url pattern
         pk = self.kwargs['pk']
-        post = Post.objects.get(pk=pk)
+       
         profile = Profile.objects.get(pk=pk)
         context['profile'] = profile
 
         # add to ctxt data, used to display page specific nav icons
-        context['back_url'] = reverse('profile', args=[post.profile.pk])
-        context['header_profile_img'] = post.profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[pk])
+        context['header_profile_img'] = profile.profile_image_url
         return context 
