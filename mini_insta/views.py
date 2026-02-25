@@ -80,12 +80,10 @@ class CreatePostView(CreateView):
         response = super().form_valid(form)
 
         #access image url from photos model
-        image_url = self.request.POST.get('image_url')
-
-        if image_url: #looked this up
+        for image in self.request.FILES.getlist('image_file'):
             Photo.objects.create(
                 post=self.object,
-                image_url=image_url
+                image_file=image
             )
 
         #delegate to superclass method
