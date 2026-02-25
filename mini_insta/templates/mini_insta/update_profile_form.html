@@ -1,0 +1,26 @@
+<!-- # File: update_profile_form.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/19/2026 + 2/24/2026
+# Description: scriptlet code to display form to an update an existing profile -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content%}
+<main class="container">
+
+    <h3 style="text-align: center;">Update Profile</h3>
+
+    <form action="{% url 'update_profile' profile.pk %}" method="POST" > 
+        {% csrf_token %}
+
+        <div class="form">
+            <table>{{form.as_table}}</table>
+            <input class="submit-btn" type="submit" name="submit" value="Update">
+
+        </div>
+    </form>
+
+    <form action="{% url 'profile' profile.pk %}" method='GET'>
+        <input id="cancel" type="submit" value="Cancel">
+    </form>
+    
+</main>
+{% endblock %}

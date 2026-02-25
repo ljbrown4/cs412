@@ -1,5 +1,5 @@
 <!-- # File: show_profile.html
-# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026
+# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/24/2026
 # Description: scriptlet code to display an individual profile and its associated posts in the database and the associated data -->
 
 {% extends 'mini_insta/base.html' %}
@@ -20,7 +20,10 @@
             <p> {{profile.bio_text}}</p>
         </div>
     </div>
+
+    <a href="{% url 'update_profile' profile.pk %}"><button class="submit-btn"> update profile</button></a>
     <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
+
     <hr>
     <div class="post">
         <h3> Posts </h3>

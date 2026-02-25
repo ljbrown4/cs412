@@ -2,10 +2,10 @@
 # Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/19/2026
 # Description: create the functions necessary to connect to html templates
 
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Profile, Post, Photo
 from django.urls import reverse
-from .forms import CreatePostForm
+from .forms import CreatePostForm, UpdateProfileForm
 
 # Create your views here.
 
@@ -105,3 +105,8 @@ class CreatePostView(CreateView):
         context['back_url'] = reverse('profile', args=[pk])
         context['header_profile_img'] = profile.profile_image_url
         return context 
+    
+class UpdateProfileView(UpdateView):
+    model = Profile
+    form_class= UpdateProfileForm
+    template_name = "mini_insta/update_profile_form.html"

@@ -23,6 +23,11 @@ class Profile(models.Model):
         posts = Post.objects.filter(profile=self)
         return posts
     
+    def get_absolute_url(self):
+        '''return a url to display one instance of this mdel
+        used to deal with config error when updating profile using a form'''
+        return reverse('profile', kwargs={'pk':self.pk})
+    
     
 
 class Post(models.Model):
