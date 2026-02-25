@@ -11,7 +11,7 @@
         <div class="imgside2">
             {% if post.get_all_photos %}
                     {% for a in post.get_all_photos %}
-                        <img class="post-page-image" src="{{a.image_url}}">
+                        <img class="post-page-image" src="{{a.get_image_url}}">
                     {% endfor %}
             {% endif%}
         </div>

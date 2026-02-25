@@ -36,7 +36,7 @@
                 {% if p.get_all_photos %}
                     {% with a=p.get_first_photo %}
                      <a href="{% url 'post' p.pk %}"> 
-                        <img class="post-image" src="{{a.image_url}}">
+                        <img class="post-image" src="{{a.get_image_url}}">
                     </a>
                     {% endwith %}
                 {% endif%}

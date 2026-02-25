@@ -6,28 +6,22 @@
 {% block content%}
 <main class="container">
     <h3 style="text-align: center;"> New Post</h3>
-    <form action="{% url 'create_post' profile.pk %}" method="POST">
+    <form action="{% url 'create_post' profile.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->
         
         {%csrf_token%}
 
         <div class="form">
             <table>{{form.as_table}}</table>
 
-            <label for="id_image_url"><b>Image URL:</b></label><br>
-            <input type="url" name="image_url" id="id_image_url">
+            <label for="id_image_file"><b>image upload:</b></label><br>
+            <input type="file" name="image_file" id="id_image_file" multiple>
 
             <br>
-            <button class="submit-btn" type="submit">
-                    Post
-            </button>
-            <button id="cancel">Cancel</button>
+            <button class="submit-btn" type="submit"> Post </button>
         </div>
-
-        <script>
-        document.getElementById('cancel').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = "{% url 'profile' profile.pk %}";});
-        </script>
     </form>
+    <form action="{% url 'profile' profile.pk %}" method='GET'>
+    <input id="cancel" type="submit" value="Cancel">
+</form>
 </main>
 {% endblock %}
