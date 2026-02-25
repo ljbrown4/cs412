@@ -57,6 +57,13 @@ class Photo(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now=True)
     image_url = models.URLField(blank=True)
+    image_file = models.ImageField(blank=True) #an actual image
+
+    def get_image_url(self):
+        if self.image_url:
+            return self.image_url
+        elif self.image_file:
+            return self.image_file.url
 
     def __str__(self):
         '''return string rep of this comment'''
