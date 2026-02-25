@@ -6,8 +6,10 @@
 <main class="grid-container">
     
     <article class="feed-profile">
-        {% if article.image_url %}
-		<img src="{{article.image_url}}" alt="{{article.image_url}}">
+        {% if article.image_file %}
+		<img src="{{article.image_file.url}}" alt="{{article.image_url}}">
+        {% else %}
+        <p> No image.</p>
 		{% endif %}
         
         <div>
@@ -16,6 +18,7 @@
         <p>
         {{article.text}}
         </p>
+        <h3> <a href="{% url 'update_article' article.pk %}"> Update Article</a></h3>
         </div>
 
     <!-- display comments -->
@@ -27,6 +30,7 @@
         <div>
             <strong> by {{c.author}} at {{c.published}} </strong>
             <p> {{c.text}} </p>
+            <a href="{% url 'delete_comment' c.pk %}"> <b>delete</b> </a>
         </div>
     </div>
      </article>

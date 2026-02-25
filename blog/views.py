@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView
-from .models import Article
-from .forms import CreateArticleForm, CreateCommentForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .models import Article, Comment
+from .forms import CreateArticleForm, CreateCommentForm, UpdateArticleForm
 from django.urls import reverse #allows us to create url from an url pattern name
 import random
 
@@ -42,6 +42,10 @@ class CreateArticleView(CreateView):
 
     form_class = CreateArticleForm
     template_name = 'blog/create_article_form.html'
+
+    def form_valid(self, form):
+        print(f'CreateArticleView.form_valid(): {form.cleaned_data}')
+        return super().form_valid(form)
 
 class CreateCommentView(CreateView):
     '''a view to handle comment creation'''
@@ -84,4 +88,21 @@ class CreateCommentView(CreateView):
         context['article'] = article
         return context 
     
+
+class UpdateArticleView(UpdateView):
+    model = Article
+    form_class= UpdateArticleForm
+    template_name = "blog/update_article_form.html"
+
+class DeleteCommentView(DeleteView):
+    model = Comment
+    template_name = "blog/delete_comment_form.html"
+
+    def get_success_url(self):
+        #find pk 
+        pk = self.kwargs['pk']
+        #find comm obj
+        comment = Comment.objects.get(pk=pk)
+        article = comment.article
+        return reverse('article', kwargs={'pk':article.pk})
     
