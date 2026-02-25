@@ -2,10 +2,10 @@
 # Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/19/2026
 # Description: create the functions necessary to connect to html templates
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Profile, Post, Photo
 from django.urls import reverse
-from .forms import CreatePostForm, UpdateProfileForm
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 
 # Create your views here.
 
@@ -110,3 +110,66 @@ class UpdateProfileView(UpdateView):
     model = Profile
     form_class= UpdateProfileForm
     template_name = "mini_insta/update_profile_form.html"
+
+
+class DeletePostView(DeleteView):
+    model = Post
+    template_name = "mini_insta/delete_post_form.html"
+
+    def get_context_data(self, **kwargs):
+        #call super
+        context = super().get_context_data(**kwargs)
+
+        #get pk
+        pk = self.kwargs['pk']
+
+        #find comm obj
+        post = Post.objects.get(pk=pk)
+        profile = post.profile
+
+        #add to context data
+        context['post'] = post
+        context['profile'] = profile
+
+        return context
+
+    def get_success_url(self):
+        ''' return to profile page upon successful deletion'''
+
+        #find pk 
+        pk = self.kwargs['pk']
+        #find comm obj
+        post = Post.objects.get(pk=pk)
+        profile = post.profile
+        return reverse('profile', kwargs={'pk':profile.pk})
+    
+
+class UpdatePostView(UpdateView):
+    model = Post
+    form_class= UpdatePostForm
+    template_name = "mini_insta/update_post_form.html"
+
+    def get_context_data(self, **kwargs):
+        #call super
+        context = super().get_context_data(**kwargs)
+
+        #get pk
+        pk = self.kwargs['pk']
+
+        #find comm obj
+        post = Post.objects.get(pk=pk)
+
+        #add to context data
+        context['post'] = post
+
+        return context
+
+    def get_success_url(self):
+        ''' return to profile page upon successful deletion'''
+
+        #find pk 
+        pk = self.kwargs['pk']
+        #find comm obj
+        post = Post.objects.get(pk=pk)
+        return reverse('post', kwargs={'pk':post.pk})
+    

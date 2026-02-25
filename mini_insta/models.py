@@ -20,7 +20,7 @@ class Profile(models.Model):
     
     def get_all_posts(self):
         '''get all posts by a user'''
-        posts = Post.objects.filter(profile=self)
+        posts = Post.objects.filter(profile=self).order_by('-timestamp') #updated so newer posts are showcased first
         return posts
     
     def get_absolute_url(self):

@@ -1,0 +1,34 @@
+<!-- # File: update_post_form.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/24/2026
+# Description: scriptlet code to display form to an delete an existing post -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<main class="container">
+    <h3 style="text-align: center;"> Delete Post? </h3>
+    <br>
+
+    <div style="display:flex; flex-wrap: wrap;">
+    {% if post.get_all_photos %}
+        {% for a in post.get_all_photos %}
+            <img class="post-page-image" src="{{a.get_image_url}}">
+        {% endfor %}
+    {% endif%}
+    </div>
+
+    {% if post.caption %}
+    <p> {{post.caption}}</p>
+    {% endif %}
+    <div class="form">
+        <form method="POST">
+            {%csrf_token%}
+            <input type="submit" value="Delete" class="submit-btn">
+        </form>
+
+        <form action="{% url 'profile' profile.pk %}" method='GET'>
+            <input type="submit" value="Cancel" id="cancel">
+        </form>
+    </div>
+
+</main>
+{% endblock %}

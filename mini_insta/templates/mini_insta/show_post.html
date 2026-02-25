@@ -25,7 +25,12 @@
             <p style="color:gray"> timestamp: {{post.timestamp}}</p>
         </div>
     </div>
-     
+        <br>
+
+    <div style="display: flex; justify-content: flex-start; gap: 15px;">
+        <a href="{% url 'delete_post' post.pk %}"><button class="submit-btn"> delete post</button></a>
+        <a href="{% url 'update_post' post.pk %}"><button class="submit-btn"> update post</button></a>
+     </div>
 </main>
 {% endblock %}
  

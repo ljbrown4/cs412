@@ -13,5 +13,7 @@ urlpatterns = [
     path('profile/<int:pk>', ProfileDetailView.as_view(), name='profile'),
     path('post/<int:pk>', PostDetailView.as_view(), name='post'),
     path('profile/<int:pk>/post/create', CreatePostView.as_view(), name="create_post"), #assignment 4
-     path('profile/<int:pk>/update', UpdateProfileView.as_view(), name="update_profile"), #assignment 5
+    path('profile/<int:pk>/update', UpdateProfileView.as_view(), name="update_profile"), #assignment 5
+    path('post/<int:pk>/delete', DeletePostView.as_view(), name="delete_post"), #assignment 5
+    path('post/<int:pk>/update', UpdatePostView.as_view(), name="update_post"), #assignment 5
 ] 

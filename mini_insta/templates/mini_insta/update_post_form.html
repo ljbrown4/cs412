@@ -1,14 +1,14 @@
-<!-- # File: update_profile_form.html
+<!-- # File: update_post_form.html
 # Author: Leigh Brown (ljbrown@bu.edu), 2/24/2026
-# Description: scriptlet code to display form to an update an existing profile -->
+# Description: scriptlet code to display form to an update an existing post -->
 {% extends 'mini_insta/base.html' %}
 
 {% block content%}
 <main class="container">
 
-    <h3 style="text-align: center;">Update Profile</h3>
+    <h3 style="text-align: center;">Update Post</h3>
 
-    <form action="{% url 'update_profile' profile.pk %}" method="POST" > 
+    <form action="{% url 'update_post' post.pk %}" method="POST" > 
         {% csrf_token %}
 
         <div class="form">
@@ -18,7 +18,7 @@
         </div>
     </form>
 
-    <form action="{% url 'profile' profile.pk %}" method='GET'>
+    <form action="{% url 'post' post.pk %}" method='GET'>
         <input id="cancel" type="submit" value="Cancel">
     </form>
     
