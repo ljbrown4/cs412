@@ -247,6 +247,15 @@ a:hover {
     font-weight: 600;
 }
 
+.triple {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    max-width: 1200px;
+    width: 100%;
+    margin-bottom: 0;
+    align-items: center;
+    justify-items: center;
+}
 
 
 /* responsive styles: adapt to smaller screen sizes */

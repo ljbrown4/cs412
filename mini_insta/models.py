@@ -23,6 +23,33 @@ class Profile(models.Model):
         posts = Post.objects.filter(profile=self).order_by('-timestamp') #updated so newer posts are showcased first
         return posts
     
+    def get_num_posts(self):
+        '''get the # of posts a profile has'''
+        get = self.get_all_posts()
+        return len(get)
+    
+    def get_followers(self):
+        ''' get all followers of the curr profile'''
+        followers_set = Follow.objects.filter(profile=self)
+        followers = list(followers_set)
+        return followers
+    
+    def get_num_followers(self):
+        '''get the number of profiles that follow this profile'''
+        get = self.get_followers()
+        return len(get)
+    
+    def get_following(self):
+        ''' get all profiles this profile follows'''
+        following_set = Follow.objects.filter(follower_profile=self)
+        following = list(following_set)
+        return following
+    
+    def get_num_following(self):
+        '''get the number of profiles that this profile follows'''
+        get = self.get_following()
+        return len(get)
+    
     def get_absolute_url(self):
         '''return a url to display one instance of this mdel
         used to deal with config error when updating profile using a form'''
@@ -73,4 +100,14 @@ class Photo(models.Model):
     def __str__(self):
         '''return string rep of this comment'''
         return f'image uploaded at {self.timestamp} associated with post: {self.post}'
+    
 
+class Follow(models.Model):
+    '''class that encapsulates data for profiles followed and that following'''
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="profile")
+    follower_profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="follower_profile")
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        '''return string rep of this comment'''
+        return f'{self.follower_profile} followed {self.profile} at {self.timestamp}'

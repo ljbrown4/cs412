@@ -3,7 +3,7 @@
 # Description: create the functions necessary to connect to html templates
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Profile, Post, Photo
+from .models import Profile, Post, Photo, Follow
 from django.urls import reverse
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 
@@ -57,7 +57,6 @@ class PostDetailView(DetailView):
         context['back_url'] = reverse('profile', args=[post.profile.pk])
         context['header_profile_img'] = post.profile.profile_image_url
 
-
         return context
 
 class CreatePostView(CreateView):
@@ -104,15 +103,35 @@ class CreatePostView(CreateView):
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('profile', args=[pk])
         context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[profile.pk])
+
         return context 
     
 class UpdateProfileView(UpdateView):
+    ''' view to handle profile updates'''
     model = Profile
     form_class= UpdateProfileForm
     template_name = "mini_insta/update_profile_form.html"
 
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template'''
+        
+        context = super().get_context_data(**kwargs)
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        # add to ctxt data, used to display page specific nav icons
+        context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[profile.pk])
+
+        return context
+
+    
 
 class DeletePostView(DeleteView):
+    ''' view to handle post deletion '''
     model = Post
     template_name = "mini_insta/delete_post_form.html"
 
@@ -130,6 +149,9 @@ class DeletePostView(DeleteView):
         #add to context data
         context['post'] = post
         context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[post.profile.pk])
+        
 
         return context
 
@@ -145,6 +167,7 @@ class DeletePostView(DeleteView):
     
 
 class UpdatePostView(UpdateView):
+    ''' view to handle post updates '''
     model = Post
     form_class= UpdatePostForm
     template_name = "mini_insta/update_post_form.html"
@@ -161,15 +184,62 @@ class UpdatePostView(UpdateView):
 
         #add to context data
         context['post'] = post
+        context['profile'] = post.profile
+        context['header_profile_img'] = post.profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[post.profile.pk])
 
         return context
 
     def get_success_url(self):
-        ''' return to profile page upon successful deletion'''
+        ''' return to profile page upon successful deletion '''
 
         #find pk 
         pk = self.kwargs['pk']
         #find comm obj
         post = Post.objects.get(pk=pk)
         return reverse('post', kwargs={'pk':post.pk})
+    
+class ShowFollowersDetailView(DetailView):
+    ''' view to show all followers '''
+
+    model = Follow
+    template_name = 'mini_insta/show_followers.html'
+    context_object_name = 'profile'
+
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template '''
+        
+        context = super().get_context_data(**kwargs)
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        # add to ctxt data, used to display page specific nav icons
+        context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[profile.pk])
+
+        return context
+
+
+class ShowFollowingDetailView(DetailView):
+    ''' view to show all following '''
+
+    model = Follow
+    template_name = 'mini_insta/show_following.html'
+    context_object_name = 'profile'
+
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template'''
+        
+        context = super().get_context_data(**kwargs)
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        # add to ctxt data, used to display page specific nav icons
+        context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[profile.pk])
+        return context
     

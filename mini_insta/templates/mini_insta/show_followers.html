@@ -1,16 +1,15 @@
-<!-- # File: show_profile.html
-# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/24/2026
-# Description: scriptlet code to display an individual profile and its associated posts in the database and the associated data -->
+<!-- # File: show_followers.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/25/2026
+# Description: scriptlet code to display list of followers -->
 
 {% extends 'mini_insta/base.html' %}
  
 {% block content %}
-
 <main class="container">
     <div class="double">
         <div class="imgside2">
             {% if profile.profile_image_url %}
-                <img id="personalprofile" src="{{profile.profile_image_url}}" alt="{{p.profile_image_url}}">
+                <img id="personalprofile" src="{{profile.profile_image_url}}">
             {% endif %}
 
             <h5>{{profile.username}}</h5>
@@ -36,37 +35,31 @@
         </div>
     </div>
 
-    <a href="{% url 'update_profile' profile.pk %}"><button class="submit-btn"> update profile</button></a>
     <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
 
     <hr>
     <div class="post">
-        <h3> Posts </h3>
+        <h3> Followers </h3>
         <img src="https://toppng.com/uploads/preview/grid-2-icon-icon-11553414040ugsieibfpj.png" id="postlogo">
     </div>
     <hr>
- 
-    <!-- showcase posts by user-->
-     {% if profile.get_all_posts %}
-     <div>
-            {% for p in profile.get_all_posts%}
+    <br>
+    <div>
+        {% for p in profile.get_followers %}
+            <div class="double">
+                <div class="imgside2">
+                    {% if p.follower_profile.profile_image_url%}
+                    <img id="personalprofile" src="{{p.follower_profile.profile_image_url}}">
+                    {% endif %}
+                </div>
+                <div class="post-info">
+                    <h5><i>{{p.follower_profile.display_name}}</i></h5>
+                    <p> {{p.follower_profile.username}}</p>
+                </div>
+                
 
-                {% if p.get_all_photos %}
-                    {% with a=p.get_first_photo %}
-                     <a href="{% url 'post' p.pk %}"> 
-                        <img class="post-image" src="{{a.get_image_url}}">
-                    </a>
-                    {% endwith %}
-                {% endif%}
-            {% endfor %}
-     </div>
-     
-     {% else %}
-        <div class="noposts">
-            <img id="cam" src="https://www.shutterstock.com/image-vector/no-photography-sign-camera-crossed-600nw-2642188343.jpg">
-            <h2> No posts yet.</h2>
-        </div>
-    {% endif %}
-</main>
+            </div>
+        {% endfor%}
+    </div>
+
 {% endblock %}
- 

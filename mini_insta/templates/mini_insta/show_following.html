@@ -1,0 +1,65 @@
+<!-- # File: show_following.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/25/2026
+# Description: scriptlet code to display list of following -->
+
+{% extends 'mini_insta/base.html' %}
+ 
+{% block content %}
+<main class="container">
+    <div class="double">
+        <div class="imgside2">
+            {% if profile.profile_image_url %}
+                <img id="personalprofile" src="{{profile.profile_image_url}}">
+            {% endif %}
+
+            <h5>{{profile.username}}</h5>
+        </div>
+        <div class="post-info">
+            <h2><i>{{profile.display_name}}</i></h2>
+            <p> {{profile.bio_text}}</p>
+
+            <div class="triple">
+                <div style="text-align: center;">
+                    <a href="{% url 'profile' profile.pk %}"><h5><b> Posts</b></h5></a>
+                    <p> {{profile.get_num_posts}}</p>
+                </div>
+                <div style="text-align: center;">
+                    <a href="{% url 'followers' profile.pk %}"><h5><b> followers</b></h5></a>
+                    <p> {{profile.get_num_followers}}</p>
+                </div>
+                <div style="text-align: center;">
+                    <a href="{% url 'following' profile.pk %}"><h5><b> Following</b></h5></a>
+                    <p> {{profile.get_num_following}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
+
+    <hr>
+    <div class="post">
+        <h3> following </h3>
+        <img src="https://toppng.com/uploads/preview/grid-2-icon-icon-11553414040ugsieibfpj.png" id="postlogo">
+    </div>
+    <hr>
+    <br>
+    <div>
+        {% for p in profile.get_following %}
+            <div class="double">
+                <div class="imgside2">
+                    {% if p.profile.profile_image_url%}
+                    <img id="personalprofile" src="{{p.profile.profile_image_url}}">
+                    {% endif %}
+                </div>
+                <div class="post-info">
+                    <h5><i>{{p.profile.display_name}}</i></h5>
+                    <p> {{p.profile.username}}</p>
+                </div>
+                
+
+            </div>
+        {% endfor%}
+    </div>
+
+{% endblock %}
