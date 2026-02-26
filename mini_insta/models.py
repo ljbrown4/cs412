@@ -28,6 +28,22 @@ class Profile(models.Model):
         get = self.get_all_posts()
         return len(get)
     
+    def get_post_feed(self):
+        '''returns all posts from users this profile follows'''
+
+        # get following profiles
+        following_set = Follow.objects.filter(follower_profile=self)
+
+        # extract Profile 
+        following_profiles = []
+        for f in following_set:
+            following_profiles.append(f.profile)
+
+        # get posts from those profiles
+        all_posts = Post.objects.filter(profile__in=following_profiles).order_by('-timestamp')
+
+        return all_posts
+    
     def get_followers(self):
         ''' get all followers of the curr profile'''
         followers_set = Follow.objects.filter(profile=self)

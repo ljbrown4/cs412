@@ -34,6 +34,35 @@ class ProfileDetailView(DetailView):
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
         context['create_post_img'] = reverse('create_post', args=[pk])
+        context['feed'] = reverse('show_feed', args=[pk])
+
+        return context
+
+class PostFeedListView(ListView):
+    ''' show all the posts from the database from users the current profile follows'''
+    model = Post
+    template_name = 'mini_insta/show_feed.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        profile = Profile.objects.get(pk=pk)
+        return profile.get_post_feed()
+    
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template'''
+        
+        context = super().get_context_data(**kwargs)
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        # add to ctxt data, used to display page specific nav icons
+        context['profile'] = profile
+        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['header_profile_img'] = profile.profile_image_url
+        context['create_post_img'] = reverse('create_post', args=[pk])
+        context['feed'] = reverse('show_feed', args=[pk])
 
         return context
 
@@ -56,6 +85,7 @@ class PostDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('profile', args=[post.profile.pk])
         context['header_profile_img'] = post.profile.profile_image_url
+        context['feed'] = reverse('show_feed', args=[post.profile.pk])
 
         return context
 
@@ -104,6 +134,7 @@ class CreatePostView(CreateView):
         context['back_url'] = reverse('profile', args=[pk])
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('profile', args=[profile.pk])
+        context['feed'] = reverse('show_feed', args=[profile.pk])
 
         return context 
     
@@ -125,6 +156,7 @@ class UpdateProfileView(UpdateView):
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('profile', args=[profile.pk])
+        context['feed'] = reverse('show_feed', args=[profile.pk])
 
         return context
 
@@ -151,6 +183,7 @@ class DeletePostView(DeleteView):
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('profile', args=[post.profile.pk])
+        context['feed'] = reverse('show_feed', args=[post.profile.pk])
         
 
         return context
@@ -187,6 +220,7 @@ class UpdatePostView(UpdateView):
         context['profile'] = post.profile
         context['header_profile_img'] = post.profile.profile_image_url
         context['back_url'] = reverse('profile', args=[post.profile.pk])
+        context['feed'] = reverse('show_feed', args=[post.profile.pk])
 
         return context
 
@@ -218,6 +252,7 @@ class ShowFollowersDetailView(DetailView):
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('profile', args=[profile.pk])
+        context['feed'] = reverse('show_feed', args=[profile.pk])
 
         return context
 
@@ -241,5 +276,6 @@ class ShowFollowingDetailView(DetailView):
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('profile', args=[profile.pk])
+        context['feed'] = reverse('show_feed', args=[profile.pk])
         return context
     

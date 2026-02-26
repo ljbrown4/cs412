@@ -49,15 +49,16 @@
             <div class="double">
                 <div class="imgside2">
                     {% if p.profile.profile_image_url%}
-                    <img id="personalprofile" src="{{p.profile.profile_image_url}}">
+                    <a href="{% url 'profile' p.profile.pk %}"><img id="personalprofile" src="{{p.profile.profile_image_url}}"> </a>
                     {% endif %}
+                    <br>
                 </div>
                 <div class="post-info">
                     <h5><i>{{p.profile.display_name}}</i></h5>
                     <p> {{p.profile.username}}</p>
                 </div>
                 
-
+                <br>
             </div>
         {% endfor%}
     </div>

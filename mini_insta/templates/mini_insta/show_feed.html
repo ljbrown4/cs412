@@ -1,0 +1,61 @@
+<!-- # File: show_feed.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/26/2026
+# Description: scriptlet code to display all the posts from users the profile follows -->
+
+{% extends 'mini_insta/base.html' %}
+ 
+{% block content %}
+
+<!-- get the list of posts -->
+  
+<main class="container">
+    {% for post in posts%}
+        <div class="double2">
+            <div class="imgside2">
+                {% if post.get_all_photos %}
+                    {% with a=post.get_first_photo %}
+                        <a href="{% url 'post' post.pk %}"> 
+                        <img class="post-image" src="{{a.get_image_url}}">
+                    </a>
+                    {% endwith %}
+                {% endif%}
+            </div>
+                <div class="post-info">
+                    <div style="display: flex; gap: 30px; align-items: center;">
+                        <h4> {{post.profile.display_name}}</h4> 
+                        <p> @{{post.profile.username}} </p>
+                    </div>
+                    <hr>
+                    <br>
+                    {% if post.caption %}
+                        <p> <b>@{{post.profile.username}}: </b>{{post.caption}}</p>
+                    {% endif %}
+
+                    <p style="color:rgb(167, 167, 167)"> timestamp: {{post.timestamp}}</p>
+
+                    {%if post.get_likes %}
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            {% with a=post.get_first_like %}
+                                <p> Liked by <b>{{a.profile.username}}</b></p>
+                            {% endwith %}
+
+                            {%if post.get_num_likes >= 1 %}
+                                <p> <b> and {{post.get_num_likes}} others</b></p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <br>
+                    {% for c in post.get_all_comments%}
+                        <div style="display: flex; gap: 30px; align-items: center;">
+                            <h5><b>@{{c.profile.username}}</b></h5>
+                            <p>{{c.text}}</p>
+                        </div>
+                    {% endfor %}
+            </div>
+            <br>
+        </div>
+    {% endfor %}
+
+</main>
+{% endblock %}

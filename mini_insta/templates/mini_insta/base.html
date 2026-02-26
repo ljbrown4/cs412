@@ -12,7 +12,7 @@
         <header>
             <h1><i>Mini Instagram</i></h1>
 
-            <div style="gap: 30 px">
+            <div style="gap: 65 px">
                 {% if create_post_img %}
                 <a href="{{ create_post_img }}">
                     <img id="home" src="https://cdn.creazilla.com/icons/3217168/plus-circle-icon-lg.png">
@@ -30,7 +30,12 @@
                 </a> 
                 {% endif %}
 
-                <a href="{% url 'show_all_profiles' %}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+                {% if feed %}
+                <a href="{{ feed }}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+                {% endif %}
+
+                <a href="{% url 'show_all_profiles' %}"> <b>All</b></a>
+            </div>
             </div>
 
         </header>
