@@ -78,6 +78,26 @@ class Post(models.Model):
         photos = Photo.objects.filter(post=self).first() #googled this
         return photos
     
+    def get_all_comments(self):
+        '''get all comments on a post'''
+        comments = Comment.objects.filter(post=self)
+        return comments
+    
+    def get_likes(self):
+        '''get all likes on a post'''
+        likes = Like.objects.filter(post=self)
+        return likes
+    
+    def get_first_like(self):
+        '''get all likes on a post'''
+        likes = Like.objects.filter(post=self).first()
+        return likes
+    
+    def get_num_likes(self):
+        '''get the number of profiles that follow this profile'''
+        get = self.get_likes()
+        return len(get) - 1 #bc first one is already displayed
+    
     def get_absolute_url(self):
         '''return a url to display one instance of this mdel
         used to deal with config error when adding articles using form'''
@@ -111,3 +131,27 @@ class Follow(models.Model):
     def __str__(self):
         '''return string rep of this comment'''
         return f'{self.follower_profile} followed {self.profile} at {self.timestamp}'
+    
+class Comment(models.Model):
+    '''class that encapsulates data for comments on posts'''
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now=True)
+    text = models.TextField(blank=False)
+
+    def __str__(self):
+        '''return string rep of this comment'''
+        return f'{self.profile.username} commented {self.text}'
+    
+
+class Like(models.Model):
+    ''' class that encapsulates data for likes on a post'''
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        '''return string rep of this comment'''
+        return f'{self.profile} liked {self.post}'
+
+

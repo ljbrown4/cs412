@@ -3,6 +3,10 @@
   box-sizing: border-box;
 }
 
+p {
+    font-size: 14px;
+}
+
 body {
   margin: 0;
   background: #f4f6f9;
@@ -185,12 +189,25 @@ a:hover {
     text-align: left;
 }
 
+
 .post-info {
-    width: 45%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     text-align: left;
+    justify-content: flex-start;                    
+
 }
+
+.post-info h2,
+.post-info h3,
+.post-info h4,
+.post-info h5,
+.post-info h6,
+.post-info p {
+    margin: 4px 0;
+}
+
 
 .double2 {
     display: grid;
@@ -203,7 +220,7 @@ a:hover {
 }
 .imgside2 {
     width: 50%;
-    text-align: center;
+    margin: auto;
 }
 
 .post-page-image {
