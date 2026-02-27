@@ -54,7 +54,7 @@
                     <br>
                 </div>
                 <div class="post-info">
-                    <h5><i>{{p.profile.display_name}}</i></h5>
+                    <a href="{% url 'profile' p.profile.pk %}"><h5><i>{{p.profile.display_name}}</i></h5></a>
                     <p> {{p.profile.username}}</p>
                 </div>
                 

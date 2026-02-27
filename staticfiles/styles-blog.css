@@ -174,12 +174,12 @@ a:hover {
 }
 
 .imgside {
-    width: 20%;
+    width: 30%;
     text-align: center;
 }
 
 .profile-info {
-    width: 75%;
+    width: 70%;
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -194,7 +194,7 @@ a:hover {
 
 .double2 {
     display: grid;
-    grid-template-columns: 500px 1fr;              
+    grid-template-columns: 700px 1fr;              
     max-width: 1200px;         
     width: 100%;
     margin-bottom: 0;

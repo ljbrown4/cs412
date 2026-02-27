@@ -49,12 +49,12 @@
             <div class="double">
                 <div class="imgside2">
                     {% if p.follower_profile.profile_image_url%}
-                    <a href="{% url 'profile' p.profile.pk %}"><img id="personalprofile" src="{{p.follower_profile.profile_image_url}}"></a>
+                    <a href="{% url 'profile' p.follower_profile.pk %}"><img id="personalprofile" src="{{p.follower_profile.profile_image_url}}"></a>
                     {% endif %}
                     <br>
                 </div>
                 <div class="post-info">
-                    <h5><i>{{p.follower_profile.display_name}}</i></h5>
+                    <a href="{% url 'profile' p.follower_profile.pk %}"><h5><i>{{p.follower_profile.display_name}}</i></h5></a>
                     <p> {{p.follower_profile.username}}</p>
                 </div>
                 
