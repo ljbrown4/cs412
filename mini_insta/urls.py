@@ -19,4 +19,5 @@ urlpatterns = [
     path('post/<int:pk>/update', UpdatePostView.as_view(), name="update_post"), #assignment 5
     path('profile/<int:pk>/followers', ShowFollowersDetailView.as_view(), name="followers"), #assignment 5
     path('profile/<int:pk>/following', ShowFollowingDetailView.as_view(), name="following"), #assignment 5  
+    path('profile/<int:pk>/search', SearchView.as_view(), name='search'), #assignment 5
 ] 

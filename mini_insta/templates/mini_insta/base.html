@@ -34,6 +34,10 @@
                 <a href="{{ feed }}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
                 {% endif %}
 
+                {% if search_icon %}
+                    <a href="{{ search_icon }}"><img id="home" src="https://png.pngtree.com/png-clipart/20190903/original/pngtree-magnifying-glass-icon-png-image_4419957.jpg"></a>
+                {% endif %}
+
                 <a href="{% url 'show_all_profiles' %}"> <b>All</b></a>
             </div>
             </div>

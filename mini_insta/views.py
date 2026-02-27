@@ -5,6 +5,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Profile, Post, Photo, Follow
 from django.urls import reverse
+from django.shortcuts import render
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 
 # Create your views here.
@@ -35,34 +36,7 @@ class ProfileDetailView(DetailView):
         context['header_profile_img'] = profile.profile_image_url
         context['create_post_img'] = reverse('create_post', args=[pk])
         context['feed'] = reverse('show_feed', args=[pk])
-
-        return context
-
-class PostFeedListView(ListView):
-    ''' show all the posts from the database from users the current profile follows'''
-    model = Post
-    template_name = 'mini_insta/show_feed.html'
-    context_object_name = 'posts'
-
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        profile = Profile.objects.get(pk=pk)
-        return profile.get_post_feed()
-    
-    def get_context_data(self, **kwargs):
-        '''return the dict of context variables for use in the template'''
-        
-        context = super().get_context_data(**kwargs)
-
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
-
-        # add to ctxt data, used to display page specific nav icons
-        context['profile'] = profile
-        context['back_url'] = reverse('profile', args=[profile.pk])
-        context['header_profile_img'] = profile.profile_image_url
-        context['create_post_img'] = reverse('create_post', args=[pk])
-        context['feed'] = reverse('show_feed', args=[pk])
+        context['search_icon'] = reverse('search', args=[profile.pk])
 
         return context
 
@@ -86,6 +60,8 @@ class PostDetailView(DetailView):
         context['back_url'] = reverse('profile', args=[post.profile.pk])
         context['header_profile_img'] = post.profile.profile_image_url
         context['feed'] = reverse('show_feed', args=[post.profile.pk])
+        context['create_post_img'] = reverse('create_post', args=[post.profile.pk])
+        context['search_icon'] = reverse('search', args=[post.profile.pk])
 
         return context
 
@@ -251,6 +227,8 @@ class ShowFollowersDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
+        context['create_post_img'] = reverse('create_post', args=[profile.pk])
+        context['search_icon'] = reverse('search', args=[profile.pk])
         context['back_url'] = reverse('profile', args=[profile.pk])
         context['feed'] = reverse('show_feed', args=[profile.pk])
 
@@ -275,7 +253,100 @@ class ShowFollowingDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
+        context['create_post_img'] = reverse('create_post', args=[profile.pk])
+        context['search_icon'] = reverse('search', args=[profile.pk])
         context['back_url'] = reverse('profile', args=[profile.pk])
+        
         context['feed'] = reverse('show_feed', args=[profile.pk])
         return context
+
+class PostFeedListView(ListView):
+    ''' show all the posts from the database from users the current profile follows'''
+    model = Post
+    template_name = 'mini_insta/show_feed.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        profile = Profile.objects.get(pk=pk)
+        return profile.get_post_feed()
     
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template'''
+        
+        context = super().get_context_data(**kwargs)
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        # add to ctxt data, used to display page specific nav icons
+        context['profile'] = profile
+        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['header_profile_img'] = profile.profile_image_url
+        context['create_post_img'] = reverse('create_post', args=[profile.pk])
+        context['search_icon'] = reverse('search', args=[profile.pk])
+        context['feed'] = reverse('show_feed', args=[profile.pk])
+
+        return context
+
+
+class SearchView(ListView):
+    ''' allow users to input text to search profiles + captions and then display the results'''
+    template_name = 'mini_insta/search_results.html'
+    context_object_name = 'posts'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        pk = self.kwargs['pk']
+        self.profile = Profile.objects.get(pk=pk)
+
+        # check for query in GET
+        self.results = self.request.GET.get('results')
+
+        if not self.results:
+            context = {}
+            context['profile'] = self.profile
+            context['header_profile_img'] = self.profile.profile_image_url
+            context['back_url'] = reverse('profile', args=[self.profile.pk])
+            context['feed'] = reverse('show_feed', args=[self.profile.pk])
+            context['create_post_img'] = reverse('create_post', args=[self.profile.pk])
+            context['search_icon'] = reverse('search', args=[self.profile.pk])
+            return render(request, 'mini_insta/search.html', context)
+
+
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        '''get matching posts to the search'''
+        res = self.results
+        return Post.objects.filter(caption__icontains=res).order_by('-timestamp')
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        
+        #nav
+        context['profile'] = self.profile
+        context['header_profile_img'] = self.profile.profile_image_url
+        context['back_url'] = reverse('profile', args=[self.profile.pk])
+        context['feed'] = reverse('show_feed', args=[self.profile.pk])
+        context['create_post_img'] = reverse('create_post', args=[self.profile.pk])
+        context['search_icon'] = reverse('search', args=[self.profile.pk])
+
+        #matching posts
+        context['results'] = self.results
+        context['posts'] = self.get_queryset()
+
+        #matching profiles
+        res = self.results
+
+        context['profiles'] = (
+            Profile.objects.filter(username__icontains=res) |
+            Profile.objects.filter(display_name__icontains=res) |
+            Profile.objects.filter(bio_text__icontains=res)
+        ).distinct()
+
+
+
+
+        return context
