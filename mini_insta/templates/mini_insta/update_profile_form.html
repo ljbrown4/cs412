@@ -8,7 +8,7 @@
 
     <h3 style="text-align: center;">Update Profile</h3>
 
-    <form action="{% url 'update_profile' profile.pk %}" method="POST" > 
+    <form action="{% url 'update_profile' %}" method="POST" > 
         {% csrf_token %}
 
         <div class="form">
@@ -18,7 +18,7 @@
         </div>
     </form>
 
-    <form action="{% url 'profile' profile.pk %}" method='GET'>
+    <form action="{% url 'my_profile' %}" method='GET'>
         <input id="cancel" type="submit" value="Cancel">
     </form>
     

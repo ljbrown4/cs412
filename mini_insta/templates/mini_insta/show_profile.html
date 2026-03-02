@@ -36,7 +36,9 @@
         </div>
     </div>
 
-    <a href="{% url 'update_profile' profile.pk %}"><button class="submit-btn"> update profile</button></a>
+    {% if request.user.is_authenticated and is_owner %} <!-- only show this if the person viewing is logged in + is the user who created this profile-->
+    <a href="{% url 'update_profile' %}"><button class="submit-btn">update profile</button></a>
+    {% endif %}
     <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
 
     <hr>

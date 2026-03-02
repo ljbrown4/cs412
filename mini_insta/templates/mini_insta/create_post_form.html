@@ -6,7 +6,7 @@
 {% block content%}
 <main class="container">
     <h3 style="text-align: center;"> New Post</h3>
-    <form action="{% url 'create_post' profile.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->
+    <form action="{% url 'create_post' %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->
         
         {%csrf_token%}
 
@@ -20,7 +20,7 @@
             <button class="submit-btn" type="submit"> Post </button>
         </div>
     </form>
-    <form action="{% url 'profile' profile.pk %}" method='GET'>
+    <form action="{% url 'my_profile' %}" method='GET'>
     <input id="cancel" type="submit" value="Cancel">
 </form>
 </main>

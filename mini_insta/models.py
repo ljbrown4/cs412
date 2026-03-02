@@ -4,6 +4,7 @@
 
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User #for authentication
 # Create your models here.
 
 class Profile(models.Model):
@@ -14,6 +15,7 @@ class Profile(models.Model):
     bio_text = models.TextField(blank=True)
     join_date = models.DateTimeField(auto_now=True)
     profile_image_url = models.URLField(blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) #assignment 6
 
     def __str__(self):
         return f'{self.username} joined on {self.join_date}'

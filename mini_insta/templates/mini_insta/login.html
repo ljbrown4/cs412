@@ -1,0 +1,24 @@
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<main class="container">
+
+    <h3 style="text-align: center;">Log in</h3>
+
+
+    <form action = "{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        {{form}}
+
+        <input type="submit" value="Login">
+
+        {% if request.GET.next %} <!-- for getting u back to the page u were on when u were directed to login. not always back to show_all-->
+            <input type="hidden" name="next" value="{{request.GET.next}}">
+        {% else %}
+            <input type="hidden" name="next" value="{% url 'show_all_profiles' %}">
+        {% endif %}
+    </form>
+
+<hr>
+</main>
+{% endblock %}

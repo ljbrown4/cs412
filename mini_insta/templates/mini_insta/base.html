@@ -10,33 +10,65 @@
     </head>
     <body>
         <header>
-            <h1><i>Mini Instagram</i></h1>
+            <div style="gap: 40px; display: flex; align-items: center;">
+                <h1><i>Mini Instagram</i></h1>
+                    {% if request.user.is_authenticated %}  
+                        <p> <b><i>{{request.user}}</i></b> </p>
+                        <form method="post" action="{% url 'logout' %}" >
+                            {% csrf_token %}
+                            <button class="submit-btn-small" type="submit">Logout</button>
+                        </form>               
+                        
+                    {% else %}
+                        {% url 'login' as login_url %}
+                        {% if request.path != login_url %} <!-- don't show login button on login page-->
+                            <button class="submit-btn-small"><a href="{% url 'login' %}">Log in</a></button>
+                        {% endif %}
+                    {% endif %}
+            </div>
+            <div style="width: 25%; display: flex; gap: 30px; justify-content: flex-end; margin-left: 35px; align-items: center; ">
 
-            <div style="width: 25%; display: flex; justify-content: space-between; margin-left: 35px; align-items: center;">
-                {% if create_post_img %}
-                <a href="{{ create_post_img }}">
-                    <img id="home" src="https://cdn.creazilla.com/icons/3217168/plus-circle-icon-lg.png">
-                </a>
-                {% endif %}
-                {% if back_url %}
-                <a href="{{ back_url }}">
-                    <img id="home" src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg">
-                </a>
-                {% endif %}
+                {% if request.user.is_authenticated %}  
 
-                {% if header_profile_img %}
-                <a href="{{ back_url }}">
-                    <img id="personalprofileheader" src="{{ header_profile_img }}" alt="profile pic">
-                </a> 
-                {% endif %}
+                        {% if is_owner and create_post_img %}
+                        <a href="{{ create_post_img }}">
+                            <img id="home" src="https://cdn.creazilla.com/icons/3217168/plus-circle-icon-lg.png">
+                        </a>
+                        {% endif %}
+                        {% if back_url %}
+                        <a href="{{ back_url }}">
+                            <img id="home" src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg">
+                        </a>
+                        {% endif %}
 
-                {% if feed %}
-                <a href="{{ feed }}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
-                {% endif %}
+                        {% if header_profile_img %}
+                        <a href="{{ back_url }}">
+                            <img id="personalprofileheader" src="{{ header_profile_img }}" alt="profile pic">
+                        </a> 
+                        {% endif %}
 
-                {% if search_icon %}
-                    <a href="{{ search_icon }}"><img id="home" src="https://png.pngtree.com/png-clipart/20190903/original/pngtree-magnifying-glass-icon-png-image_4419957.jpg"></a>
-                {% endif %}
+                        {% if is_owner and feed %}
+                        <a href="{{ feed }}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+                        {% endif %}
+
+                        {% if is_owner and search_icon %}
+                            <a href="{{ search_icon }}"><img id="home" src="https://png.pngtree.com/png-clipart/20190903/original/pngtree-magnifying-glass-icon-png-image_4419957.jpg"></a>
+                        {% endif %}            
+                        
+                    {% else %}
+                        {% if back_url %}
+                        <a href="{{ back_url }}">
+                            <img id="home" src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg">
+                        </a>
+                        {% endif %}
+
+                        {% if header_profile_img %}
+                        <a href="{{ back_url }}">
+                            <img id="personalprofileheader" src="{{ header_profile_img }}" alt="profile pic">
+                        </a> 
+                        {% endif %}
+
+                    {% endif %}
 
                 <a href="{% url 'show_all_profiles' %}"> <b>All</b></a>
             </div>

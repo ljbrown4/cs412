@@ -15,13 +15,13 @@
 
                     <!-- module 6 -->
                     {% if request.user.is_authenticated %}      
-                    <li><a href="{% url 'create_article' %}">Create Article</a></li>              
-                    <form method="post" action="{% url 'logout' %}" >
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                    </form>
-                    {% else %}
-                    <button><a href="{% url 'login' %}">Log in</a></button>
+                        <li><a href="{% url 'create_article' %}">Create Article</a></li>              
+                        <form method="post" action="{% url 'logout' %}" >
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                        </form>
+                        {% else %}
+                        <button><a href="{% url 'login' %}">Log in</a></button>
                     {% endif %}
  
  

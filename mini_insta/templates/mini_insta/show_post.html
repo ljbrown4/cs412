@@ -53,8 +53,10 @@
         <br>
 
     <div style="display: flex; justify-content: flex-start; gap: 15px; margin: auto; margin-top: 15px;">
+        {% if is_owner %}
         <a href="{% url 'delete_post' post.pk %}"><button class="submit-btn"> delete post</button></a>
         <a href="{% url 'update_post' post.pk %}"><button class="submit-btn"> update post</button></a>
+        {% endif %}
      </div>
 </main>
 {% endblock %}
