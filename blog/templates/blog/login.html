@@ -1,0 +1,23 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<h1> login to our Blog</h1>
+
+<form action = "{% url 'login' %}" method="POST">
+    {% csrf_token %}
+    {{form}}
+
+    <input type="submit" value="Login">
+
+    {% if request.GET.next %} <!-- for getting u back to the page u were on when u were directed to login. not always back to show_all-->
+        <input type="hidden" name="next" value="{{request.GET.next}}">
+    {% else %}
+        <input type="hidden" name="next" value="{% url 'show_all' %}">
+    {% endif %}
+</form>
+
+<hr>
+Don't have an account? <a href="{% url 'register' %}">Register here</a>.
+
+{% endblock %}

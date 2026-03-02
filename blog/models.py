@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User #for authentication
 
 # Create your models here.
 class Article(models.Model):
@@ -10,6 +11,7 @@ class Article(models.Model):
     author = models.TextField(blank=True)
     text = models.TextField(blank=True)
     published = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) #module 6
     # image_url = models.URLField(blank=True) #url as a string
 
     image_file = models.ImageField(blank=True) #an actual image
