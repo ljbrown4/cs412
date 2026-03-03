@@ -13,7 +13,7 @@
             <div style="gap: 40px; display: flex; align-items: center;">
                 <h1><i>Mini Instagram</i></h1>
                     {% if request.user.is_authenticated %}  
-                        <p> <b><i>{{request.user}}</i></b> </p>
+                       <a href="{% url 'my_profile' %}"><p> <b><i>{{request.user}}</i></b> </p></a>
                         <form method="post" action="{% url 'logout' %}" >
                             {% csrf_token %}
                             <button class="submit-btn-small" type="submit">Logout</button>

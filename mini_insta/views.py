@@ -2,7 +2,7 @@
 # Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/19/2026
 # Description: create the functions necessary to connect to html templates
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import Profile, Post, Photo, Follow
 from django.urls import reverse
 from django.shortcuts import render
@@ -17,6 +17,9 @@ class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     def get_profile(self): 
         """ get profile of current user"""
         return Profile.objects.get(user=self.request.user)
+    
+    def get_login_url(self):
+        return reverse('login')
 
     
     def is_owner(self, profile):
@@ -396,3 +399,8 @@ class MyProfileDetailView(ProfileRequiredMixin, DetailView):
         context['search_icon'] = reverse('search')
 
         return context
+    
+
+class LogOutComfirmationView(TemplateView):
+    '''page for users to log out'''
+    template_name = "mini_insta/logged_out.html"

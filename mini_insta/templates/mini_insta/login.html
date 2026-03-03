@@ -8,14 +8,17 @@
 
     <form action = "{% url 'login' %}" method="POST">
         {% csrf_token %}
-        {{form}}
+        {{form.as_table}}
 
         <input type="submit" value="Login">
 
-        {% if request.GET.next %} <!-- for getting u back to the page u were on when u were directed to login. not always back to show_all-->
+        <!-- <input type="hidden" name="next" value="{% url 'my_profile' %}"> -->
+
+        <!-- for getting u back to the page u were on when u were directed to login. not always back to show_all-->
+        {% if request.GET.next %} 
             <input type="hidden" name="next" value="{{request.GET.next}}">
         {% else %}
-            <input type="hidden" name="next" value="{% url 'show_all_profiles' %}">
+            <input type="hidden" name="next" value="{% url 'my_profile' %}">
         {% endif %}
     </form>
 
