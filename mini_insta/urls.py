@@ -36,4 +36,6 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name="mini_insta/login.html"), name="login"), #assignment 6
     path('logout/', auth_views.LogoutView.as_view(next_page='logout_confirmation'), name='logout'), #assignment 6
     path("confirmation/", LogOutComfirmationView.as_view(), name="logout_confirmation"), #assignment 6
+
+    path('create_profile/', CreateProfileView.as_view(), name="create_profile"), #assignment 6
 ] 

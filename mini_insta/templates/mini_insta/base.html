@@ -23,6 +23,7 @@
                         {% url 'login' as login_url %}
                         {% if request.path != login_url %} <!-- don't show login button on login page-->
                             <button class="submit-btn-small"><a href="{% url 'login' %}">Log in</a></button>
+                            <button class="submit-btn-small"><a href="{% url 'create_profile' %}">Create Profile</a></button>
                         {% endif %}
                     {% endif %}
             </div>

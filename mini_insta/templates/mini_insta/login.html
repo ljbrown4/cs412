@@ -1,3 +1,6 @@
+<!-- # File: login.html
+# Author: Leigh Brown (ljbrown@bu.edu), 3/01/2026
+# Description: scriptlet code to allow for user login -->
 {% extends 'mini_insta/base.html' %}
 
 {% block content %}
@@ -12,9 +15,6 @@
 
         <input type="submit" value="Login">
 
-        <!-- <input type="hidden" name="next" value="{% url 'my_profile' %}"> -->
-
-        <!-- for getting u back to the page u were on when u were directed to login. not always back to show_all-->
         {% if request.GET.next %} 
             <input type="hidden" name="next" value="{{request.GET.next}}">
         {% else %}

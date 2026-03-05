@@ -6,8 +6,10 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Profile, Post, Photo, Follow
 from django.urls import reverse
 from django.shortcuts import render
-from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
+from .forms import * #CreatePostForm, UpdateProfileForm, UpdatePostForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
+from django.contrib.auth import login
 
 # Create your views here.
 
@@ -404,3 +406,49 @@ class MyProfileDetailView(ProfileRequiredMixin, DetailView):
 class LogOutComfirmationView(TemplateView):
     '''page for users to log out'''
     template_name = "mini_insta/logged_out.html"
+
+
+class CreateProfileView(CreateView):
+    ''' view to handle profile updates'''
+    model = Profile
+    form_class= CreateProfileForm
+    template_name = "mini_insta/create_profile_form.html"
+
+    def form_valid(self, form):
+
+        user = UserCreationForm(self.request.POST)
+
+        if not user.is_valid():
+            context = self.get_context_data()
+            context['user'] = user
+            # so user knows why error occured. googled this
+            return self.render_to_response(context)
+
+        
+        #create user
+        new_user = user.save()
+        # log in
+        login(self.request, new_user, backend='django.contrib.auth.backends.ModelBackend')
+
+        #attach to profile
+        form.instance.user = new_user
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        '''return the dict of context variables for use in the template'''
+        
+        context = super().get_context_data(**kwargs)
+
+        if 'user' not in context:
+            context['user'] = UserCreationForm()
+
+        # add to ctxt data, used to display page specific nav icons
+        context['back_url'] = reverse('show_all_profiles')
+        context['is_owner'] = False
+
+        return context
+    
+    def get_success_url(self):
+        '''send user to newly created profile upon successful creation'''
+        return reverse('my_profile')

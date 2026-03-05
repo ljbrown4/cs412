@@ -162,7 +162,7 @@ a:hover {
 }
 
 .submit-btn-small {
-  width: 100px;
+  width: 125px;
   background-color: #f4f6f9;
   color: #000000;
   font-weight: bold;
@@ -223,6 +223,15 @@ a:hover {
 .double2 {
     display: grid;
     grid-template-columns: 500px 1fr;              
+    max-width: 1200px;         
+    width: 100%;
+    margin-bottom: 0;
+    align-items: flex-start;   
+    justify-items: start  
+}
+.double3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;              
     max-width: 1200px;         
     width: 100%;
     margin-bottom: 0;
