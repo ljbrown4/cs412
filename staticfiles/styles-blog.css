@@ -31,9 +31,6 @@ header {
     align-items: center;
 }
 
-.header-right p {
-    vertical-align:top;
-}
 hr {
     border: none;
     border-top: 1px solid #bbc7c7;
@@ -121,6 +118,13 @@ a:hover {
     padding-bottom: 0px;
 }
 
+#like {
+    width: 20px;
+    height: auto;
+    border-radius: 10px;
+    padding-bottom: 0px;
+}
+
 #postlogo {
     width: 25px;
     height: 25px;
@@ -157,6 +161,16 @@ a:hover {
   color: #000000;
   font-weight: bold;
   padding: 10px;
+  margin: 20px 0;
+  border-radius:10px;
+}
+
+.submit-btn-small {
+  width: 125px;
+  background-color: #f4f6f9;
+  color: #000000;
+  font-weight: bold;
+  padding: 7px;
   margin: 20px 0;
   border-radius:10px;
 }
@@ -213,6 +227,15 @@ a:hover {
 .double2 {
     display: grid;
     grid-template-columns: 500px 1fr;              
+    max-width: 1200px;         
+    width: 100%;
+    margin-bottom: 0;
+    align-items: flex-start;   
+    justify-items: start  
+}
+.double3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;              
     max-width: 1200px;         
     width: 100%;
     margin-bottom: 0;
@@ -288,7 +311,6 @@ a:hover {
   header {
     margin: 20px 24px;
     gap: 12px;
-    flex-wrap: wrap;
   }
 
   .container {
@@ -341,8 +363,6 @@ a:hover {
 
   header {
     margin: 16px;
-    display: flex;
-    flex-wrap: wrap;
   }
 
   .container {
@@ -356,6 +376,10 @@ a:hover {
  
   #home { 
     width: 32px; 
+  }
+
+  #like { 
+    width: 12px; 
   }
 
   #personalprofileheader { 
