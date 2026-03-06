@@ -29,23 +29,54 @@
 
             <p style="color:rgb(167, 167, 167)"> timestamp: {{post.timestamp}}</p>
 
-            {%if post.get_likes %}
-                <div style="display: flex; gap: 5px; align-items: center;">
-                    {% with a=post.get_first_like %}
-                        <p> Liked by <b>{{a.profile.username}}</b></p>
-                    {% endwith %}
 
-                    {%if post.get_num_likes >= 1 %}
-                        <p> <b> and {{post.get_num_likes}} others</b></p>
+            <div style="display: flex; gap: 15px;">
+                <!-- liking and unliking post-->
+                {% if request.user.is_authenticated and not is_owner %}
+                    {% if liked %}
+                        <a href="{% url 'delete_like' post.pk %}"> <!-- unlike post -->
+                        <img id="like" src="https://img.freepik.com/premium-psd/png-heart-symbol-shape-black-ai-generated-image-by-rawpixel_53876-205951.jpg?semt=ais_hybrid&w=740&q=80">
+                        </a>
+                    {% else %}
+                        <a href="{% url 'like' post.pk %}"> <!-- like post -->
+                        <img id="like" src="https://static.vecteezy.com/system/resources/thumbnails/054/679/611/small/simple-black-heart-silhouette-for-versatile-use-png.png">
+                        </a>
                     {% endif %}
-                </div>
-            {% endif %}
+                {% endif %}
+
+                <!-- comment creation-->
+                {% if request.user.is_authenticated and not is_owner %}
+                    <a href="{% url 'create_comment' post.pk %}">
+                        <img id="like" src="https://icons.veryicon.com/png/o/miscellaneous/2px-common-icons/message-63.png">
+                    </a>
+                {% endif %}
+
+                <!-- display likes on post-->
+                {%if post.get_likes %}
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        {% with a=post.get_first_like %}
+                            <p> Liked by <b>{{a.profile.username}}</b></p>
+                        {% endwith %}
+
+                        {%if post.get_num_likes >= 1 %}
+                            <p> <b> and {{post.get_num_likes}} others</b></p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
 
             <br>
             {% for c in post.get_all_comments%}
                 <div style="display: flex; gap: 30px; align-items: center;">
                     <h5><b>@{{c.profile.username}}</b></h5>
                     <p>{{c.text}}</p>
+
+                    {% if request.user.is_authenticated %}
+                        {% if c.profile == current or is_owner %}
+                            <a href="{% url 'delete_comment' c.pk %}"> <p>delete</p> </a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

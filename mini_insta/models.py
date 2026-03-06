@@ -68,6 +68,11 @@ class Profile(models.Model):
         get = self.get_following()
         return len(get)
     
+    def is_following(self, other):
+        '''return True if this profile follows the other profile'''
+        following = Follow.objects.filter(profile=other, follower_profile=self).exists()
+        return following
+    
     def get_absolute_url(self):
         '''return a url to display one instance of this mdel
         used to deal with config error when updating profile using a form'''
@@ -114,7 +119,14 @@ class Post(models.Model):
     def get_num_likes(self):
         '''get the number of profiles that follow this profile'''
         get = self.get_likes()
-        return len(get) - 1 #bc first one is already displayed
+        if len(get) > 0:
+            return len(get) - 1 #bc first one is already displayed
+        return 0
+    
+    def is_liked_by(self, profile):
+        '''return True if this post is liked by the given profile'''
+        liked =  Like.objects.filter(post=self, profile=profile).exists()
+        return liked
     
     def get_absolute_url(self):
         '''return a url to display one instance of this mdel
@@ -171,5 +183,4 @@ class Like(models.Model):
     def __str__(self):
         '''return string rep of this comment'''
         return f'{self.profile} liked {self.post}'
-
 

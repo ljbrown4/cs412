@@ -1,0 +1,23 @@
+<!-- # File: create_comment_form.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/24/2026
+# Description: scriptlet code to display form to an create a comment on a post -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<main class="container">
+    <h3 style="text-align: center;">Add Comment</h3>
+
+    <form action="{% url 'create_comment' post.pk %}" method="POST">
+        {% csrf_token %}
+
+        <div class="form">
+            <table>{{ form.as_table }}</table>
+            <input class="submit-btn" type="submit" value="Post Comment">
+        </div>
+    </form>
+
+    <form action="{% url 'post' post.pk %}" method="GET">
+        <input id="cancel" type="submit" value="Cancel">
+    </form>
+</main>
+{% endblock %}

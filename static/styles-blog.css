@@ -31,9 +31,6 @@ header {
     align-items: center;
 }
 
-.header-right p {
-    vertical-align:top;
-}
 hr {
     border: none;
     border-top: 1px solid #bbc7c7;
@@ -116,6 +113,13 @@ a:hover {
 
 #home {
     width: 40px;
+    height: auto;
+    border-radius: 10px;
+    padding-bottom: 0px;
+}
+
+#like {
+    width: 20px;
     height: auto;
     border-radius: 10px;
     padding-bottom: 0px;
@@ -307,7 +311,6 @@ a:hover {
   header {
     margin: 20px 24px;
     gap: 12px;
-    flex-wrap: wrap;
   }
 
   .container {
@@ -360,8 +363,6 @@ a:hover {
 
   header {
     margin: 16px;
-    display: flex;
-    flex-wrap: wrap;
   }
 
   .container {
@@ -375,6 +376,10 @@ a:hover {
  
   #home { 
     width: 32px; 
+  }
+
+  #like { 
+    width: 12px; 
   }
 
   #personalprofileheader { 

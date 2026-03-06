@@ -1,5 +1,5 @@
 <!-- # File: show_profile.html
-# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/24/2026
+# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/24/2026 + 3/5/2026
 # Description: scriptlet code to display an individual profile and its associated posts in the database and the associated data -->
 
 {% extends 'mini_insta/base.html' %}
@@ -39,6 +39,20 @@
     {% if request.user.is_authenticated and is_owner %} <!-- only show this if the person viewing is logged in + is the user who created this profile-->
     <a href="{% url 'update_profile' %}"><button class="submit-btn">update profile</button></a>
     {% endif %}
+    
+    {% if request.user.is_authenticated and not is_owner %} <!--- only show this if the person viewing is looged in and is not the user who created this prof -->
+        {% if follows %}
+            <a href="{% url 'delete_follow' profile.pk %}">
+                <button class="submit-btn-small">unfollow</button>
+            </a>
+        {% else %}
+            <a href="{% url 'follow' profile.pk %}">
+                <button class="submit-btn-small">follow</button>
+            </a>
+        {% endif %}
+    {% endif %}
+
+
     <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
 
     <hr>

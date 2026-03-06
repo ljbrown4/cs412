@@ -3,13 +3,14 @@
 # Description: create the functions necessary to connect to html templates
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from .models import Profile, Post, Photo, Follow
+from .models import Profile, Post, Photo, Follow, Like
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import * #CreatePostForm, UpdateProfileForm, UpdatePostForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.contrib.auth import login
+from django.http import HttpRequest, HttpResponse
 
 # Create your views here.
 
@@ -51,6 +52,13 @@ class ProfileDetailView(DetailView):
 
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
+
+        #for like and follow
+        if self.request.user.is_authenticated:
+            current = Profile.objects.get(user=self.request.user)
+            context['current'] = current
+            context['follows'] = current.is_following(profile)
+
         context['is_owner'] = (self.request.user.is_authenticated and profile.user == self.request.user)
         if context['is_owner']:
             context['header_profile_img'] = profile.profile_image_url
@@ -80,6 +88,12 @@ class PostDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('profile', args=[post.profile.pk])
         context['header_profile_img'] = post.profile.profile_image_url
+
+        #for like and follow
+        if self.request.user.is_authenticated:
+            current = Profile.objects.get(user=self.request.user)
+            context['current'] = current
+            context['liked'] = post.is_liked_by(current)
 
         context['is_owner'] = (
             self.request.user.is_authenticated and profile.user == self.request.user
@@ -371,11 +385,7 @@ class SearchView(ProfileRequiredMixin, ListView):
         context['profiles'] = (
             Profile.objects.filter(username__icontains=res) |
             Profile.objects.filter(display_name__icontains=res) |
-            Profile.objects.filter(bio_text__icontains=res)
-        ).distinct()
-
-
-
+            Profile.objects.filter(bio_text__icontains=res)).distinct()
 
         return context
     
@@ -452,3 +462,142 @@ class CreateProfileView(CreateView):
     def get_success_url(self):
         '''send user to newly created profile upon successful creation'''
         return reverse('my_profile')
+    
+
+class CreateFollowView(ProfileRequiredMixin, TemplateView):
+    '''allow logged in user to follow another profile'''
+
+    def dispatch(self, request, *args, **kwargs):
+        current = self.get_profile()
+        other = Profile.objects.get(pk=self.kwargs['pk'])
+
+        # profile can't follow itself
+        if current != other:
+            exists = Follow.objects.filter(profile=other, follower_profile=current).exists()
+
+            if not exists:
+                Follow.objects.create(
+                    profile=other,
+                    follower_profile=current)
+
+        return redirect('profile', pk=other.pk) #reverse wouldn't work here for some reason, looked this up
+    
+class DeleteFollowView(ProfileRequiredMixin, TemplateView):
+    '''allow logged in user to unfollow another profile'''
+
+    def dispatch(self, request, *args, **kwargs):
+        current = self.get_profile()
+        other = Profile.objects.get(pk=self.kwargs['pk'])
+
+        Follow.objects.filter(
+            profile=other,
+            follower_profile=current).delete()
+
+        return redirect('profile', pk=other.pk)
+    
+class CreateLikeView(ProfileRequiredMixin, TemplateView):
+    '''allow logged in user to follow another profile'''
+
+    def dispatch(self, request, *args, **kwargs):
+        current = self.get_profile()
+        post = Post.objects.get(pk=self.kwargs['pk'])
+
+        # profile can't follow itself
+        if post.profile != current:
+            exists = Like.objects.filter(post=post, profile=current).exists()
+
+            if not exists:
+                Like.objects.create(
+                    post=post,
+                    profile=current)
+
+        return redirect('post', pk=post.pk)
+    
+class DeleteLikeView(ProfileRequiredMixin, TemplateView):
+    '''allow logged in user to unfollow another profile'''
+
+    def dispatch(self, request, *args, **kwargs):
+        current = self.get_profile()
+        post = Post.objects.get(pk=self.kwargs['pk'])
+
+        Like.objects.filter(
+            post=post,
+            profile=current).delete()
+
+        return redirect('post', pk=post.pk)
+
+
+class CreateCommentView(ProfileRequiredMixin, CreateView):
+    '''view to handle comment creation'''
+
+    form_class = CreateCommentForm
+    template_name = 'mini_insta/create_comment_form.html'
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('post', kwargs={'pk': pk})
+
+    def form_valid(self, form):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        profile = self.get_profile()
+
+        form.instance.post = post
+        form.instance.profile = profile
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        profile = self.get_profile()
+
+        context['post'] = post
+        context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('post', args=[post.pk])
+        context['create_post_img'] = reverse('create_post')
+        context['feed'] = reverse('show_feed')
+        context['search_icon'] = reverse('search')
+        context['is_owner'] = True
+
+        return context
+    
+    
+class DeleteCommentView(ProfileRequiredMixin, DeleteView):
+    '''view to handle comment deletion. this is allowed by profile who made the post and profile who wrote the comment'''
+
+    model = Comment
+    template_name = 'mini_insta/delete_comment_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        comment = self.get_object()
+        current = self.get_profile()
+
+        # allow deletion if current user wrote comment OR owns the post
+        if comment.profile != current and comment.post.profile != current:
+            return HttpResponse("You cannot delete this comment.")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        comment = self.get_object()
+        return reverse('post', kwargs={'pk': comment.post.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        comment = self.get_object()
+        profile = self.get_profile()
+
+        context['comment'] = comment
+        context['post'] = comment.post
+        context['profile'] = profile
+        context['header_profile_img'] = profile.profile_image_url
+        context['back_url'] = reverse('post', args=[comment.post.pk])
+        context['create_post_img'] = reverse('create_post')
+        context['feed'] = reverse('show_feed')
+        context['search_icon'] = reverse('search')
+        context['is_owner'] = True
+
+        return context

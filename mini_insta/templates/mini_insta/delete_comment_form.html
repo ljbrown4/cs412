@@ -1,0 +1,23 @@
+<!-- # File: delete_comment_form.html
+# Author: Leigh Brown (ljbrown@bu.edu), 2/24/2026
+# Description: scriptlet code to display form to an delete comment from a post -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<main class="container">
+    <h3 style="text-align: center;">Delete Comment?</h3>
+
+    <p><b>@{{ comment.profile.username }}</b>: {{ comment.text }}</p>
+
+    <div class="form">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Delete" class="submit-btn">
+        </form>
+
+        <form action="{% url 'post' post.pk %}" method="GET">
+            <input type="submit" value="Cancel" id="cancel">
+        </form>
+    </div>
+</main>
+{% endblock %}

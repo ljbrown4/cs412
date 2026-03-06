@@ -38,4 +38,12 @@ urlpatterns = [
     path("confirmation/", LogOutComfirmationView.as_view(), name="logout_confirmation"), #assignment 6
 
     path('create_profile/', CreateProfileView.as_view(), name="create_profile"), #assignment 6
+
+    path('profile/<int:pk>/follow', CreateFollowView.as_view(), name='follow'), #assignment 6
+    path('profile/<int:pk>/delete_follow', DeleteFollowView.as_view(), name='delete_follow'), #assignment 6
+    path('post/<int:pk>/like', CreateLikeView.as_view(), name='like'), #assignment 6
+    path('post/<int:pk>/delete_like', DeleteLikeView.as_view(), name='delete_like'), #assignment 6
+
+    path('post/<int:pk>/comment', CreateCommentView.as_view(), name='create_comment'), #assignment 6 challenge
+    path('comment/<int:pk>/delete', DeleteCommentView.as_view(), name='delete_comment'), #assignment 6 challenge
 ] 

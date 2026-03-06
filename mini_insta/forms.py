@@ -37,3 +37,11 @@ class CreateProfileForm(forms.ModelForm):
         '''assoc this form with profile model from database'''
         model = Profile
         fields = ['username','display_name', 'bio_text','profile_image_url']
+
+
+class CreateCommentForm(forms.ModelForm):
+    '''form to add comment on a post'''
+
+    class Meta:
+        model = Comment
+        fields = ['text']
