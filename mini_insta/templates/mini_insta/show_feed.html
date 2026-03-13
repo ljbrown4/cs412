@@ -24,7 +24,7 @@
                     <div class="post-info">
                         <div style="display: flex; gap: 30px; align-items: center;">
                             <h4> {{post.profile.display_name}}</h4> 
-                            <p> @{{post.profile.username}} </p>
+                            <a href="{% url 'profile' post.profile.pk %}"><p> @{{post.profile.username}} </p></a>
                         </div>
                         <hr>
                         <br>
