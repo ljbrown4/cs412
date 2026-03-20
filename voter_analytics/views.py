@@ -1,3 +1,6 @@
+# File: views.py
+# Author: Leigh Brown (ljbrown@bu.edu), 3/17/2026
+# Description: create the functions necessary to connect to html templates
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
@@ -16,7 +19,7 @@ class VotersListView(ListView):
     paginate_by = 100 # how many records per page
  
     def get_queryset(self):
-        voters = super().get_queryset().order_by('last_name')
+        voters = super().get_queryset()
 
         # filter by party
         if 'party' in self.request.GET:
@@ -121,7 +124,7 @@ class GraphListView(ListView):
     context_object_name = "graphs"
 
     def get_queryset(self):
-        voters = super().get_queryset().order_by('last_name')
+        voters = super().get_queryset()
 
         # filter by party
         if 'party' in self.request.GET:
@@ -212,10 +215,12 @@ class GraphListView(ListView):
         prty = {}
 
         for v in voters:
-            if v.party in prty:
-                prty[v.party] += 1
-            else:
-                prty[v.party] = 1
+            if v.party:
+                p = v.party
+                if p in prty:
+                    prty[v.party] += 1
+                else:
+                    prty[v.party] = 1
 
         xP = list(prty.keys())
         yP = list(prty.values())

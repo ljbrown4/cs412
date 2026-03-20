@@ -48,7 +48,7 @@ class Voter(models.Model):
 
 def to_bool(field):
     ''' convert boolean values from the fields. to deal with this error: django.core.exceptions.ValidationError: ['“FALSE” value must be either True or False.']'''
-    field = field.strip().upper()
+    field = field.strip()
 
     if field in ['TRUE']:
         return True
