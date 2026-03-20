@@ -1,0 +1,36 @@
+<!-- # File: graphs.html
+# Author: Leigh Brown (ljbrown@bu.edu), 3/19/2026 
+Description: showcases graphs for voter distribution-->
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center;">Voter Graphs</h2>
+
+    <!-- show the search form on this page -->
+    <div>
+        {% include 'voter_analytics/search.html' %}
+    </div>
+
+    <p style="text-align: center;"><b>{{ total }} records included in graphs.</b></p>
+
+    <div class="results-box">
+        <h3 style="text-align: center;">Birth Year Distribution</h3>
+        {{ graphY|safe }}
+    </div>
+
+    <br>
+
+    <div class="results-box">
+        <h3 style="text-align: center;">Party Affiliation Distribution</h3>
+        {{ graphP|safe }}
+    </div>
+
+    <br>
+
+    <div class="results-box">
+        <h3 style="text-align: center;">Election Participation Distribution</h3>
+        {{ graphE|safe }}
+    </div>
+</div>
+{% endblock %}

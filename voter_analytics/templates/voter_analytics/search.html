@@ -5,7 +5,7 @@ Description: used to allow users to filter the records based on specific choices
 <div class="search-box">
 <h3 style="text-align: center;">Search Form</h3>
 
-<form action="{% url 'voters' %}">
+<form action="{% url redirect %}">
 <table>
     <tr>
         <th>Party:</th>
@@ -79,7 +79,7 @@ Description: used to allow users to filter the records based on specific choices
 </table>
 <div style="display: flex; gap: 10px">
         <button class="submit-btn-small" type="submit">Search</button>
-        <a href="{% url 'voters' %}"></a><button class="submit-btn-small">Clear</button></a> <!-- to get rid of selected filters-->
+        <a class="submit-btn-small" href="{% url redirect %}">Clear</a> <!-- to get rid of selected filters-->
     </div>
 </form>
 
