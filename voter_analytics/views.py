@@ -19,7 +19,7 @@ class VotersListView(ListView):
     paginate_by = 100 # how many records per page
  
     def get_queryset(self):
-        voters = super().get_queryset()
+        voters = super().get_queryset().order_by('last_name')
 
         # filter by party
         if 'party' in self.request.GET:
@@ -124,7 +124,7 @@ class GraphListView(ListView):
     context_object_name = "graphs"
 
     def get_queryset(self):
-        voters = super().get_queryset()
+        voters = super().get_queryset().order_by('last_name')
 
         # filter by party
         if 'party' in self.request.GET:
