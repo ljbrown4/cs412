@@ -50,9 +50,9 @@ def to_bool(field):
     ''' convert boolean values from the fields. to deal with this error: django.core.exceptions.ValidationError: ['“FALSE” value must be either True or False.']'''
     field = field.strip().upper()
 
-    if field in ['TRUE', 'T', 'YES', 'Y', '1']:
+    if field in ['TRUE']:
         return True
-    elif field in ['FALSE', 'F', 'NO', 'N', '0', '']:
+    elif field in ['FALSE']:
         return False
     else:
         raise ValueError(f"Invalid boolean value: {field}")

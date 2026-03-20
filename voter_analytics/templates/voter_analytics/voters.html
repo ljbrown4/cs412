@@ -1,0 +1,70 @@
+<!-- # File: voters.html
+# Author: Leigh Brown (ljbrown@bu.edu), 3/19/2026 
+Description: showcases all voters in the database and their corresponding info -->
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <h2 style="text-align: center;">All Voters</h2>
+    <br>
+
+    <!-- show the search form on this page -->
+    <div>
+        {% include 'voter_analytics/search.html' %}
+    </div>
+    <br>
+    <!-- navigation links for different pages of voters -->
+    <div>
+        {% if is_paginated %}
+        <ul>
+            {% if page_obj.has_previous %}
+                <li>
+                    <span><a href="?page={{ page_obj.previous_page_number }}{% if filters %}&{{ filters }}{% endif %}">Previous</a></span> <!-- updated for the urlencode and to keep filtered results-->
+                </li>
+            {% endif %}
+
+            <li>
+                <span>Page <b>{{ page_obj.number }}</b> of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li>
+                    <span><a href="?page={{ page_obj.next_page_number }}{% if filters %}&{{ filters }}{% endif %}">Next</a></span>
+                </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <p style="text-align: center;  margin: 14px 0 20px 20px;"><b>{{ total }} records shown.</b></p>
+
+    <div class="results-box">
+    <table class="voter-table">
+        <tr>
+            <th>Name</th>
+            <th>Street Address</th>
+            <th>ZIP</th>
+            <th>Date of Birth</th>
+            <th>Party</th>
+            <th>Precinct</th>
+            <th>Score</th>
+        </tr>
+
+        {% for v in voters %}
+        <tr>
+            <td><a href="{% url 'voter_detail' v.pk %}">{{ v.first_name }} {{ v.last_name }}</a></td>
+            <td>{{ v.street_num }} {{ v.street_name }} {{ v.apt_num }}</td>
+            <td>{{ v.zip }}</td>
+            <td>{{ v.date_of_birth }}</td>
+            <td>{{ v.party }}</td>
+            <td>{{ v.prec_num }}</td>
+            <td>{{ v.score }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</div>
+
+
+{% endblock %}

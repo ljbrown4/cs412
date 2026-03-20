@@ -62,7 +62,7 @@ a:hover {
     width: 100%;
     display: flex;
     flex-direction: column;              
-    margin: 20px auto;            
+    margin: 20px auto;     
 }
 /* make the format for the personal profile page */
 .double {
@@ -353,6 +353,82 @@ a:hover {
     margin-left: 0;
   }
 }
+
+/* assignment 7 */
+.search-box {
+    background-color: #f8f9fb;
+    border: 1px solid #d9dee8;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.search-box table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.search-box th {
+    text-align: left;
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+    color: #333;
+    font-weight: 600;
+}
+
+.search-box td {
+    padding: 8px 0;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;   
+    gap: 16px;         
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.results-box {
+    background-color: #f8f9fb;
+    border: 1px solid #d9dee8;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    overflow-x: auto; 
+}
+
+.voter-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+/* header */
+.voter-table th {
+    background-color: #e9eef7;
+    font-weight: 600;
+    padding: 14px 20px;
+    text-align: left;
+}
+
+.voter-table td {
+    padding: 14px 20px;   
+    border-top: 1px solid #edf1f5;
+}
+
+
+li {
+  margin: 14px 10;
+  list-style: none;
+  text-align: center;
+}
+
 
 @media screen and (max-width: 760px) {
   .grid-container {

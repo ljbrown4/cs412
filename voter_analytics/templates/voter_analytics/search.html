@@ -1,0 +1,85 @@
+<!-- # File: search.html
+# Author: Leigh Brown (ljbrown@bu.edu), 3/19/2026 
+Description: used to allow users to filter the records based on specific choices -->
+
+<div class="search-box">
+<h3 style="text-align: center;">Search Form</h3>
+
+<form action="{% url 'voters' %}">
+<table>
+    <tr>
+        <th>Party:</th>
+        <td>
+            <select name="party">
+                <option value="">All</option>
+                {% for p in parties %}
+                    <option value="{{ p }}" {% if p == selected_party %}selected{% endif %}>
+                        {{ p }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+     <tr>
+        <th>Minimum Birth Year:</th>
+        <td>
+            <select name="min_dob">
+                <option value="">Any</option>
+                {% for y in years %}
+                    <option value="{{ y }}" {% if y|stringformat:"s" == selected_min_dob %}selected{% endif %}>
+                        {{ y }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Maximum Birth Year:</th>
+        <td>
+            <select name="max_dob">
+                <option value="">Any</option>
+                {% for y in years %}
+                    <option value="{{ y }}" {% if y|stringformat:"s" == selected_max_dob %}selected{% endif %}>
+                        {{ y }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Voter Score:</th>
+        <td>
+            <select name="score">
+                <option value="">Any</option>
+                {% for s in scores %}
+                    <option value="{{ s }}" {% if s|stringformat:"s" == selected_score %}selected{% endif %}>
+                        {{ s }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Voted In:</th>
+        <td>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="v20" {% if checked_v20 %}checked{% endif %}> 2020</label>
+                <label><input type="checkbox" name="v21t" {% if checked_v21t %}checked{% endif %}> 2021 Town</label>
+                <label><input type="checkbox" name="v21p" {% if checked_v21p %}checked{% endif %}> 2021 Primary</label>
+                <label><input type="checkbox" name="v22" {% if checked_v22 %}checked{% endif %}> 2022</label>
+                <label><input type="checkbox" name="v23" {% if checked_v23 %}checked{% endif %}> 2023</label>
+            </div>
+        </td>
+    </tr>
+    
+</table>
+<div style="display: flex; gap: 10px">
+        <button class="submit-btn-small" type="submit">Search</button>
+        <a href="{% url 'voters' %}"></a><button class="submit-btn-small">Clear</button></a> <!-- to get rid of selected filters-->
+    </div>
+</form>
+

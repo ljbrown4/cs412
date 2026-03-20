@@ -1,0 +1,41 @@
+<!-- # File: voter_detail.html
+# Author: Leigh Brown (ljbrown@bu.edu), 3/19/2026 
+Description: showcases information about a specific voter -->
+{% extends 'voter_analytics/base.html' %}
+ 
+{% block content %}
+<div class="container">
+    <h3 style="text-align: center;">{{v.first_name}} {{v.last_name}} information</h3>
+    <div class="results-box">
+    <table class="voter-table">
+        <tr><th>Full Name</th><td>{{ v.first_name }} {{ v.last_name }}</td></tr>
+        <tr><th>Street Address</th><td>{{ v.street_num }} {{ v.street_name }} {{ v.apt_num }}</td></tr>
+        <tr><th>ZIP Code</th><td>{{ v.zip }}</td></tr>
+
+        <tr><th>Date of Birth</th><td>{{ v.date_of_birth }}</td></tr>
+        <tr><th>Registration Date</th><td>{{ v.reg_date }}</td></tr>
+
+        <tr><th>Party</th><td>{{ v.party }}</td></tr>
+        <tr><th>Precinct</th><td>{{ v.prec_num }}</td></tr>
+        <tr><th>Score</th><td>{{ v.score }}</td></tr>
+
+        <tr><th>Voted 2020</th><td>{{ v.v20 }}</td></tr>
+        <tr><th>Voted 2021 Town</th><td>{{ v.v21t }}</td></tr>
+        <tr><th>Voted 2021 Primary</th><td>{{ v.v21p }}</td></tr>
+        <tr><th>Voted 2022</th><td>{{ v.v22 }}</td></tr>
+        <tr><th>Voted 2023</th><td>{{ v.v23 }}</td></tr>
+   </table>
+   <br>
+   <div style="text-align: center;">
+            <a 
+                href="https://www.google.com/maps/search/?api=1&query={{ v.street_num }} {{ v.street_name }} {{ v.zip }}"
+                target="_blank"
+                class="submit-btn-small"
+            >
+                View on Google Maps
+            </a>
+        </div>
+   </div>
+</div>
+ 
+{% endblock %}

@@ -43,7 +43,7 @@ class ResultDetailView(DetailView):
         '''
         Provide context variables for use in template
         '''
-        # start with superclass context
+        # start with superclass context 
         context = super().get_context_data(**kwargs)
         r = context['r']
  
