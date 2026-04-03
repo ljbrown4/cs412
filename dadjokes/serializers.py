@@ -23,7 +23,7 @@ class PictureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Picture
-        fields = ['picture', 'contributor', 'timestamp']
+        fields = ['image_url', 'contributor', 'timestamp']
 
     #customize create operation
     def create(self, validated_data):
