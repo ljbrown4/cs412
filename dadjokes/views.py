@@ -54,7 +54,7 @@ class PictureDetailView(DetailView):
 #api views
 class JokeListAPIView(generics.ListCreateAPIView):
   '''An API view to return a listing of Jokes and to create an Joke.'''
-  queryset = Joke.objects.all()
+  queryset = Joke.objects.all().order_by('-timestamp')
   serializer_class = JokeSerializer
  
 class JokeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -73,7 +73,7 @@ class RandomJokeAPIView(generics.RetrieveAPIView):
 
 class PictureListAPIView(generics.ListCreateAPIView):
   '''An API view to return a listing of Jokes and to create an Joke.'''
-  queryset = Picture.objects.all()
+  queryset = Picture.objects.all().order_by('-timestamp')
   serializer_class = PictureSerializer
  
 class PictureDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
