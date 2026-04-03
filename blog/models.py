@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User #for authentication
-
+ 
 # Create your models here.
 class Article(models.Model):
     '''encapsulate data of blog articles'''

@@ -1,0 +1,27 @@
+<!-- # File: jokes.html
+# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026
+# Description: scriptlet code to display all jokes-->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3 style="text-align: center;">All Jokes</h3>
+    <hr>
+
+    {% if jokes %}
+        {% for joke in jokes %}
+            <div class="feed-profile">
+                <h2>
+                    <a href="{% url 'joke' joke.pk %}">{{ joke.joke|truncatechars:80 }}</a>
+                </h2>
+                <h5>By {{ joke.contributor }}</h5>
+                <p>{{ joke.timestamp }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="noposts">
+            <h3>No jokes yet.</h3>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

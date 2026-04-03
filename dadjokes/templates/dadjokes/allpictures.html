@@ -1,0 +1,29 @@
+<!-- # File: pictures.html
+# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026
+# Description: scriptlet code to display all pictures -->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3 style="text-align: center;">All Pictures</h1>
+    <hr>
+
+    {% if pictures %}
+        <div class="grid-container">
+            {% for picture in pictures %}
+                <div class="feed-profile">
+                    <a href="{% url 'picture' picture.pk %}">
+                        <img src="{{ picture.image_url }}" alt="Picture by {{ picture.contributor }}" class="post-image">
+                    </a>
+                    <h5>By {{ picture.contributor }}</h5>
+                    <p>{{ picture.timestamp }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="noposts">
+            <h3>No pictures yet.</h3>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+<!-- # File: base.html
+# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026 -->
+
+{% load static %}
+
+<html>
+    <head>
+        <title>Dad Jokes</title>
+        <link rel="stylesheet" href="{% static 'styles-blog.css' %}">
+    </head>
+    <body>
+        <header>
+            <div style="gap: 40px; display: flex; align-items: center;">
+                <h1>
+                    <a href="{% url 'home' %}"><i>Dad Jokes</i></a>
+                </h1>
+            </div>
+
+            <nav style="display: flex; gap: 30px; align-items: center;">
+                <a href="{% url 'home' %}">Random</a>
+                <a href="{% url 'jokes' %}">All Jokes</a>
+                <a href="{% url 'pictures' %}">Pictures</a>
+            </nav>
+        </header>
+    
+        {% block content %}
+        {% endblock %}    
+  
+    </body>
+</html>

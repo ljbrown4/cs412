@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'mini_insta', #Assignment 3,4,5,6
     'marathon_analytics', #module 7 examples
     'voter_analytics', #Assignment 7
+    "rest_framework", #module 9 examples
+    'dadjokes', #assignment 9
 ]
 
 MIDDLEWARE = [
@@ -146,3 +148,9 @@ if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
 #declarations to ref media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = "media/"
+
+## at the bottom of the file:
+REST_FRAMEWORK = {
+  'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+  'PAGE_SIZE': 10
+}

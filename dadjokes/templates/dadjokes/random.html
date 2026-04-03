@@ -1,0 +1,32 @@
+<!-- # File: random.html
+# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026
+# Description: scriptlet code to display random joke and picture -->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3 style="text-align: center;">Random Dad Joke + Picture</h3>
+    <hr>
+
+    <div class="double2">
+        <div class="imgside2">
+            <img src="{{ picture.image_url }}" class="post-page-image">
+
+
+            <h4>Picture contributor: {{ picture.contributor }}</h4>
+            <h5>Added: {{ picture.timestamp }}</h5>
+        </div>
+
+        <div class="post-info">
+            <h2>Joke</h2>
+            <br>
+            <p><i>{{ joke.joke }}</i></p>
+            <br>
+            <h5>Joke contributor: {{ joke.contributor }}</h5>
+            <h6>Added: {{ joke.timestamp }}</h6>
+
+            <hr>
+        </div>
+    </div>
+</div>
+{% endblock %}

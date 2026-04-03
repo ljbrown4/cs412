@@ -1,0 +1,21 @@
+<!--# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026
+# Description: scriptlet code to display one picture -->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Picture Details</h1>
+    <hr>
+
+    <div class="double2">
+        <div class="imgside2">
+            <img src="{{ picture.image_url }}" alt="Picture by {{ picture.contributor }}" class="post-page-image">
+        </div>
+
+        <div class="post-info">
+            <h3>Contributor: {{ picture.contributor }}</h3>
+            <p>{{ picture.timestamp }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
