@@ -5,15 +5,12 @@
 {% extends 'dadjokes/base.html' %}
 {% block content %}
 <div class="container">
-    <h3 style="text-align: center;">Joke Details</h3>
-    <hr>
-
+    <h3 style="text-align: center;">Joke</h3>
+    
     <div class="feed-profile">
         <h2>{{ joke.joke }}</h2>
         <h4>Contributor: {{ joke.contributor }}</h4>
         <p>{{ joke.timestamp }}</p>
     </div>
 </div>
-{% endblock %}
-
 {% endblock %}

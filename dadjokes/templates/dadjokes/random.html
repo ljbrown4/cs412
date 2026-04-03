@@ -6,26 +6,22 @@
 {% block content %}
 <div class="container">
     <h3 style="text-align: center;">Random Dad Joke + Picture</h3>
-    <hr>
+    <br>
 
     <div class="double2">
         <div class="imgside2">
             <img src="{{ picture.image_url }}" class="post-page-image">
-
-
-            <h4>Picture contributor: {{ picture.contributor }}</h4>
-            <h5>Added: {{ picture.timestamp }}</h5>
+            <h3>Picture contributor: {{ picture.contributor }}</h3>
+            <h4>Added: {{ picture.timestamp }}</h4>
         </div>
 
         <div class="post-info">
-            <h2>Joke</h2>
+            <h3>Joke</h3>
             <br>
             <p><i>{{ joke.joke }}</i></p>
             <br>
-            <h5>Joke contributor: {{ joke.contributor }}</h5>
-            <h6>Added: {{ joke.timestamp }}</h6>
-
-            <hr>
+            <h3>Joke contributor: {{ joke.contributor }}</h3>
+            <h4>Added: {{ joke.timestamp }}</h4>
         </div>
     </div>
 </div>

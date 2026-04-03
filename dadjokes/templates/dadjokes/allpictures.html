@@ -13,7 +13,7 @@
             {% for picture in pictures %}
                 <div class="feed-profile">
                     <a href="{% url 'picture' picture.pk %}">
-                        <img src="{{ picture.image_url }}" alt="Picture by {{ picture.contributor }}" class="post-image">
+                        <img src="{{ picture.image_url }}" class="post-image">
                     </a>
                     <h5>By {{ picture.contributor }}</h5>
                     <p>{{ picture.timestamp }}</p>
