@@ -13,6 +13,10 @@ from django.contrib.auth import login
 from django.http import HttpRequest, HttpResponse
 
 # Create your views here.
+#api imports
+from rest_framework import generics
+from .serializers import *
+
 
 class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     """Custom mixin that requires auth and returns user profile as need """
@@ -601,3 +605,63 @@ class DeleteCommentView(ProfileRequiredMixin, DeleteView):
         context['is_owner'] = True
 
         return context
+    
+
+
+
+#api views
+#profile views
+class ProfileListAPIView(generics.ListCreateAPIView):
+  '''An API view to return a listing of Profiles and to create an Profile.'''
+  queryset = Profile.objects.all().order_by('-join_date')
+  serializer_class = ProfileSerializer
+
+class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+  '''An API view to return a Profile.'''
+  queryset = Profile.objects.all()
+  serializer_class = ProfileSerializer
+
+#post views
+class PostListAPIView(generics.ListCreateAPIView):
+  '''An API view I plan to use to create a new post and display feed.'''
+  queryset = Post.objects.all().order_by('-timestamp')
+  serializer_class = PostSerializer
+
+class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+  '''An API view to return a post.'''
+  queryset = Post.objects.all()
+  serializer_class = PostSerializer
+
+#follower + following views
+class FollowerListAPIView(generics.ListCreateAPIView):
+  '''An API view to return a list of followers.'''
+  queryset = Follow.objects.all().order_by('-timestamp')
+  serializer_class = FollowSerializer
+ 
+class FollowingListAPIView(generics.ListCreateAPIView):
+  '''An API view to return a list of people they follow.'''
+  queryset = Follow.objects.all().order_by('-timestamp')
+  serializer_class = FollowSerializer
+
+#comment views
+class CommentListAPIView(generics.ListCreateAPIView):
+  '''An API view I plan to return all comments within the api.'''
+  queryset = Comment.objects.all().order_by('-timestamp')
+  serializer_class = CommentSerializer
+
+class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+  '''An API view to allow comment creation and deletion.'''
+  queryset = Comment.objects.all()
+  serializer_class = CommentSerializer
+
+#like views
+class LikeListAPIView(generics.ListCreateAPIView):
+  '''An API view to return all likes within the api.'''
+  queryset = Like.objects.all().order_by('-timestamp')
+  serializer_class = LikeSerializer
+
+class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+  '''An API view to allow like creation and deletion.'''
+  queryset = Like.objects.all()
+  serializer_class = LikeSerializer
+

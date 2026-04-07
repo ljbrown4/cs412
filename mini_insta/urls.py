@@ -46,4 +46,17 @@ urlpatterns = [
 
     path('post/<int:pk>/comment', CreateCommentView.as_view(), name='create_comment'), #assignment 6 challenge
     path('comment/<int:pk>/delete', DeleteCommentView.as_view(), name='delete_comment'), #assignment 6 challenge
+
+
+    #api views
+    path('api/', PostListAPIView.as_view(), name="api_feed"),
+    path('api/explore', ProfileListAPIView.as_view(), name="api_explore"),
+    path('api/profile/<int:pk>', ProfileDetailAPIView.as_view(), name="api_profile"),
+    path('api/post/<int:pk>', PostDetailAPIView.as_view(), name="api_post"),
+    path('api/followers', FollowerListAPIView.as_view(), name="api_followers"),
+    path('api/following', FollowingListAPIView.as_view(), name="api_following"),
+    path('api/comments', CommentListAPIView.as_view(), name="api_comments"),
+    path('api/comment/<int:pk>', CommentDetailAPIView.as_view(), name="api_comment"),
+    path('api/likes', LikeListAPIView.as_view(), name="api_likes"),
+    path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like"),
 ] 
