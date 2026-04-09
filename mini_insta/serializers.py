@@ -7,8 +7,7 @@ from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
-    post_feed = serializers.SerializerMethodField()
-    all_posts = serializers.SerializerMethodField()
+    #all_posts = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -21,21 +20,20 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         return Profile.objects.create(**validated_data)
     
-    #class level methods from models.py 
-    def get_post_feed(self, obj):
-        return obj.get_post_feed()
     
-    def get_all_posts(self, obj):
-        return obj.get_all_posts()
+    # def get_all_posts(self, obj):
+    #     return obj.get_all_posts()
     
 class PostSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
-    first_photo = serializers.SerializerMethodField()
+    first_photo = serializers.SerializerMethodField() #asked how to add class level methods from models.py to serializers
+    username = serializers.SerializerMethodField()
+    display_name = serializers.SerializerMethodField()
     #all_photos = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username']
 
     #customize create operation
     def create(self, validated_data):
@@ -48,6 +46,12 @@ class PostSerializer(serializers.ModelSerializer):
     # def get_all_photos(self, obj):
     #     '''get all photos for a post'''
     #     return obj.get_all_photos()
+
+    def get_username(self, obj):
+        return obj.profile.username
+    
+    def get_displayname(self, obj):
+        return obj.profile.display_name
 
     def get_first_photo(self, obj):
         photo = obj.get_first_photo()
