@@ -1,5 +1,5 @@
 # File: views.py
-# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026 + 2/19/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 2/12/2026 + 2/19/2026
 # Description: create the functions necessary to connect to html templates
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView

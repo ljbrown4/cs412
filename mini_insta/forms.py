@@ -1,5 +1,5 @@
 # File: forms.py
-# Author: Leigh Brown (ljbrown@bu.edu), 2/19/2026 + 2/25/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 2/19/2026 + 2/25/2026
 # Description: create forms and their fields (post)
 
 from django import forms

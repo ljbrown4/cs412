@@ -1,5 +1,5 @@
 # File: views.py
-# Author: Leigh Brown (ljbrown@bu.edu), 3/17/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 3/17/2026
 # Description: create the functions necessary to connect to html templates
 from django.shortcuts import render
 from django.urls import reverse

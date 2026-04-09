@@ -1,5 +1,5 @@
 # File: serializers.py
-# Author: Leigh Brown (ljbrown@bu.edu), 4/07/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/07/2026
 # Description: convert django models into text to send over HTTP
 
 from rest_framework import serializers

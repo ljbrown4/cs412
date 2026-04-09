@@ -1,5 +1,5 @@
 # File: models.py
-# Author: Leigh Brown (ljbrown@bu.edu), 3/17/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 3/17/2026
 # Description: create the voter model to showcase records from the csv file.
 
 from django.db import models

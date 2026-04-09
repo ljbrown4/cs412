@@ -1,5 +1,5 @@
 # File: models.py
-# Author: Leigh Brown (ljbrown@bu.edu), 4/02/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/02/2026
 # Description: create models and their attributes (joke, picture)
 from django.db import models
 from django.urls import reverse

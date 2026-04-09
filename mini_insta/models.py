@@ -1,5 +1,5 @@
 # File: models.py
-# Author: Leigh Brown (ljbrown@bu.edu), 2/12/2026
+# Author: Leigh Brown (ljbrown4@bu.edu), 2/12/2026
 # Description: create models and their attributes (profile, post, photo)
 
 from django.db import models
