@@ -622,32 +622,51 @@ class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   serializer_class = ProfileSerializer
 
 #post views
-class PostListAPIView(generics.ListCreateAPIView):
+class PostFeedAPIView(generics.ListCreateAPIView):
   '''An API view I plan to use to create a new post and display feed.'''
-  queryset = Post.objects.all().order_by('-timestamp')
+  
   serializer_class = PostSerializer
+
+  def get_queryset(self):
+        profile = self.get_profile()
+        return profile.get_post_feed()
+       
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to return a post.'''
   queryset = Post.objects.all()
   serializer_class = PostSerializer
 
+
+       
+
 #follower + following views
 class FollowerListAPIView(generics.ListCreateAPIView):
-  '''An API view to return a list of followers.'''
-  queryset = Follow.objects.all().order_by('-timestamp')
+  '''An API view to return a list of followers for a profile'''
   serializer_class = FollowSerializer
+
+  def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Follow.objects.filter(profile__pk=pk)
  
 class FollowingListAPIView(generics.ListCreateAPIView):
-  '''An API view to return a list of people they follow.'''
-  queryset = Follow.objects.all().order_by('-timestamp')
+  '''An API view to return a list of people a profile follows.'''
   serializer_class = FollowSerializer
+
+  def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Follow.objects.filter(follower_profile__pk=pk)
 
 #comment views
 class CommentListAPIView(generics.ListCreateAPIView):
-  '''An API view I plan to return all comments within the api.'''
-  queryset = Comment.objects.all().order_by('-timestamp')
+  '''An API view I plan to return all comments associated with a specific post'''
+  
   serializer_class = CommentSerializer
+  
+  def get_queryset(self):
+        #to use filter on the query set
+        pk = self.kwargs['pk']
+        return Comment.objects.filter(post__pk=pk).order_by('-timestamp')
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow comment creation and deletion.'''
@@ -656,9 +675,13 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 #like views
 class LikeListAPIView(generics.ListCreateAPIView):
-  '''An API view to return all likes within the api.'''
-  queryset = Like.objects.all().order_by('-timestamp')
+  '''An API view to return all likes associated with a specific post '''
   serializer_class = LikeSerializer
+  
+  def get_queryset(self):
+        #to use filter on the query set
+        pk = self.kwargs['pk']
+        return Comment.objects.filter(post__pk=pk).order_by('-timestamp')
 
 class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow like creation and deletion.'''

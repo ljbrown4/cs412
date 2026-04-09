@@ -49,7 +49,7 @@ urlpatterns = [
 
 
     #api views
-    path('api/', PostListAPIView.as_view(), name="api_feed"),
+    path('api/', PostFeedAPIView.as_view(), name="api_feed"),
     path('api/explore', ProfileListAPIView.as_view(), name="api_explore"),
     path('api/profile/<int:pk>', ProfileDetailAPIView.as_view(), name="api_profile"),
     path('api/post/<int:pk>', PostDetailAPIView.as_view(), name="api_post"),
@@ -58,5 +58,5 @@ urlpatterns = [
     path('api/comments', CommentListAPIView.as_view(), name="api_comments"),
     path('api/comment/<int:pk>', CommentDetailAPIView.as_view(), name="api_comment"),
     path('api/likes', LikeListAPIView.as_view(), name="api_likes"),
-    path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like"),
+    path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like33"),
 ] 

@@ -7,6 +7,8 @@ from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
+    post_feed = serializers.SerializerMethodField()
+    all_posts = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -18,6 +20,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         print(f'ProfileSerializer.create, validated_data={validated_data}.')
 
         return Profile.objects.create(**validated_data)
+    
+    #class level methods from models.py 
+    def get_post_feed(self, obj):
+        return obj.get_post_feed()
+    
+    def get_all_posts(self, obj):
+        return obj.get_all_posts()
     
 class PostSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
