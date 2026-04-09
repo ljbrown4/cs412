@@ -624,7 +624,6 @@ class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 #post views
 class PostFeedAPIView(generics.ListCreateAPIView):
   '''An API view I plan to use to create a new post and display feed.'''
-  
   serializer_class = PostSerializer
 
   def get_queryset(self):
@@ -637,8 +636,15 @@ class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   queryset = Post.objects.all()
   serializer_class = PostSerializer
 
+#for a singular profile
+class ProfilePostListAPIView(generics.ListAPIView):
+  '''An API view to return all posts associated with a profile'''
+  serializer_class = PostSerializer
 
-       
+  def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Post.objects.filter(profile__pk=pk).order_by('-timestamp')
+
 
 #follower + following views
 class FollowerListAPIView(generics.ListAPIView):

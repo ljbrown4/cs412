@@ -45,11 +45,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         return len(followers)
     
     def get_following(self, obj):
-        following = list(Follow.objects.filter(profile=obj))
+        following = list(Follow.objects.filter(follower_profile=obj))
         return [f.pk for f in following]
     
     def get_num_following(self, obj):
-        following = list(Follow.objects.filter(profile=obj))
+        following = list(Follow.objects.filter(follower_profile=obj))
         return len(following)
 
     
