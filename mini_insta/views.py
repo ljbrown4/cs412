@@ -646,7 +646,7 @@ class PostFeedAPIView(generics.ListCreateAPIView):
             profile = Profile.objects.get(user=self.request.user)
             return profile.get_post_feed()
 
-        return Post.objects.all().order_by('-timestamp') #guest user j sees all posts in the app
+        return Post.objects.all().order_by('-timestamp') #guest user j sees all posts in the app or user that follows no one
   
   def perform_create(self, serializer): #this is to try and make sure that the images are added when a post is created
     profile = Profile.objects.get(user=self.request.user)
@@ -656,7 +656,7 @@ class PostFeedAPIView(generics.ListCreateAPIView):
         Photo.objects.create(
             post=post,
             image_file=image
-        )
+    )
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to return a post.'''

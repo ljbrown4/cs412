@@ -72,6 +72,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes', 'two_comments', 'pk', 'pfp']
+        ead_only_fields = ['profile']
 
     #customize create operation
     def create(self, validated_data):
