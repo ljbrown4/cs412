@@ -30,6 +30,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     
 class PostSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
+    first_photo = serializers.SerializerMethodField()
+    all_photos = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -41,6 +43,19 @@ class PostSerializer(serializers.ModelSerializer):
         print(f'PostSerializer.create, validated_data={validated_data}.')
 
         return Post.objects.create(**validated_data)
+    
+    #class methods 
+    def get_all_photos(self, obj):
+        '''get all photos for a post'''
+        return obj.get_all_photos()
+
+    def get_first_photo(self, obj):
+        photo = obj.get_first_photo()
+
+        if photo:
+            return photo.image_file.url #so i can put into image tag and use uri
+
+        return None
     
 class PhotoSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
@@ -55,6 +70,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         print(f'PhotoSerializer.create, validated_data={validated_data}.')
 
         return Photo.objects.create(**validated_data)
+
     
 class CommentSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''

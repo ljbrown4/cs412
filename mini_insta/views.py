@@ -628,7 +628,7 @@ class PostFeedAPIView(generics.ListCreateAPIView):
   serializer_class = PostSerializer
 
   def get_queryset(self):
-        profile = self.get_profile()
+        profile = Profile.objects.get(pk=2) #temporary for testinf
         return profile.get_post_feed()
        
 
