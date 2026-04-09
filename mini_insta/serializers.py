@@ -96,8 +96,10 @@ class PostSerializer(serializers.ModelSerializer):
             return 0
     
     def get_first_like(self, obj):
-        likes = Like.objects.filter(post=obj).first()
-        return likes.profile.username
+        like = Like.objects.filter(post=obj).first()
+        if like and like.profile:
+            return like.profile.username
+        return ""  # no likes case
     
 class PhotoSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''

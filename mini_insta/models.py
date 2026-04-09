@@ -17,8 +17,7 @@ class Profile(models.Model):
     profile_image_url = models.URLField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE) #assignment 6
 
-    def __str__(self): 
-        return f'{self.username} joined on {self.join_date}'
+    
     
     def get_all_posts(self):
         '''get all posts by a user'''

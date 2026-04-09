@@ -607,8 +607,6 @@ class DeleteCommentView(ProfileRequiredMixin, DeleteView):
         return context
     
 
-
-
 #api views
 #profile views
 class ProfileListAPIView(generics.ListCreateAPIView):
