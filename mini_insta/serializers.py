@@ -34,10 +34,11 @@ class PostSerializer(serializers.ModelSerializer):
     all_photos = serializers.SerializerMethodField()
     first_like = serializers.SerializerMethodField()
     num_likes = serializers.SerializerMethodField()
+    pfp = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes', 'two_comments', 'pk']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes', 'two_comments', 'pk', 'pfp']
 
     #customize create operation
     def create(self, validated_data):
@@ -66,6 +67,8 @@ class PostSerializer(serializers.ModelSerializer):
         comments = Comment.objects.filter(post=obj)
         return [c.profile.username + " " + c.text for c in comments]
 
+    def get_pfp(self, obj):
+        return obj.profile.profile_image_url
     
     def get_display_name(self, obj):
         return obj.profile.display_name
