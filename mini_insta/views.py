@@ -754,7 +754,7 @@ class LikeListAPIView(generics.ListCreateAPIView):
   def get_queryset(self):
         #to use filter on the query set
         pk = self.kwargs['pk']
-        return Comment.objects.filter(post__pk=pk).order_by('-timestamp')
+        return Like.objects.filter(post__pk=pk).order_by('-timestamp')
 
 class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow like creation and deletion.'''
