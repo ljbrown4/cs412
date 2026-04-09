@@ -156,6 +156,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['profile', 'post', 'timestamp', 'text']
+        read_only_fields = ['profile']
 
     #customize create operation
     def create(self, validated_data):
@@ -170,6 +171,7 @@ class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = ['profile', 'follower_profile', 'timestamp']
+        read_only_fields = ['profile']
 
     #customize create operation
     def create(self, validated_data):
@@ -184,6 +186,7 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ['profile', 'post', 'timestamp']
+        read_only_fields = ['profile']
 
     #customize create operation
     def create(self, validated_data):
