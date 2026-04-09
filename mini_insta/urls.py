@@ -61,4 +61,5 @@ urlpatterns = [
     path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like"),
     path('api/profile/<int:pk>/posts', ProfilePostListAPIView.as_view(), name="api_profile_posts"),
     path('api/login', LoginAPIView.as_view(), name="api_login"),
+    path('api/my_profile', MyProfileAPIView.as_view(), name="api_my_profile"),
 ] 

@@ -699,6 +699,7 @@ class FollowingListAPIView(generics.ListAPIView):
   def get_queryset(self):
         pk = self.kwargs['pk']
         return Profile.objects.filter(profile__follower_profile__pk=pk)
+  
 #comment views
 class CommentListAPIView(generics.ListCreateAPIView):
   '''An API view I plan to return all comments associated with a specific post'''
