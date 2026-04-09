@@ -641,22 +641,21 @@ class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
        
 
 #follower + following views
-class FollowerListAPIView(generics.ListCreateAPIView):
+class FollowerListAPIView(generics.ListAPIView):
   '''An API view to return a list of followers for a profile'''
-  serializer_class = FollowSerializer
+  serializer_class = ProfileSerializer
 
   def get_queryset(self):
         pk = self.kwargs['pk']
-        return Follow.objects.filter(profile__pk=pk)
+        return Profile.objects.filter(follower_profile__profile__pk=pk)
  
-class FollowingListAPIView(generics.ListCreateAPIView):
+class FollowingListAPIView(generics.ListAPIView):
   '''An API view to return a list of people a profile follows.'''
-  serializer_class = FollowSerializer
+  serializer_class = ProfileSerializer
 
   def get_queryset(self):
         pk = self.kwargs['pk']
-        return Follow.objects.filter(follower_profile__pk=pk)
-
+        return Profile.objects.filter(profile__follower_profile__pk=pk)
 #comment views
 class CommentListAPIView(generics.ListCreateAPIView):
   '''An API view I plan to return all comments associated with a specific post'''
