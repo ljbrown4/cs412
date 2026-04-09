@@ -57,7 +57,7 @@ urlpatterns = [
     path('api/profile/<int:pk>/following', FollowingListAPIView.as_view(), name="api_following"),
     path('api/post/<int:pk>/comments', CommentListAPIView.as_view(), name="api_comments"),
     path('api/comment/<int:pk>', CommentDetailAPIView.as_view(), name="api_comment"),
-    path('api/likes', LikeListAPIView.as_view(), name="api_likes"),
+    path('api/post/<int:pk>/likes', LikeListAPIView.as_view(), name="api_likes"),
     path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like"),
     path('api/profile/<int:pk>/posts', ProfilePostListAPIView.as_view(), name="api_profile_posts"),
     #api auth views
