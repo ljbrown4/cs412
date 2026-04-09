@@ -30,13 +30,14 @@ class PostSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     display_name = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    two_comments = serializers.SerializerMethodField()
     all_photos = serializers.SerializerMethodField()
     first_like = serializers.SerializerMethodField()
     num_likes = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes', 'two_comments', 'pk']
 
     #customize create operation
     def create(self, validated_data):
@@ -54,6 +55,11 @@ class PostSerializer(serializers.ModelSerializer):
         
     def get_username(self, obj):
         return obj.profile.username
+    
+    def get_two_comments(self, obj): #show less comments on the main page for space saving
+        #get the username of the commenter and the comment itself
+        comments = Comment.objects.filter(post=obj)[:2]
+        return [c.profile.username + " " + c.text for c in comments]
     
     def get_comments(self, obj):
         #get the username of the commenter and the comment itseld
@@ -74,6 +80,9 @@ class PostSerializer(serializers.ModelSerializer):
                 return photo.image_url
 
         return None
+    
+    def get_pk(self, obj):
+        return obj.pk
     
     def get_num_likes(self, obj):
         likes = list(Like.objects.filter(post=obj))
