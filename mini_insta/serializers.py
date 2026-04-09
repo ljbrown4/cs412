@@ -30,11 +30,13 @@ class PostSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     display_name = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    #all_photos = serializers.SerializerMethodField()
+    all_photos = serializers.SerializerMethodField()
+    first_like = serializers.SerializerMethodField()
+    num_likes = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments', 'first_like', 'all_photos', 'num_likes']
 
     #customize create operation
     def create(self, validated_data):
@@ -44,21 +46,18 @@ class PostSerializer(serializers.ModelSerializer):
         return Post.objects.create(**validated_data)
     
     #class methods 
-    # def get_all_photos(self, obj):
-    #     '''get all photos for a post'''
-    #     return obj.get_all_photos()
+    def get_all_photos(self, obj):
+        '''get all photos for a post'''
+        photos = Photo.objects.filter(post=obj)
 
+        return [p.image_url if p.image_url else p.image_file.url for p in photos]
+        
     def get_username(self, obj):
         return obj.profile.username
     
     def get_comments(self, obj):
         #get the username of the commenter and the comment itseld
         comments = Comment.objects.filter(post=obj)
-        keep = []
-        for c in comments:
-            keep = c.profile.username
-            keep += " "
-            keep += c.text
         return [c.profile.username + " " + c.text for c in comments]
 
     
@@ -75,6 +74,18 @@ class PostSerializer(serializers.ModelSerializer):
                 return photo.image_url
 
         return None
+    
+    def get_num_likes(self, obj):
+        likes = list(Like.objects.filter(post=obj))
+        num = len(likes)
+        if num > 0:
+            return num - 1 #1st alr displayed
+        else:
+            return 0
+    
+    def get_first_like(self, obj):
+        likes = Like.objects.filter(post=obj).first()
+        return likes.profile.username
     
 class PhotoSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
