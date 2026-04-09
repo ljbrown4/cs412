@@ -50,7 +50,7 @@ class PostSerializer(serializers.ModelSerializer):
     def get_username(self, obj):
         return obj.profile.username
     
-    def get_displayname(self, obj):
+    def get_display_name(self, obj):
         return obj.profile.display_name
 
     def get_first_photo(self, obj):
