@@ -29,11 +29,12 @@ class PostSerializer(serializers.ModelSerializer):
     first_photo = serializers.SerializerMethodField() #asked how to add class level methods from models.py to serializers
     username = serializers.SerializerMethodField()
     display_name = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
     #all_photos = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name', 'comments']
 
     #customize create operation
     def create(self, validated_data):
@@ -49,6 +50,17 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_username(self, obj):
         return obj.profile.username
+    
+    def get_comments(self, obj):
+        #get the username of the commenter and the comment itseld
+        comments = Comment.objects.filter(post=obj)
+        keep = []
+        for c in comments:
+            keep = c.profile.username
+            keep += " "
+            keep += c.text
+        return [c.profile.username + " " + c.text for c in comments]
+
     
     def get_display_name(self, obj):
         return obj.profile.display_name
