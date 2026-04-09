@@ -629,6 +629,16 @@ class PostFeedAPIView(generics.ListCreateAPIView):
   def get_queryset(self):
         profile = Profile.objects.get(pk=3) #temporary for testinf
         return profile.get_post_feed()
+  
+  def perform_create(self, serializer): #this is to try and make sure that the images are added when a post is created
+    profile = Profile.objects.get(pk=2)   #temp profile
+    post = serializer.save(profile=profile)
+
+    for image in self.request.FILES.getlist('image_file'):
+        Photo.objects.create(
+            post=post,
+            image_file=image
+        )
        
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
