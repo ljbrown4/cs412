@@ -60,6 +60,11 @@ urlpatterns = [
     path('api/likes', LikeListAPIView.as_view(), name="api_likes"),
     path('api/like/<int:pk>', LikeDetailAPIView.as_view(), name="api_like"),
     path('api/profile/<int:pk>/posts', ProfilePostListAPIView.as_view(), name="api_profile_posts"),
+    #api auth views
     path('api/login', LoginAPIView.as_view(), name="api_login"),
     path('api/my_profile', MyProfileAPIView.as_view(), name="api_my_profile"),
+    path('api/my_profile', MyProfileAPIView.as_view(), name="api_my_profile"),
+    path('api/my_profile/followers', MyFollowerListAPIView.as_view(), name="api_my_followers"),
+    path('api/my_profile/following', MyFollowingListAPIView.as_view(), name="api_my_following"),
+    path('api/my_profile/posts', MyProfilePostListAPIView.as_view(), name="api_my_posts"),
 ] 

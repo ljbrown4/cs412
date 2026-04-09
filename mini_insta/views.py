@@ -672,6 +672,16 @@ class ProfilePostListAPIView(generics.ListAPIView):
         pk = self.kwargs['pk']
         return Post.objects.filter(profile__pk=pk).order_by('-timestamp')
   
+class MyProfilePostListAPIView(generics.ListAPIView):
+    '''An API view to return all posts for the current user's profile.'''
+    serializer_class = PostSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        profile = Profile.objects.get(user=self.request.user)
+        return Post.objects.filter(profile=profile).order_by('-timestamp')
+  
 #current user's profile
 class MyProfileAPIView(generics.RetrieveAPIView):
     '''An API view to return the current user's profile.'''
@@ -691,6 +701,16 @@ class FollowerListAPIView(generics.ListAPIView):
   def get_queryset(self):
         pk = self.kwargs['pk']
         return Profile.objects.filter(follower_profile__profile__pk=pk)
+  
+class MyFollowerListAPIView(generics.RetrieveAPIView):
+    '''An API view to return the current user's profile.'''
+    serializer_class = ProfileSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        profile = Profile.objects.get(user=self.request.user)
+        return Profile.objects.filter(follower_profile__profile=profile).distinct()
  
 class FollowingListAPIView(generics.ListAPIView):
   '''An API view to return a list of people a profile follows.'''
@@ -699,6 +719,16 @@ class FollowingListAPIView(generics.ListAPIView):
   def get_queryset(self):
         pk = self.kwargs['pk']
         return Profile.objects.filter(profile__follower_profile__pk=pk)
+  
+class MyFollowingListAPIView(generics.RetrieveAPIView):
+    '''An API view to return the current user's profile.'''
+    serializer_class = ProfileSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        profile = Profile.objects.get(user=self.request.user)
+        return Profile.objects.filter(profile__follower_profile=profile).distinct()
   
 #comment views
 class CommentListAPIView(generics.ListCreateAPIView):
