@@ -7,11 +7,17 @@ from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
-    #all_posts = serializers.SerializerMethodField()
+    #posts = serializers.SerializerMethodField()
+    num_posts = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
+    num_followers = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
+    num_following = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ['username', 'user', 'display_name', 'bio_text', 'join_date', 'profile_image_url']
+        fields = ['username', 'user', 'display_name', 'bio_text', 'join_date', 'profile_image_url', 'num_posts', 'followers', 
+                  'num_followers','following','num_following']
 
     #customize create operation
     def create(self, validated_data):
@@ -21,8 +27,31 @@ class ProfileSerializer(serializers.ModelSerializer):
         return Profile.objects.create(**validated_data)
     
     
-    # def get_all_posts(self, obj):
-    #     return obj.get_all_posts()
+    # def get_posts(self, obj):
+    #     #get the photo from each post and the pk so that u can display the photo and use it to go to the corresponding profile page
+    #     posts = Post.objects.filter(profile=obj).order_by('-timestamp')
+    #     return []
+    
+    def get_num_posts(self, obj):
+        posts = Post.objects.filter(profile=obj).order_by('-timestamp')
+        return len(posts)
+    
+    def get_followers(self, obj):
+        followers = list(Follow.objects.filter(profile=obj))
+        return [f.follower_profile.pk for f in followers]
+    
+    def get_num_followers(self, obj):
+        followers = list(Follow.objects.filter(profile=obj))
+        return len(followers)
+    
+    def get_following(self, obj):
+        following = list(Follow.objects.filter(profile=obj))
+        return [f.pk for f in following]
+    
+    def get_num_following(self, obj):
+        following = list(Follow.objects.filter(profile=obj))
+        return len(following)
+
     
 class PostSerializer(serializers.ModelSerializer):
     '''serializer for the joke model. specificies which fields are sent to the API'''
@@ -88,9 +117,9 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.pk
     
     def get_num_likes(self, obj):
-        likes = list(Like.objects.filter(post=obj))
+        likes = Like.objects.filter(post=obj)
         num = len(likes)
-        if num > 0:
+        if num > 1:
             return num - 1 #1st alr displayed
         else:
             return 0
