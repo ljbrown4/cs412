@@ -628,9 +628,7 @@ class ProfileListAPIView(generics.ListCreateAPIView):
 class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     '''An API view to return a Profile.'''
     serializer_class = ProfileSerializer
-
-    def get_object(self):
-        return Profile.objects.get(pk=3)
+    queryset = Profile.objects.all()
 
 #post views
 class PostFeedAPIView(generics.ListCreateAPIView):
