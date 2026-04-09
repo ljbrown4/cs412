@@ -33,7 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username']
+        fields = ['profile', 'caption', 'timestamp', 'first_photo', 'username', 'display_name']
 
     #customize create operation
     def create(self, validated_data):
