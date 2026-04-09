@@ -17,6 +17,17 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework import generics
 from .serializers import *
 
+#login api imports
+from django.contrib.auth import authenticate, login
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
+
 
 class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     """Custom mixin that requires auth and returns user profile as need """
@@ -625,13 +636,20 @@ class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class PostFeedAPIView(generics.ListCreateAPIView):
   '''An API view I plan to use to create a new post and display feed.'''
   serializer_class = PostSerializer
-
+  authentication_classes = [TokenAuthentication]
+  
+  def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return []
+  
   def get_queryset(self):
-        profile = Profile.objects.get(pk=3) #temporary for testinf
-        return profile.get_post_feed()
+        if self.request.user.is_authenticated:
+            profile = Profile.objects.get(user=self.request.user)
+            return profile.get_post_feed()
   
   def perform_create(self, serializer): #this is to try and make sure that the images are added when a post is created
-    profile = Profile.objects.get(pk=2)   #temp profile
+    profile = Profile.objects.get(user=self.request.user)
     post = serializer.save(profile=profile)
 
     for image in self.request.FILES.getlist('image_file'):
@@ -639,7 +657,6 @@ class PostFeedAPIView(generics.ListCreateAPIView):
             post=post,
             image_file=image
         )
-       
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to return a post.'''
@@ -654,6 +671,16 @@ class ProfilePostListAPIView(generics.ListAPIView):
   def get_queryset(self):
         pk = self.kwargs['pk']
         return Post.objects.filter(profile__pk=pk).order_by('-timestamp')
+  
+#current user's profile
+class MyProfileAPIView(generics.RetrieveAPIView):
+    '''An API view to return the current user's profile.'''
+    serializer_class = ProfileSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
 
 
 #follower + following views
@@ -702,4 +729,24 @@ class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow like creation and deletion.'''
   queryset = Like.objects.all()
   serializer_class = LikeSerializer
+
+
+#login view
+class LoginAPIView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+
+        user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
+
+        print(f'LoginAPIView.post(): user ={user}')
+
+        if user:
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+
+            return Response({ 'token': token.key, 'username': user.username,}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 

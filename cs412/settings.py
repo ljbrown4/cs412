@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'voter_analytics', #Assignment 7
     "rest_framework", #module 9 examples
     'dadjokes', #assignment 9
+    'rest_framework.authtoken', #assignment 10 auth
 ]
 
 MIDDLEWARE = [
