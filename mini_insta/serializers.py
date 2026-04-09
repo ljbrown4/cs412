@@ -13,11 +13,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     num_followers = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
     num_following = serializers.SerializerMethodField()
+    pk = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
         fields = ['username', 'user', 'display_name', 'bio_text', 'join_date', 'profile_image_url', 'num_posts', 'followers', 
-                  'num_followers','following','num_following']
+                  'num_followers','following','num_following', 'pk']
 
     #customize create operation
     def create(self, validated_data):
@@ -51,6 +52,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_num_following(self, obj):
         following = list(Follow.objects.filter(follower_profile=obj))
         return len(following)
+    
+    def get_pk(self, obj):
+        return obj.pk
 
     
 class PostSerializer(serializers.ModelSerializer):
