@@ -735,11 +735,15 @@ class CommentListAPIView(generics.ListCreateAPIView):
   '''An API view I plan to return all comments associated with a specific post'''
   
   serializer_class = CommentSerializer
-  
   def get_queryset(self):
-        #to use filter on the query set
-        pk = self.kwargs['pk']
-        return Comment.objects.filter(post__pk=pk).order_by('-timestamp')
+    pk = self.kwargs['pk']
+    return Comment.objects.filter(post__pk=pk).order_by('timestamp')
+  
+  def perform_create(self, serializer):
+    profile = Profile.objects.get(user=self.request.user)
+    post = Post.objects.get(pk=self.kwargs['pk'])
+    serializer.save(profile=profile, post=post)
+
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow comment creation and deletion.'''
@@ -750,11 +754,25 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class LikeListAPIView(generics.ListCreateAPIView):
   '''An API view to return all likes associated with a specific post '''
   serializer_class = LikeSerializer
+  authentication_classes = [TokenAuthentication]
+  
+  def get_permissions(self):
+    if self.request.method == 'POST':
+        return [IsAuthenticated()]
+    return []
   
   def get_queryset(self):
-        #to use filter on the query set
-        pk = self.kwargs['pk']
-        return Like.objects.filter(post__pk=pk).order_by('-timestamp')
+    return Like.objects.all().order_by('-timestamp')
+  
+  def perform_create(self, serializer):
+    profile = Profile.objects.get(user=self.request.user)
+    post_pk = self.request.data.get('post')
+    post = Post.objects.get(pk=post_pk)
+
+    exists = Like.objects.filter(profile=profile, post=post).exists()
+
+    if not exists:
+        serializer.save(profile=profile, post=post)
 
 class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   '''An API view to allow like creation and deletion.'''
