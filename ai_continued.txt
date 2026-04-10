@@ -1,0 +1,786 @@
+every time i open the app it goes to this screen but I can't figure out why. I don't see any extra tabs or anything that it would be going to:
+(tabs)/layout.tsx:
+import React from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Link, Tabs } from 'expo-router';
+import { Pressable } from 'react-native';
+
+import Colors from '@/constants/Colors';
+import { useColorScheme } from '@/components/useColorScheme';
+import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+
+// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof FontAwesome>['name'];
+  color: string;
+}) {
+  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
+export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        // Disable the static render of the header on web
+        // to prevent a hydration error in React Navigation v6.
+        headerShown: useClientOnlyValue(false, true),
+      }}>
+      <Tabs.Screen
+        name="Feed"
+        options={{
+          title: 'Feed',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          headerRight: () => (
+            <Link href="/modal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="info-circle"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <TabBarIcon name="globe" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="CreatePost"
+        options={{
+          title: 'Create',
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="MyProfile"
+        options={{
+          title: 'profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user-circle" color={color} />,
+        }}
+      />
+    </Tabs>
+
+    
+  );
+}
+
+app/_layout.tsx:
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+
+import { useColorScheme } from '@/components/useColorScheme';
+
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from 'expo-router';
+
+export const unstable_settings = {
+  // Ensure that reloading on /modal keeps a back button present.
+  initialRouteName: '(tabs)',
+};
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    ...FontAwesome.font,
+  });
+
+  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
+  return <RootLayoutNav />;
+}
+
+function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      </Stack>
+    </ThemeProvider>
+  );
+}
+Thought for 12s
+
+It’s most likely happening because Expo Router is opening the (tabs) group itself, not one actual screen inside it.
+
+That matches your screenshot exactly:
+
+back button says (tabs)
+page says “This screen doesn't exist.”
+no tab bar is showing
+
+So the app is reaching the tabs group, but it is not landing on a real child route.
+
+Why
+
+In app/_layout.tsx, you set:
+
+initialRouteName: '(tabs)'
+
+That sends the app to the tabs route group. But a route group is just a container. The app still needs an actual screen inside it to open first.
+
+Right now, Expo Router usually expects one of these:
+
+an index.tsx inside app/(tabs)/
+or a properly resolved initial child screen
+
+If it can’t resolve one, you get the “Oops” screen.
+
+Most likely cause
+
+You probably do not have an index.tsx inside app/(tabs)/, and Expo Router is not automatically choosing Feed.tsx as the startup screen.
+
+So it opens:
+
+(tabs) group
+but not Feed
+which leads to the missing-screen page
+What to do
+
+You have a few clean options.
+
+Option 1: add an index.tsx inside (tabs)
+
+Make that file redirect to Feed.
+
+This is usually the cleanest fix.
+
+So the structure would be:
+
+app/(tabs)/index.tsx
+that route sends user to Feed
+Option 2: rename Feed.tsx to index.tsx
+
+If Feed is meant to be the default home tab anyway, this is also a very normal Expo Router pattern.
+
+Then the first tab becomes the default route automatically.
+
+Option 3: set the tabs layout to use a real initial child route
+
+This is a little more configuration-heavy than just adding index.tsx, but it can also work.
+
+Another thing to check
+
+Make sure your actual file names inside app/(tabs)/ exactly match:
+
+Feed.tsx
+Explore.tsx
+CreatePost.tsx
+MyProfile.tsx
+
+because Tabs.Screen name="Feed" only works if the file really is named Feed.tsx with matching case.
+
+Expo Router is file-based and case-sensitive enough that mismatches can cause route issues.
+
+Why no extra tab appears
+
+Because this is not an “extra tab” problem. It is a startup route problem.
+
+The app is failing before it ever gets into a real tab screen, which is why you only see the missing-route page.
+
+Best fix
+
+The simplest fix is:
+
+create app/(tabs)/index.tsx
+have it redirect to /(tabs)/Feed
+
+That usually solves this exact problem cleanly.
+
+If you want, I can show the exact tiny index.tsx redirect file.
+
+yes please
+
+Perfect — this is the cleanest fix.
+
+Inside app/(tabs)/index.tsx, make a tiny redirect file:
+
+import { Redirect } from 'expo-router';
+
+export default function TabsIndex() {
+  return <Redirect href="/(tabs)/Feed" />;
+}
+
+That’s it.
+
+Why this fixes your exact issue
+
+Right now the app starts at:
+
+initialRouteName: '(tabs)'
+
+That successfully enters the tabs group.
+
+But without an index.tsx, Expo Router doesn’t know:
+
+“which actual child screen inside tabs should be first?”
+
+So it lands on the missing-route “Oops” page.
+
+This new file tells Expo Router:
+
+whenever (tabs) itself is opened, immediately go to Feed
+
+So startup becomes:
+
+app opens
+enters (tabs)
+index.tsx runs
+redirects to Feed
+Feed tab opens normally
+Your final folder should look like
+
+Something like:
+
+app
+ ├── _layout.tsx
+ ├── modal.tsx
+ ├── (tabs)
+ │   ├── _layout.tsx
+ │   ├── index.tsx   <-- new file
+ │   ├── Feed.tsx
+ │   ├── Explore.tsx
+ │   ├── CreatePost.tsx
+ │   └── MyProfile.tsx
+
+That is the normal Expo Router pattern.
+
+Why this is better than changing your root layout
+
+Your root layout is already fine.
+
+The issue is just:
+
+(tabs) needs a default child route
+
+So adding this redirect file is the cleanest minimal fix.
+
+Small optional cleaner alternative later
+
+Later, if Feed is always your home tab, you could rename:
+
+Feed.tsx
+
+to
+
+index.tsx
+
+and then make Feed the first tab directly.
+
+But for now your redirect solution is easier and keeps your naming consistent.
+
+So yes — this tiny index.tsx file should fix the startup “Oops” screen immediately.
+
+can we add something like hidden to the index tabs.screen so it isn't shown on the menu bar
+
+Yes — since you’re adding app/(tabs)/index.tsx, Expo Router may try to make it a visible tab unless you explicitly hide it.
+
+The clean way is to add an index Tabs.Screen in your (tabs)/_layout.tsx and hide it.
+
+Add this above Feed inside <Tabs>:
+
+<Tabs.Screen
+  name="index"
+  options={{
+    href: null,
+  }}
+/>
+
+That’s the Expo Router way of saying:
+
+this route exists for navigation
+but do NOT show it in the tab bar
+
+Why href: null is the right “hidden”
+
+There isn’t really a literal hidden: true option for tabs.
+
+Instead:
+
+href: null
+
+means:
+
+route still works
+redirects still work
+startup route still works
+tab item does not render
+
+So it behaves like a hidden tab.
+
+Your tab order after adding it
+
+Your tabs layout becomes conceptually:
+
+<Tabs>
+  <Tabs.Screen name="index" options={{ href: null }} />
+  <Tabs.Screen name="Feed" ... />
+  <Tabs.Screen name="Explore" ... />
+  <Tabs.Screen name="CreatePost" ... />
+  <Tabs.Screen name="MyProfile" ... />
+</Tabs>
+
+The user only sees:
+
+Feed
+Explore
+Create
+Profile
+
+and not the index redirect route.
+
+Why this is the best setup
+
+This gives you:
+
+startup fix
+
+(tabs) now has a default route
+
+clean UI
+
+No weird blank “index” tab button
+
+easy future routing
+
+You can still redirect the startup behavior later based on auth:
+
+logged in → Feed
+guest → Login
+onboarding → intro
+
+That hidden index route becomes super useful.
+
+So yes — use href: null on the index Tabs.Screen to hide it from the menu bar.
+
+for some reason it no longer lets me update the comment text and click update post. is it bc i don't have any checks for if there is already a caption there? but it worked before?:
+
+const updatePost = async (pk: string, caption: string) => {
+    //only poster can do this (match profiles), must be logged in to do this
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      const resp = await fetch(
+        https://cs-webapps.bu.edu/ljbrown4/mini_insta/api/post/${pk},
+        {
+          method: "PATCH",
+          headers: {'Content-Type': 'application/json', Authorization: token ? Token ${token} : ""},
+          body: JSON.stringify({caption: caption}),
+        }
+      );
+
+      const txt = await resp.text();
+      const result = txt ? JSON.parse(txt) : null;
+
+      if (!resp.ok) {
+        console.error("update failed:", result);
+        return;
+      }
+
+      console.log("caption updated:", result);
+      if (post) setPost({...post, caption: caption});
+    } catch (error) {
+      console.error("update error:", error);
+    }
+  };
+
+{currUser === post.username ? (
+              <>
+                <Text style={{ fontWeight: "bold", paddingBottom: 6 }}>edit caption</Text>
+                <TextInput
+                  style={[styles.input, { marginBottom: 12 }]}
+                  value={newCaption}
+                  onChangeText={setNewCaption}
+                  placeholder="Edit caption..."
+                  placeholderTextColor="gray"
+                />
+                <View style={{flexDirection: 'row', margin: 'auto'}}>
+                  <Button title="Update Post" color="black" onPress={() => updatePost(post.pk, newCaption)} />
+                  <Button title="Delete Post" color="black" onPress={() => deletePost(post.pk)} />
+                </View>
+              </>
+            ) : null}
+Thought for 7s
+
+Probably not because there’s already a caption there.
+
+Your PATCH request is allowed to send a new caption over an existing one, so “old caption already exists” is not the issue.
+
+The more likely causes are these:
+
+1. Your owner check may now be failing
+
+You only show the edit UI when:
+
+currUser === post.username
+
+That works only if the stored username in AsyncStorage exactly matches the post serializer’s username.
+
+If anything changed, like:
+
+different capitalization
+you stored display name instead of username
+token user and post serializer username don’t line up
+AsyncStorage username is stale
+
+then the edit section may disappear or stop behaving how you expect.
+
+So first confirm:
+
+what is currUser
+what is post.username
+2. Backend permissions may now be blocking PATCH
+
+Since you started adding auth, your backend may now require:
+
+logged in user
+owner of the post
+
+If the token is missing or invalid, or your backend permission check is stricter now, the request can fail even though the frontend code looks the same.
+
+Your function currently just does:
+
+console.error("update failed:", result);
+return;
+
+So if the backend is returning:
+
+401 unauthorized
+403 forbidden
+validation errors
+
+you won’t see much on screen besides “it doesn’t work.”
+
+3. Your JSON parse can still fail on non-JSON error responses
+
+This line:
+
+const result = txt ? JSON.parse(txt) : null;
+
+assumes the response is always JSON.
+
+If your backend returns HTML or empty text for some error, this can throw and jump to catch, making it look like update just stopped working.
+
+That is a common issue.
+
+4. Caption might now be read-only in the serializer by mistake
+
+Since you were working on serializer read-only fields for auth stuff, it is possible caption got accidentally made read-only or excluded from update handling.
+
+If that happened, PATCH would no longer update it even though it used to.
+
+5. You may be updating local state, but not the input state
+
+After success, you do:
+
+if (post) setPost({...post, caption: caption});
+
+but you do not reset newCaption from the returned backend data.
+
+That alone would not stop updating, but if the backend trims/changes/rejects the caption, your UI can get out of sync.
+
+6. Your backend might now require more than just caption on PATCH
+
+Usually PATCH should allow partial updates, but if the serializer/view is not set up right, it may still complain about some other required field.
+
+That would show up in result if the response is JSON.
+
+Most likely suspects
+
+Given your recent changes, the top 3 likely ones are:
+
+backend permission/auth check now blocks the update
+currUser === post.username is no longer matching
+backend response is not JSON and JSON.parse is failing
+Best things to print right now
+
+Print these before guessing more:
+
+currUser
+post.username
+resp.status
+raw txt
+
+That will tell you very quickly whether it is:
+
+not rendering the edit area
+forbidden by backend
+parse error
+serializer validation issue
+
+Also small note: you said “update the comment text,” but this code is updating the post caption, not a comment. So make sure you’re testing the right field.
+
+so it is letting me click update post and it sending the post to the top of the feed.
+1. so i think it is just the text input part that's kinda not working
+2. is there a way i can make updatePost not change the timestamp
+
+LOG:
+ LOG  currUser: maxverstappen1
+ LOG  post.username: maxverstappen1
+ LOG  caption being sent: test
+ LOG  resp status: 200
+ LOG  update raw response: {"profile":2,"caption":"test","timestamp":"2026-04-10T10:19:10.927127Z","first_photo":"/ljbrown4/media/Simulator_Screenshot_-_iPhone_16_Pro_-_2026-04-09_at_03.58.38.png","username":"maxverstappen1","display_name":"Max Verstappen","comments":["shesterkinigor Vibes","shesterkinigor Vibes 2"],"first_like":"shesterkinigor","all_photos":["/ljbrown4/media/Simulator_Screenshot_-_iPhone_16_Pro_-_2026-04-09_at_03.58.38.png"],"num_likes":0,"two_comments":["shesterkinigor Vibes","shesterkinigor Vibes 2"],"pk":18,"pfp":"https://i.pinimg.com/736x/b6/ba/1e/b6ba1e103660151ff9aa811cba78f2d9.jpg"}
+ LOG  caption updated: {"all_photos": ["/ljbrown4/media/Simulator_Screenshot_-_iPhone_16_Pro_-_2026-04-09_at_03.58.38.png"], "caption": "test", "comments": ["shesterkinigor Vibes", "shesterkinigor Vibes 2"], "display_name": "Max Verstappen", "first_like": "shesterkinigor", "first_photo": "/ljbrown4/media/Simulator_Screenshot_-_iPhone_16_Pro_-_2026-04-09_at_03.58.38.png", "num_likes": 0, "pfp": "https://i.pinimg.com/736x/b6/ba/1e/b6ba1e103660151ff9aa811cba78f2d9.jpg", "pk": 18, "profile": 2, "timestamp": "2026-04-10T10:19:10.927127Z", "two_comments": ["shesterkinigor Vibes", "shesterkinigor Vibes 2"], "username": "maxverstappen1"}
+
+Perfect — your logs make the issue very clear.
+
+Your caption update is actually working correctly.
+
+The real issue is:
+
+updating the post is changing the timestamp
+which makes your feed sort think it is a “newer” post
+so it jumps to the top
+
+So your TextInput is not the main bug.
+
+The caption changed successfully:
+
+sent "test"
+got 200
+backend returned updated caption
+local state updated
+
+So that part is good.
+
+1) Why it moves to the top of the feed
+
+This line in your backend model is almost certainly the reason:
+
+timestamp = models.DateTimeField(auto_now=True)
+
+If your Post model uses auto_now=True, Django updates the timestamp every single time the object is saved, including PATCH.
+
+So when you update the caption:
+
+post saves
+timestamp becomes “now”
+feed sorted by newest first
+it moves to top
+
+That matches your logs exactly:
+the returned timestamp is the update time, not original creation time.
+
+2) Best fix: split created vs updated
+
+The cleanest model design is:
+
+creation timestamp
+
+Never changes
+
+auto_now_add=True
+updated timestamp
+
+Changes on edit
+
+auto_now=True
+
+So conceptually:
+
+created_at → for feed ordering
+updated_at → for edit history / “edited” display later
+
+Then sort the feed by:
+
+created_at descending
+
+This is the most professional solution.
+
+3) Simpler fix for your current project
+
+If you do not need “last edited time,” then your timestamp field should probably be:
+
+auto_now_add=True
+
+instead of auto_now=True
+
+That means:
+
+set once when created
+never change again
+
+Then updating caption won’t reorder the feed.
+
+For mini insta, this is probably the easiest fix.
+
+4) About your TextInput concern
+
+The TextInput itself is actually fine.
+
+Your logs prove:
+
+caption being sent: test
+
+So:
+
+newCaption
+onChangeText
+button click
+PATCH body
+
+all work correctly.
+
+The confusing part was just:
+
+post moved in feed because timestamp changed
+
+which made it feel like the edit was weird.
+
+5) Why it “worked before”
+
+Earlier, it may have looked less obvious because:
+
+fewer posts existed
+feed wasn’t sorted by timestamp yet
+you refreshed less often
+same post was already near top
+
+Now with more posts it becomes much easier to notice.
+
+Best recommendation
+
+For your project, I strongly recommend changing the Post model timestamp to:
+
+creation-only timestamp
+
+because feed ordering should usually reflect:
+
+when posted
+not
+when caption edited
+
+So yes, the real fix is:
+
+change the model field from auto_now to auto_now_add
+
+That will stop edits from pushing posts to the top.
+
+1. so the main problem is that the textinput won't let me delete the old caption and or add on to it at all. 
+2. would updating the timestamp in the post model and doing makemigrations and migrate affect any of the previous posts in the database
+Thought for a few seconds
+If the TextInput won’t let you delete or add to the old caption, then the main issue is probably not updatePost. It’s more likely the way the input’s value is being reset.
+
+You have the input controlled by newCaption, and in fetchData() you do:
+
+setNewCaption(jData.caption);
+
+You also call fetchData() on focus and refresh. So what can happen is:
+
+you start typing
+some refresh/focus effect runs
+fetchData() runs again
+setNewCaption(jData.caption) puts the old caption back into the input
+
+That makes it feel like the TextInput won’t let you edit, because your typing keeps getting overwritten by the fetched caption.
+
+That is much more consistent with what you’re describing than a problem with the input itself.
+
+So the likely issue is:
+
+newCaption is controlled
+but fetchData() keeps resetting it from backend data
+
+A good mental rule is:
+
+initialize newCaption from the post once
+don’t keep overwriting it every time post data refetches unless you really want to reset the form
+Yes, changing the model field and running makemigrations/migrate can affect existing posts, depending on exactly what change you make.
+
+If you change something like:
+
+auto_now=True → auto_now_add=True
+
+then Django will update the schema behavior for future saves, but existing rows already have timestamp values stored in the database.
+
+So:
+
+existing timestamp values do not automatically get erased
+but the field behavior going forward changes
+future edits/creates will behave differently
+
+The main thing to watch out for is migration prompts. If Django thinks it needs a default for old rows, it may ask you for one depending on the exact field change.
+
+But in general:
+
+previous posts will still keep whatever timestamp is already stored
+the main difference is what happens on future saves
+
+So the short version is:
+
+your caption-editing problem is most likely fetchData() resetting newCaption
+changing the timestamp field should mostly affect future behavior, not wipe old posts, but migrations can still ask for input depending on the exact change
+
+The first thing I’d inspect is whether useFocusEffect or fetchData() is firing while you’re typing.
+
+do you think using useCallback for handle refresh in usefocuseffect would help the issue
+Thought for a couple of seconds
+
+It might help a little with stability, but it probably won’t fix the real issue by itself.
+
+Your actual problem sounds like:
+
+useFocusEffect runs
+handleRefresh() runs
+fetchData() runs
+setNewCaption(jData.caption) resets the input
+your typing gets overwritten
+
+Using useCallback with useFocusEffect is a good idea because it prevents the effect function from being recreated every render, but useFocusEffect will still run when the screen focuses. So if the reset is happening because fetchData() is being called while you’re editing, useCallback alone does not solve that.
+
+So:
+
+yes, useCallback is cleaner and recommended
+no, it is probably not the main fix for the caption input issue
+
+The more important fix is to stop doing this every time data refetches:
+
+setting newCaption from the fetched post caption unconditionally
+
+That should usually happen:
+
+once when the post first loads, or
+only when you intentionally want to reset the edit box
+
+not every time the screen refreshes.
+
+So the real issue is less about useCallback and more about when setNewCaption(jData.caption) runs.

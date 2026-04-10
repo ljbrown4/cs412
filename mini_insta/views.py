@@ -648,7 +648,12 @@ class PostFeedAPIView(generics.ListCreateAPIView):
   def get_queryset(self): #get user if authenticated and call get post feed for that user
         if self.request.user.is_authenticated:
             profile = Profile.objects.get(user=self.request.user)
-            return profile.get_post_feed()
+            following = Follow.objects.filter(follower_profile=profile)
+            #only use get_post_feed if user follows ppl otherwise the feed would be empty
+            if following.exists(): 
+                return profile.get_post_feed()
+
+            return Post.objects.all().order_by('-timestamp') #logged in but follows no one
 
         return Post.objects.all().order_by('-timestamp') #guest user j sees all posts in the app
   
