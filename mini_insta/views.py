@@ -706,7 +706,7 @@ class FollowerListAPIView(generics.ListAPIView):
         pk = self.kwargs['pk']
         return Profile.objects.filter(follower_profile__profile__pk=pk)
   
-class MyFollowerListAPIView(generics.RetrieveAPIView):
+class MyFollowerListAPIView(generics.ListAPIView): #update
     '''An API view to return list of followers for currently logged in user. for MyProfile'''
     serializer_class = ProfileSerializer
     authentication_classes = [TokenAuthentication]
@@ -724,7 +724,7 @@ class FollowingListAPIView(generics.ListAPIView):
         pk = self.kwargs['pk']
         return Profile.objects.filter(profile__follower_profile__pk=pk)
   
-class MyFollowingListAPIView(generics.RetrieveAPIView):
+class MyFollowingListAPIView(generics.ListAPIView): #update
     '''An API view to return list of followed profiles for currently logged in user. for MyProfile'''
     serializer_class = ProfileSerializer
     authentication_classes = [TokenAuthentication]
