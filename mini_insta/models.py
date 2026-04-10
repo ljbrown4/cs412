@@ -41,8 +41,8 @@ class Profile(models.Model):
             following_profiles.append(f.profile)
 
         # get posts from those profiles
-        all_posts = Post.objects.filter(profile__in=following_profiles).order_by('-timestamp')
-
+        #updated this so that the post feed would include posts from current user as well
+        all_posts = Post.objects.filter(profile__in=following_profiles or self).order_by('-timestamp') 
         return all_posts
     
     def get_followers(self):
