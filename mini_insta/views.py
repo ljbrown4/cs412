@@ -626,14 +626,18 @@ class ProfileListAPIView(generics.ListCreateAPIView):
   serializer_class = ProfileSerializer
 
 class ProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    '''An API view to return a Profile.'''
+    '''An API view to return a single Profile.'''
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
 
 #post views
 class PostFeedAPIView(generics.ListCreateAPIView):
-  '''An API view I plan to use to create a new post and display feed.'''
+  '''An API view I plan to use to create a new post and display feed.
+  1. when user is logged in and follows people feed is trunchated to only show posts from users they follow
+  2. when user is not logged in or does not follow anyone feed is all posts within the app'''
+
   serializer_class = PostSerializer
+  #
   authentication_classes = [TokenAuthentication]
   
   def get_permissions(self):
@@ -641,18 +645,18 @@ class PostFeedAPIView(generics.ListCreateAPIView):
             return [IsAuthenticated()]
         return []
   
-  def get_queryset(self):
+  def get_queryset(self): #get user if authenticated and call get post feed for that user
         if self.request.user.is_authenticated:
             profile = Profile.objects.get(user=self.request.user)
             return profile.get_post_feed()
 
-        return Post.objects.all().order_by('-timestamp') #guest user j sees all posts in the app or user that follows no one
+        return Post.objects.all().order_by('-timestamp') #guest user j sees all posts in the app
   
   def perform_create(self, serializer): #this is to try and make sure that the images are added when a post is created
     profile = Profile.objects.get(user=self.request.user)
     post = serializer.save(profile=profile)
 
-    for image in self.request.FILES.getlist('image_file'):
+    for image in self.request.FILES.getlist('image_file'): #create a instance of the photo object for each picture uploaded
         Photo.objects.create(
             post=post,
             image_file=image
@@ -673,7 +677,7 @@ class ProfilePostListAPIView(generics.ListAPIView):
         return Post.objects.filter(profile__pk=pk).order_by('-timestamp')
   
 class MyProfilePostListAPIView(generics.ListAPIView):
-    '''An API view to return all posts for the current user's profile.'''
+    '''An API view to return list of all posts of the currently logged in user'''
     serializer_class = PostSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -684,7 +688,7 @@ class MyProfilePostListAPIView(generics.ListAPIView):
   
 #current user's profile
 class MyProfileAPIView(generics.RetrieveAPIView):
-    '''An API view to return the current user's profile.'''
+    '''An API view to return profile of currently logged in user'''
     serializer_class = ProfileSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -695,7 +699,7 @@ class MyProfileAPIView(generics.RetrieveAPIView):
 
 #follower + following views
 class FollowerListAPIView(generics.ListAPIView):
-  '''An API view to return a list of followers for a profile'''
+  '''An API view to return a list of followers for a profile. for Profile'''
   serializer_class = ProfileSerializer
 
   def get_queryset(self):
@@ -703,7 +707,7 @@ class FollowerListAPIView(generics.ListAPIView):
         return Profile.objects.filter(follower_profile__profile__pk=pk)
   
 class MyFollowerListAPIView(generics.RetrieveAPIView):
-    '''An API view to return the current user's profile.'''
+    '''An API view to return list of followers for currently logged in user. for MyProfile'''
     serializer_class = ProfileSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -721,7 +725,7 @@ class FollowingListAPIView(generics.ListAPIView):
         return Profile.objects.filter(profile__follower_profile__pk=pk)
   
 class MyFollowingListAPIView(generics.RetrieveAPIView):
-    '''An API view to return the current user's profile.'''
+    '''An API view to return list of followed profiles for currently logged in user. for MyProfile'''
     serializer_class = ProfileSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -779,9 +783,9 @@ class LikeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
   queryset = Like.objects.all()
   serializer_class = LikeSerializer
 
-
 #login view
 class LoginAPIView(APIView):
+    '''An API View for user authentication and login'''
     authentication_classes = []
     permission_classes = [AllowAny]
 

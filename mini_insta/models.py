@@ -13,7 +13,7 @@ class Profile(models.Model):
     username = models.TextField(blank=True)
     display_name = models.TextField(blank=True)
     bio_text = models.TextField(blank=True)
-    join_date = models.DateTimeField(auto_now=True)
+    join_date = models.DateTimeField(auto_now_add=True)
     profile_image_url = models.URLField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE) #assignment 6
 
@@ -136,7 +136,7 @@ class Photo(models.Model):
     '''class that encapsulates data for a user's uploaded photos associated with a post '''
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     image_url = models.URLField(blank=True)
     image_file = models.ImageField(blank=True) #an actual image
 

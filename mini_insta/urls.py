@@ -62,6 +62,7 @@ urlpatterns = [
     path('api/profile/<int:pk>/posts', ProfilePostListAPIView.as_view(), name="api_profile_posts"),
     #api auth views
     path('api/login', LoginAPIView.as_view(), name="api_login"),
+    #my profile views
     path('api/my_profile', MyProfileAPIView.as_view(), name="api_my_profile"),
     path('api/my_profile', MyProfileAPIView.as_view(), name="api_my_profile"),
     path('api/my_profile/followers', MyFollowerListAPIView.as_view(), name="api_my_followers"),

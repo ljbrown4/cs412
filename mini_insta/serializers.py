@@ -6,7 +6,7 @@ from rest_framework import serializers
 from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the profile model. specificies which fields are sent to the API'''
     #posts = serializers.SerializerMethodField()
     num_posts = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
@@ -33,32 +33,39 @@ class ProfileSerializer(serializers.ModelSerializer):
     #     posts = Post.objects.filter(profile=obj).order_by('-timestamp')
     #     return []
     
+    #class level methods from models.py brought into and modified for serializers and api views
     def get_num_posts(self, obj):
+        #get the number of posts created by this profile
         posts = Post.objects.filter(profile=obj).order_by('-timestamp')
         return len(posts)
     
     def get_followers(self, obj):
+        #get all users who follow this profile
         followers = list(Follow.objects.filter(profile=obj))
         return [f.follower_profile.pk for f in followers]
     
     def get_num_followers(self, obj):
+        #get # of users who follow this profile
         followers = list(Follow.objects.filter(profile=obj))
         return len(followers)
     
     def get_following(self, obj):
+        #get all users this profile follows
         following = list(Follow.objects.filter(follower_profile=obj))
         return [f.pk for f in following]
     
     def get_num_following(self, obj):
+        #get # of users this profile follows
         following = list(Follow.objects.filter(follower_profile=obj))
         return len(following)
     
     def get_pk(self, obj):
+        #get the primary key of this instance of the profile model
         return obj.pk
 
     
 class PostSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the post model. specificies which fields are sent to the API'''
     first_photo = serializers.SerializerMethodField() #asked how to add class level methods from models.py to serializers
     username = serializers.SerializerMethodField()
     display_name = serializers.SerializerMethodField()
@@ -68,6 +75,7 @@ class PostSerializer(serializers.ModelSerializer):
     first_like = serializers.SerializerMethodField()
     num_likes = serializers.SerializerMethodField()
     pfp = serializers.SerializerMethodField()
+    pk = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -89,6 +97,7 @@ class PostSerializer(serializers.ModelSerializer):
         return [p.image_url if p.image_url else p.image_file.url for p in photos]
         
     def get_username(self, obj):
+        #get username from profile object so it can be passed in as a field for easier use with react native
         return obj.profile.username
     
     def get_two_comments(self, obj): #show less comments on the main page for space saving
@@ -102,12 +111,15 @@ class PostSerializer(serializers.ModelSerializer):
         return [c.profile.username + " " + c.text for c in comments]
 
     def get_pfp(self, obj):
+        #get profile image url from profile object so it can be passed in as a field for easier use with react native
         return obj.profile.profile_image_url
     
     def get_display_name(self, obj):
+        #get display_name from profile object so it can be passed in as a field for easier use with react native
         return obj.profile.display_name
 
     def get_first_photo(self, obj):
+        #get the first photo of the post to display on feed and in profile\
         photo = obj.get_first_photo()
 
         if photo:
@@ -119,9 +131,11 @@ class PostSerializer(serializers.ModelSerializer):
         return None
     
     def get_pk(self, obj):
+        #get pk for corr instance of the post model
         return obj.pk
     
     def get_num_likes(self, obj):
+        #get number of likes for this post
         likes = Like.objects.filter(post=obj)
         num = len(likes)
         if num > 1:
@@ -130,13 +144,14 @@ class PostSerializer(serializers.ModelSerializer):
             return 0
     
     def get_first_like(self, obj):
+        #get username of first like on this post
         like = Like.objects.filter(post=obj).first()
         if like and like.profile:
             return like.profile.username
         return ""  # no likes case
     
 class PhotoSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the photo model. specificies which fields are sent to the API'''
 
     class Meta:
         model = Photo
@@ -151,12 +166,13 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     
 class CommentSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the comment model. specificies which fields are sent to the API'''
 
     class Meta:
         model = Comment
         fields = ['profile', 'post', 'timestamp', 'text']
-        read_only_fields = ['profile', 'post']
+        read_only_fields = ['profile', 'post'] #these fields do not have to be populated when creating only need to be read
+        #added this when error occured when adding a comment
 
     #customize create operation
     def create(self, validated_data):
@@ -166,7 +182,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return Comment.objects.create(**validated_data)
     
 class FollowSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the follow model. specificies which fields are sent to the API'''
 
     class Meta:
         model = Follow
@@ -180,7 +196,8 @@ class FollowSerializer(serializers.ModelSerializer):
         return Follow.objects.create(**validated_data)
     
 class LikeSerializer(serializers.ModelSerializer):
-    '''serializer for the joke model. specificies which fields are sent to the API'''
+    '''serializer for the like model. specificies which fields are sent to the API'''
+    pk = serializers.SerializerMethodField()
 
     class Meta:
         model = Like
@@ -194,4 +211,6 @@ class LikeSerializer(serializers.ModelSerializer):
 
         return Like.objects.create(**validated_data)
 
+    def get_pk(self, obj):
+        return obj.pk
 
