@@ -712,7 +712,7 @@ class MyFollowerListAPIView(generics.ListAPIView): #update
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
+    def get_queryset(self):
         profile = Profile.objects.get(user=self.request.user)
         return Profile.objects.filter(follower_profile__profile=profile).distinct()
  
@@ -730,7 +730,7 @@ class MyFollowingListAPIView(generics.ListAPIView): #update
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
+    def get_queryset(self):
         profile = Profile.objects.get(user=self.request.user)
         return Profile.objects.filter(profile__follower_profile=profile).distinct()
   
