@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User #for authentication
 # Create your models here.
 
-class Profile(models.Model):
+class Profile(models.Model): 
     ''' Class that encapsulates data for user profiles'''
 
     username = models.TextField(blank=True)

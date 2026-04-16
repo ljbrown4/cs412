@@ -10,7 +10,7 @@ from .forms import * #CreatePostForm, UpdateProfileForm, UpdatePostForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.contrib.auth import login
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse 
 
 # Create your views here.
 #api imports

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework", #module 9 examples
     'dadjokes', #assignment 9
     'rest_framework.authtoken', #assignment 10 auth
+    'project', #final project
 ]
 
 MIDDLEWARE = [
