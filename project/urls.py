@@ -13,23 +13,30 @@ urlpatterns = [
     path('', AdventureListView.as_view(), name="home"),
     path('home', AdventureListView.as_view(), name="home"),
     path('adventure/<int:pk>', AdventureDetailView.as_view(), name="adventure"),
-    path('create_adventure', CreateAdventureView.as_view(), name='create_adventure'),
+    path('profile/<int:pk>/create_adventure', CreateAdventureView.as_view(), name='create_adventure'),
     path('adventure/<int:pk>/update', UpdateAdventureView.as_view(), name='update_adventure'),
     path('adventure/<int:pk>/delete', DeleteAdventureView.as_view(), name='delete_adventure'),
 
     #destination urls
-    path('adventure/<int:pk>/destinations', DestinationListView.as_view(), name="destinations"),
+    path('adventure/<int:pk>/destinations', AdventureDestinationListView.as_view(), name="adventure_destinations"),
     path('destination/<int:pk>', DestinationDetailView.as_view(), name="destination"),
     path('adventure/<int:pk>/create_destination', CreateDestinationView.as_view(), name='create_destination'),
     path('destination/<int:pk>/update', UpdateDestinationView.as_view(), name='update_destination'),
     path('destination/<int:pk>/delete', DeleteDestinationView.as_view(), name='delete_destination'),
+    path('destinations', DestinationListView.as_view(), name='destinations'),
 
     #journal urls
-    path('destination/<int:pk>/journals', JournalListView.as_view(), name="journals"),
+    path('destination/<int:pk>/journals', DestinationJournalListView.as_view(), name="destination_journals"),
+    path('journals', JournalListView.as_view(), name='journals'),
     path('journal/<int:pk>', JournalDetailView.as_view(), name="journal"),
     path('destination/<int:pk>/create_journal', CreateJournalView.as_view(), name='create_journal'),
     path('journal/<int:pk>/update', UpdateJournalView.as_view(), name='update_journal'),
     path('journal/<int:pk>/delete', DeleteJournalView.as_view(), name='delete_journal'),
+
+    #media views
+    path('media/<int:pk>', MediaDetailView.as_view(), name='media'),
+    path('journal/<int:pk>/create_media', CreateMediaView.as_view(), name='create_media'),
+    path('media/<int:pk>/delete', DeleteMediaView.as_view(), name='delete_media'),
 
     #transportation urls
     path('destination/<int:pk>/transportations', TransportationListView.as_view(), name="transportations"),
@@ -56,6 +63,13 @@ urlpatterns = [
     path('profile/', ProfileDetailView.as_view(), name='profile'),
     path('create_profile/', CreateProfileView.as_view(), name='create_profile'),
     path('profile/update', UpdateProfileView.as_view(), name='update_profile'),
+
+    #packing views
+    path('adventure/<int:pk>/packing_list', PackingListView.as_view(), name="packing_list"),
+    path('packing/<int:pk>', PackingDetailView.as_view(), name="packing_item"),
+    path('adventure/<int:pk>/create_item', CreatePackingView.as_view(), name='create_item'),
+    path('packing/<int:pk>/update_item', UpdatePackingView.as_view(), name='update_item'),
+    path('packing/<int:pk>/delete_item', DeletePackingView.as_view(), name='delete_item'),
 
     #authentication
     path('login/', auth_views.LoginView.as_view(template_name="project/login.html"), name="login"), #assignment 6

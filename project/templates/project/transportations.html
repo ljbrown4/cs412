@@ -1,0 +1,125 @@
+<!-- # File: transportations.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see all transportations for a destination-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+    <br>
+     <section class="section-header">
+      <h3 class="section-title">Your Transportations</h3>
+      <span class="section-text">{{ transportations|length }} total</span>
+      <a class="toolbar-button" href="{% url 'create_transportation' destination.pk %}">+ New transportation</a>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery&filter={{ current_filter }}">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list&filter={{ current_filter }}">
+                    List</a>
+            </div>
+
+            <div class="toolbar-right">
+                <input type="hidden" name="view" value="{{ current_view }}">
+
+                <label for="filter">Filter:</label>
+                <select name="filter" id="filter" class="toolbar-select" onchange="this.form.submit()">
+                    <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All</option>
+                    <!-- travel date -->
+                     <option value="passed" {% if current_filter == 'passed' %}selected{% endif %}>Past</option>
+                     <option value="upcoming" {% if current_filter == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                    <!-- travel type-->
+                    <option disable>-------</option>
+                    <option value="bus" {% if current_filter == 'bus' %}selected{% endif %}>Bus</option>
+                    <option value="taxi" {% if current_filter == 'taxi' %}selected{% endif %}>Taxi</option>
+                    <option value="uber" {% if current_filter == 'uber' %}selected{% endif %}>Uber</option>
+                    <option value="car" {% if current_filter == 'car' %}selected{% endif %}>Car</option>
+                    <option value="flight" {% if current_filter == 'flight' %}selected{% endif %}>Flight</option>
+                    <option value="train" {% if current_filter == 'train' %}selected{% endif %}>Train</option>
+                    <option value="ferry" {% if current_filter == 'ferry' %}selected{% endif %}>Ferry</option>
+                    <option value="other" {% if current_filter == 'other' %}selected{% endif %}>Other</option>
+                    
+                </select>
+            </div>
+        </form>
+    </section>
+
+    {% if transportations %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for t in transportations %}
+            <a class="adventure-card" href="{% url 'transportation' t.pk %}">
+
+              <div class="card-body">
+                <h4 class="list-title">{{ t.location }}</h4>
+                
+                {% if t.travel_type == 'bus' %}
+                    <span class="badge travel-badge"> Bus</span>
+                {% elif t.travel_type == 'taxi' %}
+                    <span class="badge travel-badge"> Taxi</span>
+                {% elif t.travel_type == 'car' %}
+                    <span class="badge travel-badge"> Car</span>
+                {% elif t.travel_type == 'uber' %}
+                    <span class="badge travel-badge"> Uber</span>
+                {% elif t.travel_type == 'flight' %}
+                    <span class="badge travel-badge"> Flight</span>
+                {% elif t.travel_type == 'train' %}
+                    <span class="badge travel-badge"> Train</span>
+                {% elif t.travel_type == 'ferry' %}
+                    <span class="badge travel-badge"> Ferry</span>
+                {% else %}
+                    <span class="badge travel-badge"> other</span>
+                {% endif %}
+
+                <p class="list-text">travel dates: {{ t.start_datetime }} — {{ t.end_datetime }}</p>
+                <h4 class="list-title">{{ t.final_location }}</h4>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for t in transportations %}
+            <a class="transp-list-row" href="{% url 'transportation' t.pk %}">
+
+              <div class="list-main">
+                <h4 class="list-title">{{ t.location }}</h4>
+                
+                {% if t.travel_type == 'bus' %}
+                    <span class="badge travel-badge"> Bus</span>
+                {% elif t.travel_type == 'taxi' %}
+                    <span class="badge travel-badge"> Taxi</span>
+                {% elif t.travel_type == 'car' %}
+                    <span class="badge travel-badge"> Car</span>
+                {% elif t.travel_type == 'uber' %}
+                    <span class="badge travel-badge"> Uber</span>
+                {% elif t.travel_type == 'flight' %}
+                    <span class="badge travel-badge"> Flight</span>
+                {% elif t.travel_type == 'train' %}
+                    <span class="badge travel-badge"> Train</span>
+                {% elif t.travel_type == 'ferry' %}
+                    <span class="badge travel-badge"> Ferry</span>
+                {% else %}
+                    <span class="badge travel-badge"> other</span>
+                {% endif %}
+
+                <p class="list-text">travel dates: {{ t.start_datetime }} — {{ t.end_datetime }}</p>
+                <h4 class="list-title">{{ t.final_location }}</h4>
+                </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No transportations found</h4>
+        <p>Try changing your filters or add another transportaion.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

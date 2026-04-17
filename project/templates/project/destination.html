@@ -1,0 +1,163 @@
+<!-- # File: destination.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the a specific destination's dashboard page-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if cover %}
+        <img class="banner" src="{{ cover.url }}">
+    {% endif %}
+    <br>
+
+    <main class="wide-container">
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+            <div class="destination-title">
+                <h2>{{ destination.location }} Dashboard</h2>
+                <p class="section-text">{{ destination.arrival_date }} — {{ destination.departure_date }} </p>
+                <div>
+                    <a class="toolbar-button" style="width: 200px; text-decoration: none; background-color: rgb(56, 48, 58); color: whitesmoke" href="{% url 'update_destination' destination.pk %}">update destination</a>
+                    <a class="toolbar-button" style="width: 200px; text-decoration: none; background-color: rgb(56, 48, 58); color: whitesmoke" href="{% url 'delete_destination' destination.pk %}">delete destination</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="triple2">
+
+            <!-- transportation -->
+            <section>
+                <section class="section-header">
+                    <h3 class="section-title">Transportation</h3>
+                    <a class="section-text" href="{% url 'transportations' destination.pk%}"> all </a>
+                    <a class="toolbar-button" href="{% url 'create_transportation' destination.pk %}">+ New transportation</a>
+                </section>
+
+                <br>
+
+                {% if transportations %}
+                    <section class="list-wrapper">
+                        {% for t in transportations %}
+                            <a class="transp-list-row" href="{% url 'transportation' t.pk %}">
+                                <div class="list-main">
+                                    <span class="badge travel-badge">{{ t.travel_type|title }}</span>
+
+                                    <div class="transport-meta">
+                                        <p><b>starting location:</b> {{ t.location }}</p>
+                                        <p><b>final location:</b> {{ t.final_location }}</p>
+                                    </div>
+
+                                    <p>Travel times: {{ t.start_datetime }} — {{ t.end_datetime }}</p>
+                                    <p>Price: ${{ t.price }}</p>
+
+                                    {% if t.notes %}
+                                        <p>{{ t.notes }}</p>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </section>
+                {% else %}
+                    <section class="empty">
+                        <h4>No transportations found</h4>
+                    </section>
+                {% endif %}
+            </section>
+
+            <!-- activities -->
+            <section>
+                <section class="section-header">
+                    <h3 class="section-title">Activities</h3>
+                    <a class="section-text" href="{% url 'activities' destination.pk%}"> all </a>
+                    <a class="toolbar-button" href="{% url 'create_activity' destination.pk %}"> + New Activity </a>
+                </section>
+
+                <br>
+
+                {% if activities %}
+                    <section class="list-wrapper">
+                        {% for a in activities %}
+                            <a class="transp-list-row" href="{% url 'activity' a.pk %}">
+                                <div class="list-main">
+                                    <h4 class="list-title">{{ a.location }}</h4>
+                                    <p><b>planned from:</b></p>
+                                    <p>{{ a.start_datetime }} - {{ a.end_datetime }}</p>
+
+                                    {% if a.price %}
+                                        <p>Price: ${{ a.price }}</p>
+                                    {% endif %}
+
+                                    {% if a.notes %}
+                                        <p>{{ a.notes }}</p>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </section>
+                {% else %}
+                    <section class="empty">
+                        <h4>No activities found</h4>
+                    </section>
+                {% endif %}
+            </section>
+
+            <!-- entries + lodgings -->
+            <div style="display: flex; flex-direction: column; gap: 28px;">
+
+                <section>
+                    <section class="section-header">
+                        <h3 class="section-title">Entries</h3>
+                        <a class="section-text" href="{% url 'destination_journals' destination.pk%}"> all </a>
+                        <a class="toolbar-button" href="{% url 'create_journal' destination.pk %}"> + New Entry</a>
+                    </section>
+
+                    <br>
+
+                    {% if entries %}
+                        <section class="list-wrapper small-list-wrapper">
+                            {% for j in entries %}
+                                <a class="transp-list-row" href="{% url 'journal' j.pk %}">
+                                    <div class="list-main">
+                                        <h4 class="list-title">{{ j.title }}</h4>
+                                        <p class="list-text">created at: {{ j.timestamp }}</p>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </section>
+                    {% else %}
+                        <section class="empty">
+                            <h4>No entries found</h4>
+                        </section>
+                    {% endif %}
+                </section>
+
+                <section>
+                    <section class="section-header">
+                        <h3 class="section-title">Lodgings</h3>
+                        <a class="section-text" href="{% url 'lodgings' destination.pk%}"> all </a>
+                        <a class="toolbar-button" href="{% url 'create_lodging' destination.pk %}"> + New Lodging </a>
+                    </section>
+
+                    <br>
+
+                    {% if lodgings %}
+                        <section class="list-wrapper">
+                            {% for l in lodgings %}
+                                <a class="transp-list-row" href="{% url 'lodging' l.pk %}">
+                                    <div class="list-main">
+                                        <h4 class="list-title">{{ l.location }}</h4>
+                                        <p><b>staying from:</b></p>
+                                        <p>{{ l.start_datetime }} - {{ l.end_datetime }}</p>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </section>
+                    {% else %}
+                        <section class="empty">
+                            <h4>No lodgings found</h4>
+                        </section>
+                    {% endif %}
+                </section>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}

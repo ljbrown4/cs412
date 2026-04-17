@@ -21,6 +21,9 @@ class Profile(models.Model):
     def __str__(self):
         '''return string rep of this adventure'''
         return f'{self.user.username} created profile on {self.join_date}'
+    
+    def get_absolute_url(self):
+        return reverse('profile')
 
     #class methods
     def get_adventures(self):
@@ -43,8 +46,16 @@ class Adventure (models.Model):
         '''return string rep of this adventure'''
         return f'{self.title} created on {self.date_created}'
     
+    def get_absolute_url(self):
+        return reverse('adventure', args=[self.pk])
+    
     #class methods
     def get_destinations(self):
+        '''get all destinations associated with this adventure'''
+        destinations = Destination.objects.filter(adventure=self).order_by('timestamp')
+        return destinations[:6]
+    
+    def get_all_destinations(self):
         '''get all destinations associated with this adventure'''
         destinations = Destination.objects.filter(adventure=self).order_by('timestamp')
         return destinations
@@ -58,14 +69,15 @@ class Adventure (models.Model):
 
         return sorted(items, key=lambda x: x.start_datetime)
     
-    def get_all_transportations(self):
-        '''get all transportations for this adventure'''
-        items = Transportation.objects.none() #initialize 
-
-        for destination in self.get_destinations():
-            items = items.union(destination.get_transportation()) #update it by unioning it with the new destinations transportations
-
-        return items.order_by('start_datetime')
+    def get_packing_list(self):
+        '''get 5 packing list items'''
+        packing_list = PackingItem.objects.filter(adventure=self).order_by('timestamp')
+        return packing_list[:5]
+    
+    def get_all_packing_list(self):
+        '''get all packing list items'''
+        packing_list = PackingItem.objects.filter(adventure=self).order_by('timestamp')
+        return packing_list
 
 class Destination (models.Model):
     '''class that encapsulates data for the destinations a user goes to during their trip'''
@@ -81,23 +93,39 @@ class Destination (models.Model):
         '''return string rep of this destination'''
         return f'{self.location} for adventure {self.adventure.title}'
     
-    #class methods
+    def get_absolute_url(self):
+        return reverse('destination', args=[self.pk])
+    
+    #cut offs
     def get_transportation(self):
-        '''get all transportation for this destination'''
-        return Transportation.objects.filter(destination=self).order_by('start_datetime')
+        '''get all activities for this destination'''
+        return Transportation.objects.filter(destination=self).order_by('start_datetime')[:5]
 
     def get_activities(self):
         '''get all activities for this destination'''
-        return Activity.objects.filter(destination=self).order_by('start_datetime')
+        return Activity.objects.filter(destination=self).order_by('start_datetime')[:6]
 
     def get_lodging(self):
         '''get all lodging for this destination'''
+        return Lodging.objects.filter(destination=self).order_by('start_datetime')[:4]
+    
+    #all
+    def get_all_activities(self):
+        '''get all activities for this destination'''
+        return Activity.objects.filter(destination=self).order_by('start_datetime')
+
+    def get_all_lodging(self):
+        '''get all lodging for this destination'''
         return Lodging.objects.filter(destination=self).order_by('start_datetime')
+    
+    def get_all_transportation(self):
+        '''get all activities for this destination'''
+        return Transportation.objects.filter(destination=self).order_by('start_datetime')
     
     def get_entries(self):
         '''get all journal entries associated with this destination'''
-        return JournalEntry.objects.filter(destination=self).order_by('timestamp')
-    
+        entries = JournalEntry.objects.filter(destination=self).order_by('timestamp')[:4]
+        return list(entries)
 
     def get_itinerary_items(self):
         '''get all items for this destination's itinerary'''
@@ -120,6 +148,9 @@ class JournalEntry (models.Model):
         '''return string rep of this entry'''
         return f'journal entry: {self.title} for destination {self.destination.location}'
     
+    def get_absolute_url(self):
+        return reverse('journal', args=[self.pk])
+    
     #class methods
     def get_all_media(self):
         '''get all photos for a post'''
@@ -132,11 +163,23 @@ class Media (models.Model):
         upload_to='project/media/', #have it in a sep folder for organization
         validators=[FileExtensionValidator(allowed_extensions=['mp4', 'avi', 'mov', 'jpg', 'png', 'jpeg'])]
     )
+    caption = models.TextField(blank=True)
     entry = models.ForeignKey(JournalEntry, on_delete=models.CASCADE) 
 
     def __str__(self):
         '''return string rep of this destination'''
         return f'{self.media} for entry {self.entry.title}'
+    
+    #class methods
+    def get_media_type(self):
+        '''return whether this file is an image or video'''
+        name = str(self.media).lower()
+
+        if name.endswith(('.jpg', '.jpeg', '.png')):
+            return 'image'
+        elif name.endswith(('.mp4', '.avi', '.mov')):
+            return 'video'
+        return 'other'
 
 class ItineraryItem (models.Model):
     ''' super class for types of itinerary items'''
@@ -151,12 +194,6 @@ class ItineraryItem (models.Model):
 
     class Meta: #for more simplicity
         abstract = True
-
-    #class methods
-    def get_duration(self): 
-        '''return duration of item for display'''
-        duration = self.end_datetime - self.start_datetime
-        return duration
     
 
 class Transportation(ItineraryItem):
@@ -168,12 +205,18 @@ class Transportation(ItineraryItem):
         '''return string rep of this destination'''
         return f'{self.travel_type} for destination {self.destination.location} at {self.start_datetime}'
     
+    def get_absolute_url(self):
+        return reverse('transportation', args=[self.pk])
+    
 class Activity(ItineraryItem):
     '''class that encapsulates data for activities for a destination'''
 
     def __str__(self):
         '''return string rep of this destination'''
         return f'activity for destination {self.destination.location} at {self.location}'
+    
+    def get_absolute_url(self):
+        return reverse('activity', args=[self.pk])
 
 class Lodging(ItineraryItem):
     '''class that encapsulates data for activities for a destination'''
@@ -181,6 +224,23 @@ class Lodging(ItineraryItem):
     def __str__(self):
         '''return string rep of this destination'''
         return f'lodging for destination {self.destination.location} at {self.location}'
+    
+    def get_absolute_url(self):
+        return reverse('lodging', args=[self.pk])
 
+
+class PackingItem(models.Model):
+    '''class that encapsulates items user wants to bring with them on the adventure'''
+
+    item_type=models.TextField() #clothing, toiletries, miscellaneous, electronics, beauty, health + self care, trip specific
+    item = models.TextField()
+    isPacked = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField()
+    adventure = models.ForeignKey(Adventure, on_delete=models.CASCADE)
+
+    def __str__(self):
+        '''return string rep of this destination'''
+        return f'{self.item} for {self.adventure.title}'
 
 

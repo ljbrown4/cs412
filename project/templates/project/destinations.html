@@ -1,0 +1,111 @@
+<!-- # File: destinations.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see all destinations (all total or for a adv depending on the view)-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+    <br>
+    <section class="section-header">
+      <h3 class="section-title">Your destinations</h3>
+      <span class="section-text">{{ destinations|length }} total</span>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery&sort={{ current_sort }}&filter={{ current_filter }}">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list&sort={{ current_sort }}&filter={{ current_filter }}">
+                    List</a>
+            </div>
+
+            <div class="toolbar-right">
+                <input type="hidden" name="view" value="{{ current_view }}">
+
+                <label for="sort">Sort:</label>
+                <select name="sort" id="sort" class="toolbar-select" onchange="this.form.submit()">
+                    <option value="created" {% if current_sort == 'created' %}selected{% endif %}>Date created</option>
+                    <option value="start" {% if current_sort == 'start' %}selected{% endif %}>Arrival date</option>
+                </select>
+
+                <label for="filter">Filter:</label>
+                <select name="filter" id="filter" class="toolbar-select" onchange="this.form.submit()">
+                    <!-- general filters -->
+                    <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All</option>
+                    <option value="completed" {% if current_filter == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="started" {% if current_filter == 'started' %}selected{% endif %}>Started</option>
+                    <option value="upcoming" {% if current_filter == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                    <!-- separator -->
+                    <option disabled>──────────</option>
+                    <!-- adventure filters -->
+                    {% for a in adventures %}
+                        <option value="{{ a.pk }}" {% if current_filter == a.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ a.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </section>
+
+
+    {% if destinations %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for d in destinations %}
+            <a class="adventure-card" href="{% url 'destination' d.pk %}">
+              {% if d.cover_image %}
+                <img class="gallery-image" src="{{ d.cover_image.url }}">
+              {% endif %}
+
+              <div class="card-body">
+                <h4 class="list-title">{{ d.location }}</h4>
+                <p class="list-text">Destination dates: {{ d.arrival_date }} — {{ d.departure_date }}</p>
+
+                {% if d.isCompleted %}
+                  <span class="badge completed-badge">Completed</span>
+                {% else %}
+                  <span class="badge progress-badge">In progress / planned</span>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for d in destinations %}
+            <a class="list-row" href="{% url 'destination' d.pk %}">
+              <div class="list-image-wrap">
+                {% if d.cover_image %}
+                  <img class="list-image" src="{{ d.cover_image.url }}">
+                {% endif %}
+              </div>
+
+              <div class="list-main">
+                <h4 class="list-title">{{ d.location }}</h4>
+                <p class="list-text">Destination dates: {{ d.arrival_date }} — {{ d.departure_date }}</p>
+              </div>
+
+              <div class="list-side">
+                {% if d.isCompleted %}
+                  <span class="badge completed-badge">Completed</span>
+                {% else %}
+                  <span class="badge progress-badge">In progress / planned</span>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No destinations found</h4>
+        <p>Try changing your filters.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

@@ -1,0 +1,87 @@
+<!-- # File: packing_item.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the a page for a specific packing item for an adventure-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if item.adventure.cover_image %}
+        <img class="banner" src="{{ item.adventure.cover_image.url }}">
+    {% endif %}
+    <br>
+    <main class="wide-container">
+
+        <!-- page title -->
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <h2>Item Information</h2>
+
+                <div class="row-style-center">
+                    <span class="badge travel-badge">{{ item.item_type|title }}</span>
+                    <span class="badge parent-badge">{{ item.adventure.title }}</span>
+                    {% if item.isPacked %}
+                        <span class="badge completed-badge">Packed</span>
+                    {% else %}
+                        <span class="badge progress-badge">Unpacked</span>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <div class="double-info">
+
+            <!-- left main info -->
+            <section class="white-card transport-main">
+                <h3 style="margin-bottom: 18px;">Item Information</h3>
+
+                <div class="transport-info-block">
+                    <h4>Item </h4>
+                    <p>{{item.item }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Item Category </h4>
+                    <p>{{ item.item_type }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Packing Status </h4>
+                    {% if item.isPacked %}
+                       <p> Packed</p>
+                    {% else %}
+                        <p>Unpacked</p>
+                    {% endif %}
+                </div>
+
+
+                {% if item.notes %}
+                    <p><b>Notes:</b></p>
+                    <div class="notes-box">
+                        <p>{{ item.notes }}</p>
+                    </div>
+                {% else %}
+                    <p>No notes added.</p>
+                {% endif %}
+            </section>
+
+            <!-- right sidebar -->
+            <div class="info-side">
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Adventure Information</h3>
+                    <p><b>Title:</b> {{ item.adventure.title }}</p>
+                    <br>
+                    <a class="toolbar-button" href="{% url 'adventure' item.adventure.pk %}">View adventure</a>
+                </section>
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a class="toolbar-button" href="{% url 'update_item' item.pk %}"> Edit Packing Item </a>
+                        <a class="toolbar-button" href="{% url 'delete_item' item.pk %}">  Delete Packing Item </a>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}

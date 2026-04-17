@@ -1,0 +1,42 @@
+ <!-- # File: create_destination.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the form for destination creation -->
+{% extends 'project/base.html' %}
+
+{% block content%}
+<main class="container">
+    <br>
+        <section class="double">
+            <div class="double-left">
+                <div style="display: flex; flex-direction: column; max-width: 480px;">
+                    <h1 style="color: #35093e; margin-bottom: 16px;">Create your next destination</h1>
+
+                    <p style="color: #35093e; margin-bottom: 18px;"><b>Organize each stop of your adventure into its own destination hub.</b></p>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; color: #35093e;">
+                        <p>• See and add all your transportation, activities, and lodgings.</p>
+                        <p>• Create and update journal entries and upload photos/videos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="double-right" style="flex-direction: column;">
+                <div class="log-card" style="align-items: center; align-content: center;">
+                    <h3 style="text-align: center;"> Create Destination</h3>
+                    <br>
+                    <form class="login-form" action="{% url 'create_destination' adventure.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
+                        {%csrf_token%}
+                        
+                        {{form.as_table}}
+                        <input class="login-button" type="submit" value="Create Destination">
+                    </form>
+                    <form action="{% url 'adventure' adventure.pk %}" style="width: 100px;" method='GET'>
+                        <input class="login-button" id="cancel" type="submit" value="Cancel">
+                    </form>
+                </div>
+            
+        </section>
+</main>
+{% endblock %} 
+
+ 

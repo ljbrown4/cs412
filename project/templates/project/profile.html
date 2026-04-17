@@ -1,0 +1,63 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+<main class="container">
+    <br>
+    <h1 style="text-align: center;"> Your Profile :)</h1>
+    <div class="profile-grid">
+
+        <!-- profile images -->
+        <section class="white-card profile-images">
+            <h3>Profile Picture</h3>
+            <br>
+            {% if profile.profile_image %}
+                <img class="pfp-large" src="{{ profile.profile_image.url }}">
+            {% endif %}
+
+            <h3 style="margin-top: 20px;">Cover Image</h3>
+            <br>
+            {% if profile.cover_image %}
+                <img class="cover-preview" src="{{ profile.cover_image.url }}">
+            {% endif %}
+        </section>
+
+        <!-- profile info -->
+        <section class="white-card profile-info">
+            <h3>Profile Information</h3>
+
+            <div class="info-block">
+                <h5>Username</h5>
+                <p>{{ request.user.username }}</p>
+            </div>
+
+            <div class="info-block">
+                <h5>Display Name</h5>
+                <p>{{ profile.display_name }}</p>
+            </div>
+
+            <div class="info-block">
+                <h5>Bio</h5>
+                <p>{{ profile.bio_text }}</p>
+            </div>
+        </section>
+
+        <!-- actions-->
+        <div class="info-side">
+
+            <section class="white-card info-side-card">
+                <h3 style="margin-bottom: 14px;">Actions</h3>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a class="toolbar-button" href="{% url 'update_profile' %}">
+                        Edit profile
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}

@@ -1,0 +1,95 @@
+<!-- # File: journal.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the a page for a specific journal during a destination-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if journal.destination.cover_image %}
+        <img class="banner" src="{{ journal.destination.cover_image.url }}">
+    {% endif %}
+    <br>
+    <main class="wide-container">
+
+        <!-- page title -->
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <h2>{{journal.title}}</h2>
+
+                <div class="row-style-center">
+                    <span class="badge parent-badge">{{ journal.destination.location }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="double-info">
+
+            <!-- left main info -->
+             <div>
+                <section class="white-card transport-main">
+                    <section class="section-header">
+                        <h3 class="section-title">Journal Entry</h3>
+                    </section>
+                        {% if journal.notes %}
+                            <p><b>Notes:</b></p>
+                            <div class="notes-box">
+                                <p>{{ journal.notes }}</p>
+                            </div>
+                        {% else %}
+                            <p>No notes added.</p>
+                        {% endif %}
+                </section>
+                <br>
+                <section class="white-card transport-main">
+                    <section class="section-header">
+                        <h3 class="section-title">Media</h3>
+                        <a class="toolbar-button" href="{% url 'create_media' journal.pk %}">+ Add media</a>
+                    </section>
+                    <br>
+                    {% if journal.get_all_media %}
+                        <div class="media-grid">
+                            {% for m in journal.get_all_media %}
+                                <div class="media-card">
+                                    <a href="{% url 'media' m.pk%}">
+                                    {% if m.get_media_type == 'image' %}
+                                        <img class="journal-media" src="{{ m.media.url }}">
+                                    {% elif m.get_media_type == 'video' %}
+                                        <video class="journal-media" controls>
+                                            <source src="{{ m.media.url }}">
+                                        </video>
+                                    {% endif %}
+                                    </a>
+                                    {% if m.caption %}
+                                        <p class="media-caption">{{ m.caption }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <section class="empty">
+                            <h4>No media added yet</h4>
+                        </section>
+                    {% endif %}
+                </section>
+            </div>
+            <!-- right sidebar -->
+            <div class="info-side">
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Destination Information</h3>
+                    <p><b>Location:</b> {{ journal.destination.location }}</p>
+                    <br>
+                    <a class="toolbar-button" href="{% url 'destination' journal.destination.pk %}">View destination</a>
+                </section>
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a class="toolbar-button" href="{% url 'update_journal' journal.pk %}">Edit journal</a>
+                        <a class="toolbar-button" href="{% url 'delete_journal' journal.pk %}"> Delete journal</a>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}

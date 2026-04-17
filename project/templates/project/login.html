@@ -1,0 +1,51 @@
+ <!-- # File: login.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/16/2026
+# Description: scriptlet code to allow for user login -->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<main class="login">
+    {% if request.user.is_authenticated %}  
+        <div class="white-card" style="padding: 20px; text-align: center;">
+        <p style="margin-bottom: 16px;">
+            <b>Looks like you’re already packed and ready ✈️</b><br>
+            You’re already logged in, so your adventures, memories, and future plans are waiting for you.
+            Head back to your dashboard to keep exploring.
+        </p>
+
+        <a class="login-button" href="{% url 'home' %}" style="display: inline-block; text-decoration: none;">
+            Browse your adventures
+        </a>
+    </div>
+    {% else %}      
+    <section class="double">
+        <div class="double-left">
+            <div style="display: flex; flex-direction: column; max-width: 480px;">
+                <h1 style="color: #35093e; margin-bottom: 16px">Plan the trip. Keep the memory.</h1>
+                <p style="color: #35093e; margin-bottom: 16px; max-width: 420px;">
+                    Organize destinations, transportation, lodging, activities, journal entries, and pictures
+                    all in one place.
+                </p>
+            </div>
+        </div>
+        <div class="double-right">
+            <div class="log-card">
+                <h3 style="text-align: center; margin-bottom: 22px; font-size: 24px;"> Log in</h3>
+
+                <form class="login-form" action = "{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    {{form.as_table}}
+
+                    <input class="login-button" type="submit" value="Login">
+                    <input type="hidden" name="next" value="{% url 'home' %}">
+                </form>
+
+                <section class="section-header" style="gap: 60px; text-align: center;">
+                        <a href="{% url 'create_profile' %}" style="color: black;"> Need a profile?<span class="section-text"> <i>Create profile</i></span></a>
+            </section>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

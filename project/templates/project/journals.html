@@ -1,0 +1,75 @@
+<!-- # File: journals.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see all journal entries (all total or for a dest depending on the view)-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+        <br>
+    <section class="section-header">
+      <h3 class="section-title">Your Entries</h3>
+      <span class="section-text">{{ journals|length }} total</span>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery&filter={{ current_filter }}">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list&filter={{ current_filter }}">
+                    List</a>
+            </div>
+
+            <div class="toolbar-right">
+                <input type="hidden" name="view" value="{{ current_view }}">
+
+                <label for="filter">Filter:</label>
+                <select name="filter" id="filter" class="toolbar-select" onchange="this.form.submit()">
+                    <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All</option>
+                    {% for d in destinations %}
+                        <option value="{{ d.pk }}" {% if current_filter == d.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ d.location }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </section>
+
+    {% if journals %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for j in journals %}
+            <a class="adventure-card" href="{% url 'journal' j.pk %}">
+
+              <div class="card-body">
+                <h4 class="list-title">{{ j.title }}</h4>
+                <p class="list-text">created at: {{j.timestamp}}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for j in journals %}
+            <a class="transp-list-row" href="{% url 'journal' j.pk %}">
+
+              <div class="list-main">
+                <h4 class="list-title">{{ j.title }}</h4>
+                <p class="list-text">created at: {{j.timestamp}}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No entries found</h4>
+        <p>Try changing your filters.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

@@ -1,0 +1,44 @@
+ <!-- # File: create_adventure.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the form for adventure creation -->
+{% extends 'project/base.html' %}
+
+{% block content%}
+<main class="container">
+    <br>
+        <section class="double">
+            <div class="double-left">
+                <div style="display: flex; flex-direction: column; max-width: 480px;">
+                    <h1 style="color: #35093e; margin-bottom: 16px;">Start your next adventure</h1>
+
+                    <p style="color: #35093e; margin-bottom: 18px;"><b>Create a trip hub to organize everything in one place, from planning to memories.</b></p>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; color: #35093e;">
+                        <p>• Organize multiple destinations within one trip</p>
+                        <p>• Plan transportation, lodging, and activities</p>
+                        <p>• Keep journal entries and upload photos/videos</p>
+                        <p>• Automatically build your itinerary timeline</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="double-right" style="flex-direction: column;">
+                <div class="log-card" style="align-items: center; align-content: center;">
+                    <h3 style="text-align: center;"> Create Adventure</h3>
+                    <br>
+                    <form class="login-form" action="{% url 'create_adventure' profile.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
+                        {%csrf_token%}
+                        
+                        {{form.as_table}}
+                        <input class="login-button" type="submit" value="Create Adventure">
+                    </form>
+                    <form action="{% url 'home' %}" style="width: 100px;" method='GET'>
+                        <input class="login-button" id="cancel" type="submit" value="Cancel">
+                    </form>
+                </div>
+            
+        </section>
+</main>
+{% endblock %} 
+
+ 

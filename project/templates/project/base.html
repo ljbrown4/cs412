@@ -1,0 +1,61 @@
+<!-- # File: base.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/16/2026 -->
+
+{% load static %}
+
+<html>
+    <head>
+        <title>AdventureArchive</title>
+        <link rel="stylesheet" href="{% static 'project-styles.css' %}">
+    </head>
+    <body>
+        <header class="header">
+            <div class="row-style-center">
+                <img id="home" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3JtNjYxLWVsZW1lbnQtcmMtMDE1LXAucG5n.png">
+                <h4>AdventureArchive</h4>
+                {% if request.user.is_authenticated %}  
+                    <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button class="toolbar-button" type="submit">Logout</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            {% if request.user.is_authenticated %}  
+                <section class="section-header" style="gap: 60px;">
+                    <a href="{% url 'destinations' %}" ><span class="section-text"> <i>all destinations</i></span></a>
+                    <a href="{% url 'journals' %}" ><span class="section-text"> <i>all journals</i></span></a>
+                </section>
+            {% endif %}
+            
+
+            <div class="row-style-center">
+                {% if request.user.is_authenticated %} 
+                     <a href="{% url 'home' %}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+                    {% if profile %}
+                        <a href="{% url 'profile'%}">
+                            {% if pfp%}
+                                <img id="small" src="{{pfp.url}}">
+                            {% endif%}
+                        </a>
+                    {% endif %}
+                    {% if profile %}
+                        <a href="{% url 'profile'%}">
+                            <p><b>{{ profile.display_name }}</b></p>
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                {% if back_url %}
+                    <a href="{{ back_url }}">
+                        <img id="home" src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg">
+                    </a>
+                {% endif %}
+            </div>
+        </header>
+    
+    {% block content %}
+    {% endblock %}    
+  
+    </body>
+</html>

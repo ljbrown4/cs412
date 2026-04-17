@@ -4,6 +4,7 @@
 
 from django import forms
 from .models import *
+from django.core.exceptions import ValidationError #looked up online how to raise errors for incorrect date input
 
 #adventure forms
 class CreateAdventureForm(forms.ModelForm):
@@ -13,6 +14,21 @@ class CreateAdventureForm(forms.ModelForm):
         '''assoc thsi form with adventure model from the database'''
         model = Adventure
         fields = ['title', 'start_date', 'end_date', 'budget', 'cover_image']
+        widgets = { #looked up online how to get the calendar for this
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start = cleaned_data.get('start_date')
+        end = cleaned_data.get('end_date')
+
+        if start and end and end < start:
+            raise ValidationError("End date cannot be before start date.")
+
+        return cleaned_data
 
 class UpdateAdventureForm(forms.ModelForm):
     '''a form to add an adventure to the database'''
@@ -21,6 +37,24 @@ class UpdateAdventureForm(forms.ModelForm):
         '''assoc thsi form with adventure model from the database'''
         model = Adventure
         fields = ['title', 'start_date', 'end_date', 'budget', 'cover_image', 'isCompleted']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'isCompleted': 'Adventure Completed',
+        }
+
+    def clean(self):
+            cleaned_data = super().clean()
+
+            start = cleaned_data.get('start_date')
+            end = cleaned_data.get('end_date')
+
+            if start and end and end < start:
+                raise ValidationError("End date cannot be before start date.")
+
+            return cleaned_data
 
 
 #profile forms
@@ -48,6 +82,21 @@ class CreateDestinationForm(forms.ModelForm):
         '''assoc thsi form with destination model from the database'''
         model = Destination
         fields = ['location', 'arrival_date', 'departure_date', 'cover_image']
+        widgets = { #looked up online how to get the calendar for this
+            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
+            'departure_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        arrival = cleaned_data.get('arrival_date')
+        departure = cleaned_data.get('departure_date')
+
+        if arrival and departure and departure < arrival:
+            self.add_error('departure_date', "Departure date cannot be before arrival date.")
+
+        return cleaned_data
 
 class UpdateDestinationForm(forms.ModelForm):
     '''a form to update an existing destination in the database'''
@@ -56,6 +105,21 @@ class UpdateDestinationForm(forms.ModelForm):
         '''assoc thsi form with destination model from the database'''
         model = Destination
         fields = ['location', 'arrival_date', 'departure_date', 'cover_image', 'isCompleted']
+        widgets = { #looked up online how to get the calendar for this
+            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
+            'departure_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        arrival = cleaned_data.get('arrival_date')
+        departure = cleaned_data.get('departure_date')
+
+        if arrival and departure and departure < arrival:
+            self.add_error('departure_date', "Departure date cannot be before arrival date.")
+
+        return cleaned_data
 
 #journal entry forms
 class CreateJournalForm(forms.ModelForm):
@@ -74,6 +138,14 @@ class UpdateJournalForm(forms.ModelForm):
         model = JournalEntry
         fields = ['title', 'text']
 
+#media forms
+class CreateMediaForm(forms.ModelForm):
+    '''form to handle media creation'''
+
+    class Meta:
+        model = Media
+        fields = ['media', 'caption']
+
 #transportation forms
 class CreateTransportationForm(forms.ModelForm):
     '''a form to add a transportation to the database'''
@@ -81,13 +153,28 @@ class CreateTransportationForm(forms.ModelForm):
     class Meta:
         '''assoc thsi form with transportation model from the database'''
         model = Transportation
-        fields = ['location', 'price', 'notes', 'start_datetime', 'end_datetime', 'travel_type', 'final_location']
+        fields = ['location', 'price', 'notes', 'start_datetime', 'start_datetime', 'travel_type', 'final_location']
         labels = {
             'location': 'Departure location',
             'final_location': 'Arrival location',
             'start_datetime': 'Departure time',
             'end_datetime': 'Arrival time',
         }
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start = cleaned_data.get('start_datetime')
+        end = cleaned_data.get('start_datetime')
+
+        if start and end and end < start:
+            raise ValidationError("Departrure date cannot be before arrival date.")
+
+        return cleaned_data
 
 class UpdateTransportationForm(forms.ModelForm):
     '''a form to update an existing transportation in the database'''
@@ -102,7 +189,21 @@ class UpdateTransportationForm(forms.ModelForm):
             'start_datetime': 'Departure time',
             'end_datetime': 'Arrival time',
         }
-        
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start = cleaned_data.get('start_datetime')
+        end = cleaned_data.get('start_datetime')
+
+        if start and end and end < start:
+            raise ValidationError("Departrure date cannot be before arrival date.")
+
+        return cleaned_data
 
     
 class CreateLodgingForm(forms.ModelForm):
@@ -116,6 +217,21 @@ class CreateLodgingForm(forms.ModelForm):
             'start_datetime': 'Start date',
             'end_datetime': 'End date',
         }
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+            cleaned_data = super().clean()
+
+            start = cleaned_data.get('start_datetime')
+            end = cleaned_data.get('start_datetime')
+
+            if start and end and end < start:
+                raise ValidationError("Departrure date cannot be before arrival date.")
+
+            return cleaned_data
 
 class UpdateLodgingForm(forms.ModelForm):
     '''a form to update an existing lodging in the database'''
@@ -128,6 +244,21 @@ class UpdateLodgingForm(forms.ModelForm):
             'start_datetime': 'Start date',
             'end_datetime': 'End date',
         }
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+            cleaned_data = super().clean()
+
+            start = cleaned_data.get('start_datetime')
+            end = cleaned_data.get('start_datetime')
+
+            if start and end and end < start:
+                raise ValidationError("Departrure date cannot be before arrival date.")
+
+            return cleaned_data
 
 
 class CreateActivityForm(forms.ModelForm):
@@ -141,6 +272,21 @@ class CreateActivityForm(forms.ModelForm):
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
         }
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+            cleaned_data = super().clean()
+
+            start = cleaned_data.get('start_datetime')
+            end = cleaned_data.get('start_datetime')
+
+            if start and end and end < start:
+                raise ValidationError("Departrure date cannot be before arrival date.")
+
+            return cleaned_data
 
 class UpdateActivityForm(forms.ModelForm):
     '''a form to update an existing transportation in the database'''
@@ -153,3 +299,35 @@ class UpdateActivityForm(forms.ModelForm):
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
         }
+        widgets = { #looked up online how to get the calendar for this
+            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        }
+        
+    def clean(self):
+            cleaned_data = super().clean()
+
+            start = cleaned_data.get('start_datetime')
+            end = cleaned_data.get('start_datetime')
+
+            if start and end and end < start:
+                raise ValidationError("Departrure date cannot be before arrival date.")
+
+            return cleaned_data
+
+#packing forms
+class CreatePackingForm(forms.ModelForm):
+    '''a form to add an entry to the database'''
+
+    class Meta:
+        '''assoc thsi form with journalentry model from the database'''
+        model = PackingItem
+        fields = ['item_type', 'item', 'notes']
+
+class UpdatePackingForm(forms.ModelForm):
+    '''a form to update an existing entry in the database'''
+
+    class Meta:
+        '''assoc thsi form with journalentry model from the database'''
+        model = PackingItem
+        fields = ['item_type', 'item', 'notes', 'isPacked']

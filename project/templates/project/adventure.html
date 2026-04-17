@@ -1,0 +1,166 @@
+<!-- # File: adventure.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is a specific adventure's dashboard page -->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if cover %}
+        <img class="banner" src="{{ cover.url }}" alt="Profile cover image">
+    {% endif %}
+    <br>
+    <br>
+    <main class="wide-container">
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}" style="justify-content: space-between;">
+                <div class="destination-title">
+                <h2>{{ adventure.title }} Dashboard</h2>
+                <p class="section-text">{{ adventure.start_date }} — {{ adventure.end_date }} </p>
+                <div>
+                    <a class="toolbar-button" style="width: 200px; text-decoration: none; background-color: rgb(56, 48, 58); color: whitesmoke" href="{% url 'update_adventure' adventure.pk %}">update adventure</a>
+                    <a class="toolbar-button" style="width: 200px; text-decoration: none; background-color: rgb(56, 48, 58); color: whitesmoke" href="{% url 'delete_adventure' adventure.pk %}">delete adventure</a>
+                </div>
+            </div>
+                
+        </section>
+        <div class="triple"> <!--itinerary, [budget, packingList], destinations-->
+            <div class="itinerary-panel"> <!-- itinerary-->
+                <section class="section-header">
+                    <h3 class="section-title">Itinerary</h3>
+                </section>
+                <br>
+                {% if itinerary%}
+                    {% for day, di in itinerary %}
+                        <div class="white-card" style="padding: 16px; margin-bottom: 16px;">
+                            <h4 style="margin-bottom: 12px;"> {{day}}</h4>
+
+                            {% for e in di%}
+                                {% with i=e.item%}
+                                <div>
+                                    <span class="badge progress-badge"> {{e.item_type}}</span>
+                                    <p> <b>location:</b> {{i.location}}</p>
+                                    <p> {{i.start_datetime}} - {{i.end_datetime}}</p>
+                                    {% if e.item_type == 'Transportation' %}
+                                        <p> <b>traveling by: </b>{{ i.travel_type }} <b>to</b> {{ i.final_location }}</p>
+                                    {% endif %}
+                                </div>
+                                {% if not forloop.last %}
+                                    <hr>
+                                {% endif %}
+                                {% endwith %}
+                            {% endfor%}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <section class="empty">
+                        <h4>No itinerary items found</h4>
+                    </section>
+                {% endif %}
+            </div>
+            <!-- budget and packing list -->
+            <div style="display: flex; flex-direction: column;">
+                <section class="section-header">
+                    <h3 class="section-title">Expenses</h3>
+                </section>
+                <br>
+                <!-- budget -->
+                <div class="white-card">
+                    <div class="card-body">
+                        <h4 class="card-title"> Adventure Budget</h4>
+                        <p><i>${{adventure.budget}}</i></p>
+                        <h4 class="card-title"> Total Expenses</h4>
+                        <p><i>${{expenses}}</i></p>
+                    </div>
+                <!-- packing list -->
+                </div>
+                <br>
+                    <section class="section-header">
+                        <h3 class="section-title">Packing List</h3>
+                        <a href="{% url 'packing_list' adventure.pk %}" ><span class="section-text"> <i> all items</i></span></a>
+                        <a class="toolbar-button" href="{% url 'create_item' adventure.pk %}">+ New item</a>
+                    </section>
+                    <br>
+                    {% if packing %}
+                    <section class="list-wrapper">
+                        {% for p in packing %}
+                             <a class="transp-list-row" href="{% url 'packing_item' p.pk %}">
+                                <div class="list-main-row">
+                                    <h4 class="list-title">{{ p.item }}</h4>
+                                    <div class="row-style-center" style="padding-bottom: 8px;">
+                                        {% if p.item_type == 'clothing' %}
+                                            <span class="badge travel-badge"> clothing</span>
+                                        {% elif p.item_type == 'toiletries' %}
+                                            <span class="badge travel-badge"> toiletries</span>
+                                        {% elif p.item_type == 'miscellaneous' %}
+                                            <span class="badge travel-badge"> miscellaneous</span>
+                                        {% elif p.item_type == 'electronics' %}
+                                            <span class="badge travel-badge"> electronics</span>
+                                        {% elif p.item_type == 'beauty' %}
+                                            <span class="badge travel-badge"> beauty</span>
+                                        {% elif p.item_type == 'health + self care' %}
+                                            <span class="badge travel-badge"> health + self care</span>
+                                        {% elif p.item_type == 'trip specific' %}
+                                            <span class="badge travel-badge"> trip specific</span>
+                                        {% else %}
+                                            <span class="badge travel-badge"> other</span>
+                                        {% endif %}
+
+                                        {% if p.isPacked %}
+                                            <span class="badge completed-badge">Packed</span>
+                                        {% else %}
+                                            <span class="badge progress-badge">Unpacked</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </section>
+                    {% else %}
+                        <section class="empty">
+                            <h4>No items found</h4>
+                        </section>
+                    {% endif %}
+                <div>
+                    
+                </div>
+            </div>
+            <!-- destination list-->
+            <div>
+                <section class="section-header">
+                    <h3 class="section-title">Your destinations</h3>
+                    <a href="{% url 'adventure_destinations' adventure.pk %}" ><span class="section-text"> <i> more destinations</i></span></a>
+                    <a class="toolbar-button" href="{% url 'create_destination' adventure.pk %}">+ New destination</a>
+                </section>
+                <br>
+                {% if destinations %}
+                <section class="list-wrapper">
+                    {% for d in destinations %}
+                        <a class="list-row" href="{% url 'destination' d.pk %}">
+                            <div class="list-image-wrap">
+                                {% if d.cover_image %}
+                                    <img class="list-image" src="{{ d.cover_image.url }}">
+                                {% endif %}
+                            </div>
+
+                            <div class="list-main">
+                                <h4 class="list-title">{{ d.location }}</h4>
+                                <p class="list-text">Destination dates: {{ d.arrival_date }} — {{ d.departure_date }}</p>
+                            </div>
+
+                            <div class="list-side">
+                                {% if d.isCompleted %}
+                                <span class="badge completed-badge">Completed</span>
+                                {% else %}
+                                <span class="badge progress-badge">In progress / planned</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </section>
+                {% else %}
+                    <section class="empty">
+                        <h4>No destinations found</h4>
+                    </section>
+                {% endif %}
+            </div>
+
+    </main>
+{% endblock %}

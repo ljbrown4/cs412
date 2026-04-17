@@ -1,0 +1,61 @@
+<!-- # File: create_profile.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 2/24/2026
+# Description: scriptlet code to display form to an create a new profile -->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<main class="login">
+    {% if request.user.is_authenticated %}
+        <div class="white-card" style="padding: 20px; text-align: center;">
+            <p style="margin-bottom: 16px;">
+                <b>Looks like you’re already packed and ready ✈️</b><br>
+                You’re already logged in, so your adventures, memories, and future plans are waiting for you.
+                Head back to your dashboard to keep exploring.
+            </p>
+
+            <a class="login-button" href="{% url 'home' %}" style="display: inline-block; text-decoration: none;">
+                Browse your adventures
+            </a>
+        </div>
+    {% else %}
+        <section class="double">
+            <div class="double-left">
+                <div style="display: flex; flex-direction: column; max-width: 480px;">
+                    <h1 style="color: #35093e; margin-bottom: 16px;">Start your next adventure</h1>
+                    <p style="color: #35093e; margin-bottom: 16px; max-width: 420px;">
+                        Create an account to plan trips, organize destinations, track transportation and lodging,
+                        and save your favorite travel memories all in one place.
+                    </p>
+                </div>
+            </div>
+
+            <div class="double-right">
+                <div class="log-card">
+                    <h3 style="text-align: center; margin-bottom: 22px; font-size: 24px;">Create Profile</h3>
+
+                    <form class="login-form" action="{% url 'create_profile' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <h4 style="margin-bottom: 8px;">Create Login</h4>
+                        {{ user_form.as_p }}
+
+                        <br>
+
+                        <h4 style="margin-bottom: 8px;">Create Profile</h4>
+                        {{ form.as_p }}
+
+                        <input class="login-button" type="submit" value="Create Profile">
+                    </form>
+
+                    <section class="section-header" style="gap: 60px; text-align: center; margin-top: 18px;">
+                        <a href="{% url 'login' %}" style="color: black;">
+                            Already have an account?
+                            <span class="section-text"><i>Log in</i></span>
+                        </a>
+                    </section>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}

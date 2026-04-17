@@ -1,0 +1,59 @@
+<!-- # File: media.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the a page for a specific media attached to a journal entry-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if journal.destination.cover_image %}
+        <img class="banner" src="{{ media.entry.destination.cover_image.url }}">
+    {% endif %}
+    <br>
+    <main class="wide-container">
+
+        <!-- page title -->
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <h2>Media Information</h2>
+
+                <div class="row-style-center">
+                    <span class="badge parent-badge">{{ media.entry.title }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="double-info">
+
+            <!-- media file-->
+             <div>
+                <div class="media-card" style="align-items: center; align-content: center;">
+                    {% if media.get_media_type == 'image' %}
+                        <img class="media-large" src="{{ media.media.url }}">
+                    {% elif media.get_media_type == 'video' %}
+                        <video class="media-large" controls>
+                            <source src="{{ media.media.url }}">
+                        </video>
+                    {% endif %}
+
+                    {% if m.caption %}
+                        <p class="media-caption">{{ media.caption }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- right sidebar -->
+            <div class="info-side">
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Journal Entry Information</h3>
+                    <p><b>Title:</b> {{ media.entry.title }}</p>
+                    <br>
+                    <a class="toolbar-button" href="{% url 'journal' media.entry.pk %}">View Entry</a>
+                </section>
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a class="toolbar-button" href="{% url 'delete_media' media.pk %}"> Delete media</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}

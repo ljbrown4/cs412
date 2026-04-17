@@ -24,7 +24,7 @@
             {%csrf_token%}
             <input type="submit" value="Delete" class="submit-btn">
         </form>
-
+ 
         <form action="{% url 'profile' profile.pk %}" method='GET'>
             <input type="submit" value="Cancel" id="cancel">
         </form>

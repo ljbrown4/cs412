@@ -1,0 +1,32 @@
+ <!-- # File: update_destination.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the form for destination updating -->
+{% extends 'project/base.html' %}
+
+{% block content%}
+<main class="container" style="align-items: center; align-content: center;">
+    <br>      
+    <div class="log-card" style="align-items: center; align-content: center; width: 100%; max-width: 700px;">
+        <h3 style="text-align: center;"> Update Destinations</h3>
+        <br>
+        <form class="login-form" action="{% url 'update_destination' destination.pk %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if destination.cover_image %}
+                <div style="margin-bottom: 16px;">
+                    <p><b>Current cover image:</b></p>
+                    <img src="{{ destination.cover_image.url }}" style="width: 100%; max-width: 260px; border-radius: 14px;">
+                </div>
+            {% endif %}
+
+            {{ form.as_p }}
+            <input class="login-button" type="submit" value="Update Destination">
+        </form>
+        <form action="{% url 'destination' destination.pk %}" style="width: 100px;" method='GET'>
+            <input class="login-button" id="cancel" type="submit" value="Cancel">
+        </form>
+    </div>
+</main>
+{% endblock %} 
+
+ 

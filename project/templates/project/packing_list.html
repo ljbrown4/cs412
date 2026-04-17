@@ -1,0 +1,135 @@
+<!-- # File: packing_list.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see packing list for a trip-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+    <br>
+    <section class="section-header">
+      <h3 class="section-title">Your Items</h3>
+      <span class="section-text">{{ packing|length }} total</span>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery&filter={{ current_filter }}">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list&filter={{ current_filter }}">
+                    List</a>
+            </div>
+
+            <div class="toolbar-right">
+                <input type="hidden" name="view" value="{{ current_view }}">
+
+
+                <label for="filter">Filter:</label>
+                <select name="filter" id="filter" class="toolbar-select" onchange="this.form.submit()">
+                    <!-- general filters -->
+                    <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All</option>
+                    <option value="packed" {% if current_filter == 'packed' %}selected{% endif %}>Packed</option>
+                    <option value="unpacked" {% if current_filter == 'unpacked' %}selected{% endif %}>Unpacked</option>
+                    <!-- travel type-->
+                    <option disable>-------</option>
+                    <option value="clothing" {% if current_filter == 'clothing' %}selected{% endif %}>clothing</option>
+                    <option value="toiletries" {% if current_filter == 'toiletries' %}selected{% endif %}>toiletries</option>
+                    <option value="miscellaneous" {% if current_filter == 'miscellaneous' %}selected{% endif %}>miscellaneous</option>
+                    <option value="electronics" {% if current_filter == 'electronics' %}selected{% endif %}>electronics</option>
+                    <option value="beauty" {% if current_filter == 'beauty' %}selected{% endif %}>beauty</option>
+                    <option value="health + self care" {% if current_filter == 'health + self care' %}selected{% endif %}>health + self care</option>
+                    <option value="trip specific" {% if current_filter == 'trip specific' %}selected{% endif %}>trip specific</option>
+                    <option value="other" {% if current_filter == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <a class="toolbar-button" href="{% url 'create_item' adventure.pk %}">+ New item</a>
+        </form>
+    </section>
+
+
+    {% if packing %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for p in packing %}
+            <a class="adventure-card" href="{% url 'packing_item' p.pk %}">
+
+              <div class="card-body">
+                <h4 class="list-title">{{ p.item }}</h4>
+                {% if p.item_type == 'clothing' %}
+                    <span class="badge travel-badge"> clothing</span>
+                {% elif p.item_type == 'toiletries' %}
+                    <span class="badge travel-badge"> toiletries</span>
+                {% elif p.item_type == 'miscellaneous' %}
+                    <span class="badge travel-badge"> miscellaneous</span>
+                {% elif p.item_type == 'electronics' %}
+                    <span class="badge travel-badge"> electronics</span>
+                {% elif p.item_type == 'beauty' %}
+                    <span class="badge travel-badge"> beauty</span>
+                {% elif p.item_type == 'health + self care' %}
+                    <span class="badge travel-badge"> health + self care</span>
+                {% elif p.item_type == 'trip specific' %}
+                    <span class="badge travel-badge"> trip specific</span>
+                {% else %}
+                    <span class="badge travel-badge"> other</span>
+                {% endif %}
+
+                {% if p.isPacked%}
+                  <span class="badge completed-badge">Packed</span>
+                {% else %}
+                  <span class="badge progress-badge">Unpacked</span>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for p in packing %}
+            <a class="transp-list-row" href="{% url 'packing_item' p.pk %}">
+
+              <div class="list-main-row">
+                <h4 class="list-title">{{ p.item }}</h4>
+                <div class="row-style-center" style="padding-bottom: 8px;"> 
+                    
+
+                    {% if p.item_type == 'clothing' %}
+                    <span class="badge travel-badge"> clothing</span>
+                    {% elif p.item_type == 'toiletries' %}
+                        <span class="badge travel-badge"> toiletries</span>
+                    {% elif p.item_type == 'miscellaneous' %}
+                        <span class="badge travel-badge"> miscellaneous</span>
+                    {% elif p.item_type == 'electronics' %}
+                        <span class="badge travel-badge"> electronics</span>
+                    {% elif p.item_type == 'beauty' %}
+                        <span class="badge travel-badge"> beauty</span>
+                    {% elif p.item_type == 'health + self care' %}
+                        <span class="badge travel-badge"> health + self care</span>
+                    {% elif p.item_type == 'trip specific' %}
+                        <span class="badge travel-badge"> trip specific</span>
+                    {% else %}
+                        <span class="badge travel-badge"> other</span>
+                    {% endif %}
+
+                    {% if p.isPacked %}
+                        <span class="badge completed-badge">Packed</span>
+                    {% else %}
+                        <span class="badge progress-badge">Unpacked</span>
+                    {% endif %}
+                </div>    
+              </div>
+
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No packing found</h4>
+        <p>Try changing your filters.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

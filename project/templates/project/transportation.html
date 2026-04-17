@@ -1,0 +1,87 @@
+<!-- # File: transportation.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the a page for a specific transportation during a destination-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+    {% if transportation.destination.cover_image %}
+        <img class="banner" src="{{ transportation.destination.cover_image.url }}">
+    {% endif %}
+    <br>
+    <main class="wide-container">
+
+        <!-- page title -->
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <h2>Transportation Information</h2>
+
+                <div class="row-style-center">
+                    <span class="badge travel-badge">{{ transportation.travel_type|title }}</span>
+                    <span class="badge parent-badge">{{ transportation.destination.location }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="double-info">
+
+            <!-- left main info -->
+            <section class="white-card transport-main">
+                <h3 style="margin-bottom: 18px;">Transportation Information</h3>
+
+                <div class="transport-info-block">
+                    <h4>Location</h4>
+                    <p>{{ transportation.location }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Final location</h4>
+                    <p>{{ transportation.final_location }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Departure time</h4>
+                    <p>{{ transportation.start_datetime }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Arrival time</h4>
+                    <p>{{ transportation.end_datetime }}</p>
+                </div>
+
+                <div class="transport-info-block">
+                    <h4>Additional Information</h4>
+                    <p><b>Price:</b> ${{ transportation.price }}</p>
+                    <br>
+                    {% if transportation.notes %}
+                        <p><b>Notes:</b></p>
+                        <div class="notes-box">
+                            <p>{{ transportation.notes }}</p>
+                        </div>
+                    {% else %}
+                        <p>No notes added.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- right sidebar -->
+            <div class="info-side">
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Destination Information</h3>
+                    <p><b>Location:</b> {{ transportation.destination.location }}</p>
+                    <br>
+                    <a class="toolbar-button" href="{% url 'destination' transportation.destination.pk %}">View destination</a>
+                </section>
+
+                <section class="white-card info-side-card">
+                    <h3 style="margin-bottom: 14px;">Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a class="toolbar-button" href="{% url 'update_transportation' transportation.pk %}"> Edit transportation </a>
+                        <a class="toolbar-button" href="{% url 'delete_transportation' transportation.pk %}">  Delete transportation </a>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}

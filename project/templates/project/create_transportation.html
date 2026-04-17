@@ -1,0 +1,27 @@
+ <!-- # File: create_transportation.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the form for transportation creation -->
+{% extends 'project/base.html' %}
+
+{% block content%}
+<main class="container">
+    <br>
+    <div style="display: flex; justify-content: center;">
+        <div class="log-card" style="align-items: center; width: 100%; max-width: 700px;">
+            <h3 style="text-align: center;"> Create Transportation</h3>
+            <br>
+            <form class="login-form" action="{% url 'create_transportation' destination.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
+                {%csrf_token%}
+                
+                {{form.as_table}}
+                <input class="login-button" type="submit" value="Create Transportation">
+            </form>
+            <form action="{% url 'destination' destination.pk %}" style="width: 100px;" method='GET'>
+                <input class="login-button" id="cancel" type="submit" value="Cancel">
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %} 
+
+ 

@@ -1,0 +1,63 @@
+<!-- # File: activities.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see all activities for a destination-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+    <br>
+     <section class="section-header">
+      <h3 class="section-title">Your Activities</h3>
+      <span class="section-text">{{ activities|length }} total</span>
+      <a class="toolbar-button" href="{% url 'create_activity' destination.pk %}">+ New Activity</a>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list">
+                    List</a>
+            </div>
+        </form>
+    </section>
+
+    {% if activities %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for a in activities %}
+            <a class="adventure-card" href="{% url 'activity' a.pk %}">
+
+              <div class="card-body">
+                <h4 class="list-title">{{ a.location }}</h4>
+                <p class="list-text"> dates: {{ a.start_datetime }} — {{ a.end_datetime }}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for a in activities %}
+            <a class="transp-list-row" href="{% url 'activity' a.pk %}">
+
+              <div class="list-main">
+                <h4 class="list-title">{{ a.location }}</h4>
+
+                <p class="list-text"> dates: {{ a.start_datetime }} — {{ a.end_datetime }}</p>
+            </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No activities found</h4>
+        <p>Try changing your filters or add another activity.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

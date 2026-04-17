@@ -1,0 +1,63 @@
+<!-- # File: lodgings.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is where users can see all lodgings for a destination-->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<br>
+  <main class="container">
+    <br>
+     <section class="section-header">
+      <h3 class="section-title">Your Lodgings</h3>
+      <span class="section-text">{{ lodgings|length }} total</span>
+      <a class="toolbar-button" href="{% url 'create_lodging' destination.pk %}">+ New lodging</a>
+    </section>
+    <section class="toolbar">
+        <form method="get" class="toolbar-form">
+            <div class="toolbar-left">
+                <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
+                    href="?view=gallery">
+                    Gallery</a>
+
+                <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
+                    href="?view=list">
+                    List</a>
+            </div>
+        </form>
+    </section>
+
+    {% if lodgings %}
+      {% if current_view == 'gallery' %}
+        <section class="gallery-grid">
+          {% for l in lodgings %}
+            <a class="adventure-card" href="{% url 'lodging' l.pk %}">
+
+              <div class="card-body">
+                <h4 class="list-title">{{ l.location }}</h4>
+                <p class="list-text"> dates: {{ l.start_datetime }} — {{ l.end_datetime }}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% else %}
+        <section class="list-wrapper">
+          {% for l in lodgings %}
+            <a class="transp-list-row" href="{% url 'lodging' l.pk %}">
+
+              <div class="list-main">
+                <h4 class="list-title">{{ l.location }}</h4>
+
+                <p class="list-text"> dates: {{ l.start_datetime }} — {{ l.end_datetime }}</p>
+            </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="empty">
+        <h4>No lodgings found</h4>
+        <p>Try changing your filters or add another lodging.</p>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}
