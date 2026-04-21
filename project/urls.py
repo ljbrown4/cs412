@@ -13,7 +13,7 @@ urlpatterns = [
     path('', AdventureListView.as_view(), name="home"),
     path('home', AdventureListView.as_view(), name="home"),
     path('adventure/<int:pk>', AdventureDetailView.as_view(), name="adventure"),
-    path('profile/<int:pk>/create_adventure', CreateAdventureView.as_view(), name='create_adventure'),
+    path('profile/create_adventure', CreateAdventureView.as_view(), name='create_adventure'),
     path('adventure/<int:pk>/update', UpdateAdventureView.as_view(), name='update_adventure'),
     path('adventure/<int:pk>/delete', DeleteAdventureView.as_view(), name='delete_adventure'),
 
@@ -77,4 +77,5 @@ urlpatterns = [
 
     #miscellaneous
     path('information/', views.InformationView.as_view(), name='information'),
+    path('search', SearchView.as_view(), name="search"),
 ]
