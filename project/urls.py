@@ -72,6 +72,9 @@ urlpatterns = [
     path('packing/<int:pk>/delete_item', DeletePackingView.as_view(), name='delete_item'),
 
     #authentication
-    path('login/', auth_views.LoginView.as_view(template_name="project/login.html"), name="login"), #assignment 6
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'), #assignment 6
+    path('login/', auth_views.LoginView.as_view(template_name="project/login.html"), name="project_login"),
+    path('logout/', auth_views.LogoutView.as_view(next_page='project_login'), name='logout'),
+
+    #miscellaneous
+    path('information/', views.InformationView.as_view(), name='information'),
 ]

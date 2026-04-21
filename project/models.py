@@ -198,7 +198,13 @@ class ItineraryItem (models.Model):
 
 class Transportation(ItineraryItem):
     '''class that encapsulates data for all transportation for a destination'''
-    travel_type = models.CharField(max_length=6) #flight, taxi, bus, train, ferry
+    TRAVEL_CHOICES = [('bus', 'Bus'),
+        ('taxi', 'Taxi'), ('uber', 'Uber'),
+        ('car', 'Car'), ('flight', 'Flight'),
+        ('train', 'Train'), ('ferry', 'Ferry'),
+        ('other', 'Other'), ]
+
+    travel_type = models.CharField(max_length=20, choices=TRAVEL_CHOICES)
     final_location = models.TextField()
 
     def __str__(self):
@@ -232,7 +238,13 @@ class Lodging(ItineraryItem):
 class PackingItem(models.Model):
     '''class that encapsulates items user wants to bring with them on the adventure'''
 
-    item_type=models.TextField() #clothing, toiletries, miscellaneous, electronics, beauty, health + self care, trip specific
+    TYPE_CHOICES = [('clothing', 'Clothing'),
+        ('toiletries', 'Toiletries'), ('miscellaneous', 'Miscellaneous'),
+        ('electronics', 'Electronics'), ('beauty', 'Beauty'),
+        ('health + self care', 'Health + Self Care'), ('trip specific', 'Trip Specific'),
+        ('other', 'Other'), ]
+
+    item_type= models.CharField(max_length=20, choices=TYPE_CHOICES)
     item = models.TextField()
     isPacked = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)

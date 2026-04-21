@@ -24,7 +24,10 @@ class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
         return Profile.objects.get(user=self.request.user)
     
     def get_login_url(self):
-        return reverse('login')
+        return reverse('project_login')
+    
+class InformationView(ProfileRequiredMixin, TemplateView):
+    template_name = 'project/information.html'
     
 #profile views
 class ProfileDetailView(ProfileRequiredMixin, DetailView):
@@ -42,6 +45,10 @@ class ProfileDetailView(ProfileRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         # add to ctxt data, used to display page specific nav icons
+        profile = self.get_profile()
+
+        context['profile'] = profile
+        context['pfp'] = profile.profile_image
         context['back_url'] = reverse('home')
         
         return context
@@ -62,7 +69,11 @@ class UpdateProfileView(ProfileRequiredMixin, UpdateView):
 
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('profile')
-        
+        profile = self.get_profile()
+
+        context['profile'] = profile
+        context['pfp'] = profile.profile_image
+
         return context
 
 class CreateProfileView(CreateView):
@@ -104,7 +115,7 @@ class CreateProfileView(CreateView):
         if 'user_form' not in context:
             context['user_form'] = UserCreationForm()
 
-        context['back_url'] = reverse('login')
+        context['back_url'] = reverse('project_login')
         return context
 
     def get_success_url(self):
@@ -131,7 +142,7 @@ class AdventureListView(ProfileRequiredMixin, ListView):
 
         today = date.today()
 
-        # filters
+        # filter by progress
         if filter_by == 'completed':
             adventures = adventures.filter(isCompleted=True)
         elif filter_by == 'started':
@@ -156,7 +167,7 @@ class AdventureListView(ProfileRequiredMixin, ListView):
         context['pfp'] = profile.profile_image
         context['cover'] = profile.cover_image
 
-        # preserve current toolbar state
+        # current view, sort, and filters applied
         context['current_view'] = self.request.GET.get('view', 'gallery')
         context['current_sort'] = self.request.GET.get('sort', 'created')
         context['current_filter'] = self.request.GET.get('filter', 'all')
@@ -175,7 +186,7 @@ class AdventureDetailView(ProfileRequiredMixin, DetailView):
 
         pk = self.kwargs['pk']
         adventure = Adventure.objects.get(pk=pk)
-        destinations = adventure.get_destinations() #first 4 shown on page for space reasons
+        destinations = adventure.get_destinations() #views on adventure and destination page from trunchated methods for space reasons
         itinerary = adventure.get_all_itinerary_items()
         packing = adventure.get_packing_list()
         profile = self.get_profile()
@@ -193,7 +204,7 @@ class AdventureDetailView(ProfileRequiredMixin, DetailView):
             if day not in grouped_itinerary:
                 grouped_itinerary[day] = []
 
-            # figure out item type
+            # figure out item type [get which sub model of itineraryItem it is]
             if isinstance(item, Transportation):
                 item_type = 'Transportation'
             elif isinstance(item, Activity):
@@ -234,6 +245,11 @@ class UpdateAdventureView(ProfileRequiredMixin, UpdateView):
         adventure = Adventure.objects.get(pk=pk)
 
         #add to context data
+        profile = self.get_profile()
+
+        context['profile'] = profile
+        context['pfp'] = profile.profile_image
+
         context['back_url'] = reverse('adventure', args=[adventure.pk])
         context['adventure'] = adventure    
 
@@ -301,6 +317,7 @@ class DeleteAdventureView(ProfileRequiredMixin, DeleteView):
         context['lodgings'] = lodgings
         context['entries'] = entries
         context['back_url'] = reverse('adventure', args=[adventure.pk])
+        context['profile'] = profile
         context['pfp'] = profile.profile_image     
 
         return context
@@ -309,6 +326,9 @@ class DeleteAdventureView(ProfileRequiredMixin, DeleteView):
         ''' return to home page upon successful deletion'''
         return reverse('home')
     
+
+
+
 
 #destination views
 #for specific adventure
@@ -330,7 +350,7 @@ class AdventureDestinationListView(ProfileRequiredMixin, ListView):
 
         today = date.today()
 
-        # filters
+        # filter by progress
         if filter_by == 'completed':
             destinations = destinations.filter(isCompleted=True)
         elif filter_by == 'started':
@@ -354,6 +374,7 @@ class AdventureDestinationListView(ProfileRequiredMixin, ListView):
         profile = self.get_profile()
 
         context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['adventure'] = adventure
         context['back_url'] = reverse('adventure', args=[adventure.pk]) #back to the adventure page
         context['current_view'] = self.request.GET.get('view', 'gallery')
@@ -380,13 +401,14 @@ class DestinationListView(ProfileRequiredMixin, ListView):
 
         today = date.today()
 
-        # filters
+        # filter by progress
         if filter_by == 'completed':
             destinations = destinations.filter(isCompleted=True)
         elif filter_by == 'started':
             destinations = destinations.filter(arrival_date__lte=today)
         elif filter_by == 'upcoming':
             destinations = destinations.filter(arrival_date__gt=today)
+        #filter by adventure
         elif filter_by not in ['all', 'completed', 'started', 'upcoming']:
             destinations = destinations.filter(adventure__pk=filter_by)
 
@@ -405,6 +427,7 @@ class DestinationListView(ProfileRequiredMixin, ListView):
         adventures = Adventure.objects.filter(profile=profile).order_by('title')
 
         context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['adventures'] = adventures
         context['back_url'] = reverse('home') #back to home page
         context['current_view'] = self.request.GET.get('view', 'gallery')
@@ -427,6 +450,7 @@ class DestinationDetailView(ProfileRequiredMixin, DetailView):
         destination = Destination.objects.get(pk=pk)
         profile = self.get_profile()
 
+        #get all model records for models that have a fk to destination
         transportations = destination.get_transportation()
         itinerary = destination.get_itinerary_items()
         lodgings = destination.get_lodging()
@@ -434,11 +458,8 @@ class DestinationDetailView(ProfileRequiredMixin, DetailView):
         activities = destination.get_activities()
         profile = self.get_profile()
 
-        expenses = 0.0
-        for i in itinerary:
-            expenses += i.price
 
-        #looked this up online so that i could group the itinerary by day
+        #looked this up online so that i could group the itinerary by day for displaying it in the itinerary portion
         grouped_itinerary = OrderedDict()
 
         for item in itinerary:
@@ -460,7 +481,6 @@ class DestinationDetailView(ProfileRequiredMixin, DetailView):
                 'item_type': item_type,
             })
 
-
         context['profile'] = profile
         context['cover'] = destination.cover_image
         context['transportations'] = transportations
@@ -481,6 +501,26 @@ class UpdateDestinationView(ProfileRequiredMixin, UpdateView):
     form_class= UpdateDestinationForm
     template_name = "project/update_destination.html"
 
+    def form_valid(self, form):
+        pk = self.kwargs['pk']
+        destination = Destination.objects.get(pk=pk)
+        adventure = destination.adventure
+
+        arrival = form.cleaned_data.get('arrival_date')
+        departure = form.cleaned_data.get('departure_date')
+
+        #ensure that date of destination is within the dates of its associated adbenture
+        if arrival and arrival < adventure.start_date:
+            form.add_error('arrival_date', "Arrival date cannot be before the adventure start date.")
+            return self.form_invalid(form)
+
+        if departure and departure > adventure.end_date:
+            form.add_error('departure_date', "Departure date cannot be after the adventure end date.")
+            return self.form_invalid(form)
+
+        form.instance.adventure = adventure
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         #call super
         context = super().get_context_data(**kwargs)
@@ -490,10 +530,12 @@ class UpdateDestinationView(ProfileRequiredMixin, UpdateView):
 
         #find comm obj
         destination = Destination.objects.get(pk=pk)
+        adventure = destination.adventure
 
         #add to context data
         context['back_url'] = reverse('destination', args=[destination.pk])
         context['destination'] = destination
+        context['adventure'] = adventure
 
         return context
 
@@ -518,7 +560,8 @@ class CreateDestinationView(ProfileRequiredMixin, CreateView):
 
         arrival = form.cleaned_data.get('arrival_date')
         departure = form.cleaned_data.get('departure_date')
-
+        
+        #ensure that date of destination is within the dates of its associated adventure
         if arrival and arrival < adventure.start_date:
             form.add_error('arrival_date', "Arrival date cannot be before the adventure start date.")
             return self.form_invalid(form)
@@ -535,8 +578,12 @@ class CreateDestinationView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         adventure = Adventure.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('adventure', args=[adventure.pk])
+        context['adventure'] = adventure
 
         return context
 
@@ -544,7 +591,7 @@ class CreateDestinationView(ProfileRequiredMixin, CreateView):
         return reverse('adventure', args=[self.object.adventure.pk])
 
 class DeleteDestinationView(ProfileRequiredMixin, DeleteView):
-    ''' view to handle post deletion '''
+    ''' view to handle destination deletion '''
     model = Destination
     template_name = "project/delete_destination.html"
 
@@ -563,6 +610,10 @@ class DeleteDestinationView(ProfileRequiredMixin, DeleteView):
         entries = JournalEntry.objects.filter(destination__pk=pk)
     
         #add to context data
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['transportations'] = transportations
         context['activities'] = activities
@@ -578,6 +629,9 @@ class DeleteDestinationView(ProfileRequiredMixin, DeleteView):
         destination = Destination.objects.get(pk=pk)
         return reverse('adventure', args=[destination.adventure.pk])
     
+
+
+
 
 #journal views
 #PER DESTINATION
@@ -605,6 +659,7 @@ class DestinationJournalListView(ProfileRequiredMixin, ListView):
 
 
         context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk]) #back to the destination page
         context['current_view'] = self.request.GET.get('view', 'gallery')
@@ -623,7 +678,6 @@ class JournalListView(ProfileRequiredMixin, ListView):
 
         journals = JournalEntry.objects.filter(destination__adventure__profile=profile)
 
-        #get query params
         filter_by = self.request.GET.get('filter', 'all')
 
         #filter by destination
@@ -641,6 +695,7 @@ class JournalListView(ProfileRequiredMixin, ListView):
 
 
         context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destinations'] = destinations
         context['back_url'] = reverse('home') #back to home page
         context['current_filter'] = self.request.GET.get('filter', 'all')
@@ -662,15 +717,15 @@ class JournalDetailView(ProfileRequiredMixin, DetailView):
         journal = JournalEntry.objects.get(pk=pk)
 
         context['profile'] = profile
+        context['pfp'] = profile.profile_image
         context['journal'] = journal
         context['back_url'] = reverse('destination', args=[journal.destination.pk])
         context['pfp'] = profile.profile_image     
 
-        return context
-    
+        return context   
     
 class UpdateJournalView(ProfileRequiredMixin, UpdateView):
-    ''' view to handle post updates '''
+    ''' view to handle journal updates '''
     model = JournalEntry
     form_class= UpdateJournalForm
     template_name = "project/update_journal.html"
@@ -686,6 +741,10 @@ class UpdateJournalView(ProfileRequiredMixin, UpdateView):
         journal = JournalEntry.objects.get(pk=pk)
 
         #add to context data
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('journal', args=[journal.pk])
         context['journal'] = journal
 
@@ -701,7 +760,7 @@ class UpdateJournalView(ProfileRequiredMixin, UpdateView):
     
   
 class CreateJournalView(ProfileRequiredMixin, CreateView):
-    '''view to handle destination creation'''
+    '''view to handle journal creation'''
 
     form_class = CreateJournalForm
     template_name = 'project/create_journal.html'
@@ -726,7 +785,10 @@ class CreateJournalView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
 
@@ -739,7 +801,7 @@ class CreateJournalView(ProfileRequiredMixin, CreateView):
 
 
 class DeleteJournalView(ProfileRequiredMixin, DeleteView):
-    ''' view to handle post deletion '''
+    ''' view to handle journal deletion '''
     model = JournalEntry
     template_name = "project/delete_journal.html"
 
@@ -754,20 +816,28 @@ class DeleteJournalView(ProfileRequiredMixin, DeleteView):
         journal = JournalEntry.objects.get(pk=pk)
     
         #add to context data
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['journal'] = journal
         context['back_url'] = reverse('destination', args=[journal.destination.pk])     
 
         return context
 
     def get_success_url(self):
-        ''' return to home page upon successful deletion'''
+        ''' return to destination page upon successful deletion'''
         pk = self.kwargs['pk']
         journal = JournalEntry.objects.get(pk=pk)
         return reverse('destination', args=[journal.destination.pk])
 
+
+
+
+
 #media views
 class MediaDetailView(ProfileRequiredMixin, DetailView):
-    '''show details of a specific journal'''
+    '''show details of a specific media item'''
 
     model = Media
     template_name = 'project/media.html'
@@ -788,7 +858,7 @@ class MediaDetailView(ProfileRequiredMixin, DetailView):
         return context
     
 class CreateMediaView(ProfileRequiredMixin, CreateView):
-    '''view to handle destination creation'''
+    '''view to handle media creation'''
 
     form_class = CreateMediaForm
     template_name = 'project/create_media.html'
@@ -805,7 +875,10 @@ class CreateMediaView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         journal = JournalEntry.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['journal'] = journal
         context['back_url'] = reverse('journal', args=[journal.pk])
 
@@ -818,7 +891,7 @@ class CreateMediaView(ProfileRequiredMixin, CreateView):
 
 
 class DeleteMediaView(ProfileRequiredMixin, DeleteView):
-    ''' view to handle post deletion '''
+    ''' view to handle media deletion '''
     model = Media
     template_name = "project/delete_media.html"
 
@@ -834,13 +907,17 @@ class DeleteMediaView(ProfileRequiredMixin, DeleteView):
         journal = media.entry
     
         #add to context data
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['media'] = media
         context['back_url'] = reverse('journal', args=[journal.pk])     
 
         return context
 
     def get_success_url(self):
-        ''' return to home page upon successful deletion'''
+        ''' return to journal page upon successful deletion'''
         pk = self.kwargs['pk']
         media = Media.objects.get(pk=pk)
         journal = media.entry
@@ -867,8 +944,6 @@ class TransportationListView(ProfileRequiredMixin, ListView):
         destination = Destination.objects.get(pk=pk)
         transportations = destination.get_all_transportation()
 
-        #get query params
-        sort_by = self.request.GET.get('sort', 'created')
         filter_by = self.request.GET.get('filter', 'all')
 
         today = date.today()
@@ -899,6 +974,7 @@ class TransportationListView(ProfileRequiredMixin, ListView):
             transportations = transportations.filter(travel_type='other')
 
         context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['transportations'] = transportations
         context['back_url'] = reverse('destination', args=[destination.pk])
@@ -938,6 +1014,18 @@ class CreateTransportationView(ProfileRequiredMixin, CreateView):
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
 
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        #ensure that date of transp is within the dates of its associated destination
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
         form.instance.destination = destination
         return super().form_valid(form)
     
@@ -946,7 +1034,10 @@ class CreateTransportationView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
 
@@ -966,12 +1057,34 @@ class UpdateTransportationView(ProfileRequiredMixin, UpdateView):
     form_class = UpdateTransportationForm
     template_name = 'project/update_transportation.html'
 
+    def form_valid(self, form):
+        transportation = self.get_object()
+        destination = transportation.destination
+
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        #ensure that date of transp is within the dates of its associated destination
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
+        form.instance.destination = destination
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         pk = self.kwargs['pk']
-        transportation = Transportation.objects.filter(pk=pk)
+        transportation = Transportation.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('transportation', args=[transportation.pk])
         context['transportation'] = transportation
 
@@ -993,7 +1106,10 @@ class DeleteTransportationView(ProfileRequiredMixin, DeleteView):
 
         pk = self.kwargs['pk']
         transportation = Transportation.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['transportation'] = transportation
         context['back_url'] = reverse('destination', args=[transportation.destination.pk])
 
@@ -1024,6 +1140,7 @@ class LodgingListView(ProfileRequiredMixin, ListView):
         profile = self.get_profile()
         destination = Destination.objects.get(pk=pk)
 
+        context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
@@ -1062,6 +1179,18 @@ class CreateLodgingView(ProfileRequiredMixin, CreateView):
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
 
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        #ensure that date of lodging is within the dates of its associated destination
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
         form.instance.destination = destination
         return super().form_valid(form)
     
@@ -1070,7 +1199,10 @@ class CreateLodgingView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
 
@@ -1088,12 +1220,34 @@ class UpdateLodgingView(ProfileRequiredMixin, UpdateView):
     form_class = UpdateLodgingForm
     template_name = 'project/update_lodging.html'
 
+    def form_valid(self, form):
+        lodging = self.get_object()
+        destination = lodging.destination
+
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        #ensure that date of lodging is within the dates of its associated destination
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
+        form.instance.destination = destination
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         pk = self.kwargs['pk']
         lodging = Lodging.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('lodging', args=[lodging.pk])
         context['lodging'] = lodging
 
@@ -1115,7 +1269,10 @@ class DeleteLodgingView(ProfileRequiredMixin, DeleteView):
 
         pk = self.kwargs['pk']
         lodging = Lodging.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['lodging'] = lodging
         context['back_url'] = reverse('destination', args=[lodging.destination.pk])
 
@@ -1146,6 +1303,7 @@ class ActivityListView(ProfileRequiredMixin, ListView):
         profile = self.get_profile()
         destination = Destination.objects.get(pk=pk)
 
+        context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
@@ -1184,6 +1342,18 @@ class CreateActivityView(ProfileRequiredMixin, CreateView):
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
 
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        #ensure that date of activity is within the dates of its associated destination
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
         form.instance.destination = destination
         return super().form_valid(form)
     
@@ -1192,7 +1362,10 @@ class CreateActivityView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         destination = Destination.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
 
@@ -1211,12 +1384,34 @@ class UpdateActivityView(ProfileRequiredMixin, UpdateView):
     form_class = UpdateActivityForm
     template_name = 'project/update_activity.html'
 
+    def form_valid(self, form):
+        activity = self.get_object()
+        destination = activity.destination
+
+        #ensure that date of activity is within the dates of its associated destination
+        start = form.cleaned_data.get('start_datetime')
+        end = form.cleaned_data.get('end_datetime')
+
+        if start and start.date() < destination.arrival_date:
+            form.add_error('start_datetime', "Start date cannot be before the destination arrival date.")
+            return self.form_invalid(form)
+
+        if end and end.date() > destination.departure_date:
+            form.add_error('end_datetime', "End date cannot be after the destination departure date.")
+            return self.form_invalid(form)
+
+        form.instance.destination = destination
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         pk = self.kwargs['pk']
         activity = Activity.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('activity', args=[activity.pk])
         context['activity'] = activity
 
@@ -1238,7 +1433,10 @@ class DeleteActivityView(ProfileRequiredMixin, DeleteView):
 
         pk = self.kwargs['pk']
         activity = Activity.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['activity'] = activity
         context['back_url'] = reverse('destination', args=[activity.destination.pk])
 
@@ -1250,9 +1448,12 @@ class DeleteActivityView(ProfileRequiredMixin, DeleteView):
         return reverse('destination', args=[activity.destination.pk])
     
 
+
+
+
 #packing views
 class PackingListView(ProfileRequiredMixin, ListView):
-    '''show all destinations associated with an adventure'''
+    '''show all packing items associated with an adventure'''
 
     model = PackingItem
     template_name = 'project/packing_list.html'
@@ -1263,9 +1464,9 @@ class PackingListView(ProfileRequiredMixin, ListView):
         adventure = Adventure.objects.get(pk=pk)
         packing = adventure.get_all_packing_list()
 
-        #get query params
+        #filters
         filter_by = self.request.GET.get('filter', 'all')
-
+        #filter by item type
         if filter_by == 'clothing':
            packing = packing.filter(item_type='clothing')
         elif filter_by == 'toiletries':
@@ -1283,7 +1484,7 @@ class PackingListView(ProfileRequiredMixin, ListView):
         elif filter_by == 'other':
             packing = packing.filter(item_type='other')
 
-        # filters
+        # filter by packed or unpacked
         if filter_by == 'packed':
             packing = packing.filter(isPacked=True)
         elif filter_by == 'unpacked':
@@ -1298,6 +1499,7 @@ class PackingListView(ProfileRequiredMixin, ListView):
         adventure = Adventure.objects.get(pk=pk)
         profile = self.get_profile()
 
+        context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['adventure'] = adventure
         context['back_url'] = reverse('adventure', args=[adventure.pk]) #back to the adventure page
@@ -1306,7 +1508,7 @@ class PackingListView(ProfileRequiredMixin, ListView):
         return context
     
 class PackingDetailView(ProfileRequiredMixin, DetailView):
-    '''show details of a specific transportation item'''
+    '''show details of a specific packing item'''
 
     model = PackingItem
     template_name = 'project/packing_item.html'
@@ -1327,10 +1529,10 @@ class PackingDetailView(ProfileRequiredMixin, DetailView):
         return context
 
 class UpdatePackingView(ProfileRequiredMixin, UpdateView):
-    ''' view to handle post updates '''
+    ''' view to handle packing updates '''
     model = PackingItem
     form_class= UpdatePackingForm
-    template_name = "project/update_destination.html"
+    template_name = "project/update_item.html"
 
     def get_context_data(self, **kwargs):
         #call super
@@ -1340,25 +1542,31 @@ class UpdatePackingView(ProfileRequiredMixin, UpdateView):
         pk = self.kwargs['pk']
 
         #find comm obj
-        adventure = Adventure.objects.get(pk=pk)
+        item = PackingItem.objects.get(pk=pk)
+        adventure = item.adventure
 
         #add to context data
-        context['back_url'] = reverse('adventure', args=[adventure.pk])
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
+        context['back_url'] = reverse('packing_item', args=[item.pk])
         context['adventure'] = adventure
+        context['item'] = item
 
         return context
 
     def get_success_url(self):
-        ''' return to profile page upon successful deletion '''
+        ''' return to packing page upon successful deletion '''
         #find pk 
         pk = self.kwargs['pk']
         #find comm obj
-        adventure = PackingItem.objects.get(pk=pk)
-        return reverse('adventure', kwargs={'pk':adventure.pk})
+        item = PackingItem.objects.get(pk=pk)
+        return reverse('packing_item', kwargs={'pk':item.pk})
     
   
 class CreatePackingView(ProfileRequiredMixin, CreateView):
-    '''view to handle adventure creation'''
+    '''view to handle packing creation'''
 
     form_class = CreatePackingForm
     template_name = 'project/create_item.html'
@@ -1375,8 +1583,12 @@ class CreatePackingView(ProfileRequiredMixin, CreateView):
 
         pk = self.kwargs['pk']
         adventure = Adventure.objects.get(pk=pk)
+        profile = self.get_profile()
 
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['back_url'] = reverse('adventure', args=[adventure.pk])
+        context['adventure'] = adventure
 
         return context
 
@@ -1386,7 +1598,7 @@ class CreatePackingView(ProfileRequiredMixin, CreateView):
         return reverse('adventure', args=[adventure.pk])
 
 class DeletePackingView(ProfileRequiredMixin, DeleteView):
-    ''' view to handle post deletion '''
+    ''' view to handle packing deletion '''
     model = PackingItem
     template_name = "project/delete_item.html"
 
@@ -1398,16 +1610,20 @@ class DeletePackingView(ProfileRequiredMixin, DeleteView):
         pk = self.kwargs['pk']
 
         #find comm obj
-        packing = PackingItem.objects.get(pk=pk)
+        item = PackingItem.objects.get(pk=pk)
     
         #add to context data
-        context['packing'] = packing
-        context['back_url'] = reverse('adventure', args=[packing.adventure.pk])     
+        profile = self.get_profile()
+
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
+        context['item'] = item
+        context['back_url'] = reverse('adventure', args=[item.adventure.pk])     
 
         return context
 
     def get_success_url(self):
-        ''' return to home page upon successful deletion'''
+        ''' return to adventure page upon successful deletion'''
         pk = self.kwargs['pk']
         packing = PackingItem.objects.get(pk=pk)
         return reverse('adventure', args=[packing.adventure.pk])

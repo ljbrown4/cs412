@@ -13,7 +13,8 @@
             <div class="row-style-center">
                 <img id="home" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3JtNjYxLWVsZW1lbnQtcmMtMDE1LXAucG5n.png">
                 <h4>AdventureArchive</h4>
-                {% if request.user.is_authenticated %}  
+
+                {% if request.user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}" style="margin: 0;">
                         {% csrf_token %}
                         <button class="toolbar-button" type="submit">Logout</button>
@@ -21,26 +22,25 @@
                 {% endif %}
             </div>
 
-            {% if request.user.is_authenticated %}  
-                <section class="section-header" style="gap: 60px;">
-                    <a href="{% url 'destinations' %}" ><span class="section-text"> <i>all destinations</i></span></a>
-                    <a href="{% url 'journals' %}" ><span class="section-text"> <i>all journals</i></span></a>
-                </section>
+            {% if request.user.is_authenticated %}
+                <nav class="header-nav">
+                    <a href="{% url 'destinations' %}" class="header-link">All destinations | </a>
+                    <a href="{% url 'journals' %}" class="header-link">All journals | </a>
+                    <a href="{% url 'information' %}" class="header-link">Information</a>
+                </nav>
             {% endif %}
-            
 
             <div class="row-style-center">
-                {% if request.user.is_authenticated %} 
-                     <a href="{% url 'home' %}"> <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"> </a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'home' %}">
+                        <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png">
+                    </a>
+
                     {% if profile %}
-                        <a href="{% url 'profile'%}">
-                            {% if pfp%}
-                                <img id="small" src="{{pfp.url}}">
-                            {% endif%}
-                        </a>
-                    {% endif %}
-                    {% if profile %}
-                        <a href="{% url 'profile'%}">
+                        <a href="{% url 'profile' %}" class="row-style-center profile-link">
+                            {% if pfp %}
+                                <img id="small" src="{{ pfp.url }}">
+                            {% endif %}
                             <p><b>{{ profile.display_name }}</b></p>
                         </a>
                     {% endif %}

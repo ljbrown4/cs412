@@ -153,16 +153,16 @@ class CreateTransportationForm(forms.ModelForm):
     class Meta:
         '''assoc thsi form with transportation model from the database'''
         model = Transportation
-        fields = ['location', 'price', 'notes', 'start_datetime', 'start_datetime', 'travel_type', 'final_location']
+        fields = ['location', 'final_location', 'price', 'notes', 'start_datetime', 'end_datetime', 'travel_type', ]
         labels = {
             'location': 'Departure location',
             'final_location': 'Arrival location',
             'start_datetime': 'Departure time',
             'end_datetime': 'Arrival time',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
     def clean(self):
@@ -189,9 +189,9 @@ class UpdateTransportationForm(forms.ModelForm):
             'start_datetime': 'Departure time',
             'end_datetime': 'Arrival time',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
     def clean(self):
@@ -217,9 +217,9 @@ class CreateLodgingForm(forms.ModelForm):
             'start_datetime': 'Start date',
             'end_datetime': 'End date',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
     def clean(self):
@@ -244,9 +244,9 @@ class UpdateLodgingForm(forms.ModelForm):
             'start_datetime': 'Start date',
             'end_datetime': 'End date',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
     def clean(self):
@@ -272,9 +272,9 @@ class CreateActivityForm(forms.ModelForm):
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
     def clean(self):
@@ -299,9 +299,9 @@ class UpdateActivityForm(forms.ModelForm):
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
         }
-        widgets = { #looked up online how to get the calendar for this
-            'start_datetime': forms.DateInput(attrs={'type': 'date'}),
-            'end_datetime': forms.DateInput(attrs={'type': 'date'}),
+        widgets = {
+            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
         
     def clean(self):

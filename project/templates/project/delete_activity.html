@@ -1,0 +1,33 @@
+<!-- # File: delete_activity.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 2/24/2026
+# Description: scriptlet code to display form to an delete an existing activity -->
+{% extends 'project/base.html' %}
+
+{% block content %}
+<main class="container">
+    <br>
+    <section class="white-card" style="padding: 24px; max-width: 600px; margin: 0 auto;">
+
+    <h2 style="margin-bottom: 10px; text-align: center;">Delete Activity</h2>
+
+    <p style="margin-bottom: 16px; color: #6f6a67; text-align: center;">Are you sure you want to delete this activity? This action cannot be undone.</p>
+
+    <br>
+    <h3>{{ activity.location }}</h3>
+    <p>{{ activity.start_datetime }} — {{ activity.end_datetime }}</p>
+
+    <br>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 12px;">
+            <a class="toolbar-button" href="{{ back_url }}">Cancel</a>
+            <button class="toolbar-button" style="background: #7d1e1a; color: white;">
+                Delete Activity
+            </button>
+        </div>
+    </form>
+
+</section>
+</main>
+{% endblock %}

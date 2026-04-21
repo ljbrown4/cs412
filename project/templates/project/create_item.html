@@ -1,0 +1,27 @@
+ <!-- # File: create_item.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/15/2026
+# Description: this is the form for item creation -->
+{% extends 'project/base.html' %}
+
+{% block content%}
+<main class="container">
+    <br>
+    <div style="display: flex; justify-content: center;">
+        <div class="log-card" style="align-items: center; width: 100%; max-width: 900px;">
+            <h3 style="text-align: center;"> Create Item</h3>
+            <br>
+            <form class="login-form" action="{% url 'create_item' adventure.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
+                {%csrf_token%}
+                
+                {{form.as_table}}
+                <input class="login-button" type="submit" value="Create Item">
+            </form>
+            <form action="{% url 'adventure' adventure.pk %}" style="width: 100px;" method='GET'>
+                <input class="login-button" id="cancel" type="submit" value="Cancel">
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %} 
+
+ 

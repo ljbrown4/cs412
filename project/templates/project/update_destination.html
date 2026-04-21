@@ -7,7 +7,7 @@
 <main class="container" style="align-items: center; align-content: center;">
     <br>      
     <div class="log-card" style="align-items: center; align-content: center; width: 100%; max-width: 700px;">
-        <h3 style="text-align: center;"> Update Destinations</h3>
+        <h3 style="text-align: center;"> Update Destination</h3>
         <br>
         <form class="login-form" action="{% url 'update_destination' destination.pk %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}

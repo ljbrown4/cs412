@@ -1,0 +1,66 @@
+<!-- # File: information.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/18/2026
+# Description: informational page about the app -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+<main class="container">
+
+    <section class="white-card" style="padding: 32px; max-width: 900px; margin: 0 auto;">
+
+        <h1 style="color: #35093e; margin-bottom: 16px;">About AdventureArchive</h1>
+
+        <p style="margin-bottom: 18px;">
+            AdventureArchive is your personal space to plan, organize, and remember your trips and adventures.
+            Instead of juggling notes, screenshots, and scattered bookings, everything lives in one place that is structured, simple, and easy to revisit.
+        </p>
+
+        <h3 style="margin-top: 24px;">What you can do</h3>
+
+        <p style="margin-bottom: 12px;">
+            Each adventure acts as a central hub for your trip. From there, you can break your journey into destinations and build out the details of each stop.
+        </p>
+
+        <p style="margin-bottom: 12px;">
+            Within each destination, you can organize transportation, activities, and lodging, helping you keep track of both your plans and your actual experiences.
+        </p>
+
+        <p style="margin-bottom: 12px;">
+            You can also write journal entries and upload media, turning your itinerary into a record of your trip — not just a plan.
+        </p>
+
+        <h3 style="margin-top: 24px;">How it’s structured</h3>
+
+        <p style="margin-bottom: 12px;">
+            Adventures contain destinations, and each destination contains the details of your stay. This structure keeps your trips organized without feeling overwhelming.
+        </p>
+
+        <p style="margin-bottom: 12px;">
+            Dates are used throughout the app to automatically organize your itinerary, so everything appears in the order it happens.
+        </p>
+
+        <h3 style="margin-top: 24px;">Why this exists</h3>
+
+        <p style="margin-bottom: 12px;">
+            Planning a trip usually involves multiple apps, tabs, and documents. AdventureArchive brings everything together into one clear, consistent layout.
+        </p>
+
+        <p style="margin-bottom: 12px;">
+            It’s designed not just for planning, but for remembering, so when your trip is over, you still have a structured timeline of everything you did.
+        </p>
+
+        <p style="margin-top: 24px; color: #6f6a67;">
+            Whether you're planning ahead or looking back, AdventureArchive helps you keep your experiences organized and meaningful.
+        </p>
+
+        <div style="margin-top: 28px; display: flex; justify-content: center;">
+            <a class="toolbar-button" href="{% url 'home' %}">
+                Back to dashboard
+            </a>
+        </div>
+
+    </section>
+
+</main>
+{% endblock %}
