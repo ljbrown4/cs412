@@ -16,16 +16,22 @@
         <form method="get" class="toolbar-form">
             <div class="toolbar-left">
                 <a class="toolbar-button {% if current_view == 'gallery' %}active-button{% endif %}"
-                    href="?view=gallery&filter={{ current_filter }}">
+                    href="?view=gallery&sort={{ current_sort }}&filter={{ current_filter }}">
                     Gallery</a>
 
                 <a class="toolbar-button {% if current_view == 'list' %}active-button{% endif %}"
-                    href="?view=list&filter={{ current_filter }}">
+                    href="?view=list&sort={{ current_sort }}&filter={{ current_filter }}">
                     List</a>
             </div>
 
             <div class="toolbar-right">
                 <input type="hidden" name="view" value="{{ current_view }}">
+
+                <label for="sort">Sort:</label>
+                <select name="sort" id="sort" class="toolbar-select" onchange="this.form.submit()">
+                    <option value="created" {% if current_sort == 'created' %}selected{% endif %}>Date created</option>
+                    <option value="start" {% if current_sort == 'start' %}selected{% endif %}>Arrival date</option>
+                </select>
 
                 <label for="filter">Filter:</label>
                 <select name="filter" id="filter" class="toolbar-select" onchange="this.form.submit()">
@@ -44,7 +50,7 @@
                     <option value="ferry" {% if current_filter == 'ferry' %}selected{% endif %}>Ferry</option>
                     <option value="other" {% if current_filter == 'other' %}selected{% endif %}>Other</option>
                     
-                </select>
+                </select> 
             </div>
         </form>
     </section>
