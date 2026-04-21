@@ -12,7 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
 from django.http import HttpRequest, HttpResponse 
 from datetime import date
+
 from collections import OrderedDict #looked this up
+from datetime import timedelta #so that the days in between can also be populated
 
 # Create your views here.
 
@@ -28,6 +30,20 @@ class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     
 class InformationView(ProfileRequiredMixin, TemplateView):
     template_name = 'project/information.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        profile = self.get_profile()
+        #nav
+        context['profile'] = profile
+        context['pfp'] = profile.profile_image
+        context['back_url'] = reverse('home')
+        context['search_icon'] = reverse('search')
+
+        return context
+
+    
     
 #profile views
 class ProfileDetailView(ProfileRequiredMixin, DetailView):
@@ -50,6 +66,7 @@ class ProfileDetailView(ProfileRequiredMixin, DetailView):
         context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['back_url'] = reverse('home')
+        context['search_icon'] = reverse('search')
         
         return context
 
@@ -70,7 +87,7 @@ class UpdateProfileView(ProfileRequiredMixin, UpdateView):
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('profile')
         profile = self.get_profile()
-
+        context['search_icon'] = reverse('search')
         context['profile'] = profile
         context['pfp'] = profile.profile_image
 
@@ -166,6 +183,7 @@ class AdventureListView(ProfileRequiredMixin, ListView):
         context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['cover'] = profile.cover_image
+        context['search_icon'] = reverse('search')
 
         # current view, sort, and filters applied
         context['current_view'] = self.request.GET.get('view', 'gallery')
@@ -199,10 +217,8 @@ class AdventureDetailView(ProfileRequiredMixin, DetailView):
         grouped_itinerary = OrderedDict()
 
         for item in itinerary:
-            day = item.start_datetime.date()
-
-            if day not in grouped_itinerary:
-                grouped_itinerary[day] = []
+            start_day = item.start_datetime.date()
+            end_day = item.end_datetime.date()
 
             # figure out item type [get which sub model of itineraryItem it is]
             if isinstance(item, Transportation):
@@ -212,10 +228,17 @@ class AdventureDetailView(ProfileRequiredMixin, DetailView):
             else:
                 item_type = 'Lodging'
 
-            grouped_itinerary[day].append({
-                'item': item,
-                'item_type': item_type,
-            })
+            curr_day = start_day #go through each day this activity, lodging, or transportation spans and add this event to it as well
+            while curr_day <= end_day:
+                if curr_day not in grouped_itinerary:
+                    grouped_itinerary[curr_day] = []
+
+                grouped_itinerary[curr_day].append({
+                    'item': item,
+                    'item_type': item_type,
+                })
+
+                curr_day += timedelta(days=1)
 
         context['back_url'] = reverse('home')
         context['adventure'] = adventure
@@ -226,6 +249,8 @@ class AdventureDetailView(ProfileRequiredMixin, DetailView):
         context['destinations'] = destinations
         context['expenses'] = expenses
         context['packing'] = packing
+        context['search_icon'] = reverse('search')
+
         return context
     
     
@@ -249,9 +274,9 @@ class UpdateAdventureView(ProfileRequiredMixin, UpdateView):
 
         context['profile'] = profile
         context['pfp'] = profile.profile_image
-
         context['back_url'] = reverse('adventure', args=[adventure.pk])
-        context['adventure'] = adventure    
+        context['adventure'] = adventure   
+        context['search_icon'] = reverse('search') 
 
         return context
 
@@ -281,6 +306,8 @@ class CreateAdventureView(ProfileRequiredMixin, CreateView):
 
         context['back_url'] = reverse('home')
         context['profile'] = profile
+        context['pfp'] = profile.profile_image
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -318,7 +345,8 @@ class DeleteAdventureView(ProfileRequiredMixin, DeleteView):
         context['entries'] = entries
         context['back_url'] = reverse('adventure', args=[adventure.pk])
         context['profile'] = profile
-        context['pfp'] = profile.profile_image     
+        context['pfp'] = profile.profile_image    
+        context['search_icon'] = reverse('search') 
 
         return context
 
@@ -380,6 +408,8 @@ class AdventureDestinationListView(ProfileRequiredMixin, ListView):
         context['current_view'] = self.request.GET.get('view', 'gallery')
         context['current_filter'] = self.request.GET.get('filter', 'all')
         context['current_sort'] = self.request.GET.get('sort', 'created')
+        context['search_icon'] = reverse('search')
+
         return context
     
 #all adventures
@@ -433,6 +463,7 @@ class DestinationListView(ProfileRequiredMixin, ListView):
         context['current_view'] = self.request.GET.get('view', 'gallery')
         context['current_filter'] = self.request.GET.get('filter', 'all')
         context['current_sort'] = self.request.GET.get('sort', 'created')
+        context['search_icon'] = reverse('search')
 
         return context
     
@@ -491,6 +522,7 @@ class DestinationDetailView(ProfileRequiredMixin, DetailView):
         context['lodgings'] = lodgings
         context['entries'] = entries
         context['activities'] = activities
+        context['search_icon'] = reverse('search')
 
         return context
     
@@ -526,6 +558,7 @@ class UpdateDestinationView(ProfileRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
 
         #get pk
+        profile = self.get_profile()
         pk = self.kwargs['pk']
 
         #find comm obj
@@ -534,8 +567,11 @@ class UpdateDestinationView(ProfileRequiredMixin, UpdateView):
 
         #add to context data
         context['back_url'] = reverse('destination', args=[destination.pk])
+        context['pfp'] = profile.profile_image
+        context['profile'] = profile
         context['destination'] = destination
         context['adventure'] = adventure
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -584,6 +620,7 @@ class CreateDestinationView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['back_url'] = reverse('adventure', args=[adventure.pk])
         context['adventure'] = adventure
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -619,7 +656,8 @@ class DeleteDestinationView(ProfileRequiredMixin, DeleteView):
         context['activities'] = activities
         context['lodgings'] = lodgings
         context['entries'] = entries
-        context['back_url'] = reverse('destination', args=[destination.pk])     
+        context['back_url'] = reverse('destination', args=[destination.pk])   
+        context['search_icon'] = reverse('search')  
 
         return context
 
@@ -663,6 +701,7 @@ class DestinationJournalListView(ProfileRequiredMixin, ListView):
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk]) #back to the destination page
         context['current_view'] = self.request.GET.get('view', 'gallery')
+        context['search_icon'] = reverse('search')
         return context
 
 #ALL ENTRIES   
@@ -700,6 +739,7 @@ class JournalListView(ProfileRequiredMixin, ListView):
         context['back_url'] = reverse('home') #back to home page
         context['current_filter'] = self.request.GET.get('filter', 'all')
         context['current_view'] = self.request.GET.get('view', 'gallery')
+        context['search_icon'] = reverse('search')
         return context
     
 class JournalDetailView(ProfileRequiredMixin, DetailView):
@@ -720,7 +760,8 @@ class JournalDetailView(ProfileRequiredMixin, DetailView):
         context['pfp'] = profile.profile_image
         context['journal'] = journal
         context['back_url'] = reverse('destination', args=[journal.destination.pk])
-        context['pfp'] = profile.profile_image     
+        context['pfp'] = profile.profile_image  
+        context['search_icon'] = reverse('search')   
 
         return context   
     
@@ -747,6 +788,7 @@ class UpdateJournalView(ProfileRequiredMixin, UpdateView):
         context['profile'] = profile
         context['back_url'] = reverse('journal', args=[journal.pk])
         context['journal'] = journal
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -791,6 +833,7 @@ class CreateJournalView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -821,7 +864,8 @@ class DeleteJournalView(ProfileRequiredMixin, DeleteView):
         context['pfp'] = profile.profile_image
         context['profile'] = profile
         context['journal'] = journal
-        context['back_url'] = reverse('destination', args=[journal.destination.pk])     
+        context['back_url'] = reverse('destination', args=[journal.destination.pk])
+        context['search_icon'] = reverse('search')     
 
         return context
 
@@ -853,7 +897,8 @@ class MediaDetailView(ProfileRequiredMixin, DetailView):
         context['profile'] = profile
         context['media'] = media
         context['back_url'] = reverse('journal', args=[media.entry.pk])
-        context['pfp'] = profile.profile_image     
+        context['pfp'] = profile.profile_image   
+        context['search_icon'] = reverse('search')  
 
         return context
     
@@ -881,6 +926,7 @@ class CreateMediaView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['journal'] = journal
         context['back_url'] = reverse('journal', args=[journal.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -912,7 +958,8 @@ class DeleteMediaView(ProfileRequiredMixin, DeleteView):
         context['pfp'] = profile.profile_image
         context['profile'] = profile
         context['media'] = media
-        context['back_url'] = reverse('journal', args=[journal.pk])     
+        context['back_url'] = reverse('journal', args=[journal.pk])  
+        context['search_icon'] = reverse('search')   
 
         return context
 
@@ -973,6 +1020,15 @@ class TransportationListView(ProfileRequiredMixin, ListView):
         elif filter_by == 'other':
             transportations = transportations.filter(travel_type='other')
 
+        sort_by = self.request.GET.get('sort', 'created')
+        #sorting
+        if sort_by == 'start':
+            transportations = transportations.order_by('start_datetime')
+        else:
+            transportations = transportations.order_by('-timestamp')
+
+        context['current_sort'] = self.request.GET.get('sort', 'created')
+        context['current_filter'] = self.request.GET.get('filter', 'all')
         context['pfp'] = profile.profile_image
         context['profile'] = profile
         context['destination'] = destination
@@ -980,6 +1036,7 @@ class TransportationListView(ProfileRequiredMixin, ListView):
         context['back_url'] = reverse('destination', args=[destination.pk])
         context['current_view'] = self.request.GET.get('view', 'gallery')
         context['current_filter'] = self.request.GET.get('filter', 'all')
+        context['search_icon'] = reverse('search')
 
         return context
     
@@ -1001,6 +1058,7 @@ class TransportationDetailView(ProfileRequiredMixin, DetailView):
         context['transportation'] = transportation
         context['back_url'] = reverse('destination', args=[transportation.destination.pk])
         context['pfp'] = profile.profile_image
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1040,6 +1098,7 @@ class CreateTransportationView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1087,6 +1146,7 @@ class UpdateTransportationView(ProfileRequiredMixin, UpdateView):
         context['profile'] = profile
         context['back_url'] = reverse('transportation', args=[transportation.pk])
         context['transportation'] = transportation
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1112,6 +1172,7 @@ class DeleteTransportationView(ProfileRequiredMixin, DeleteView):
         context['profile'] = profile
         context['transportation'] = transportation
         context['back_url'] = reverse('destination', args=[transportation.destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1120,6 +1181,8 @@ class DeleteTransportationView(ProfileRequiredMixin, DeleteView):
         transportation = Transportation.objects.get(pk=pk)
         return reverse('destination', args=[transportation.destination.pk])
     
+
+
 #lodging views
 class LodgingListView(ProfileRequiredMixin, ListView):
     '''show all lodging associated with a destination'''
@@ -1139,12 +1202,36 @@ class LodgingListView(ProfileRequiredMixin, ListView):
         pk = self.kwargs['pk']
         profile = self.get_profile()
         destination = Destination.objects.get(pk=pk)
+        lodgings = destination.get_all_lodging()
 
+        filter_by = self.request.GET.get('filter', 'all')
+
+        today = date.today()
+
+        # filters
+        #filter by departure date
+        if filter_by == 'passed':
+            lodgings = lodgings.filter(start_datetime__date__lte=today)
+        if filter_by == 'upcoming':
+            lodgings = lodgings.filter(start_datetime__date__gt=today)
+
+        sort_by = self.request.GET.get('sort', 'created')
+        #sorting
+        if sort_by == 'start':
+            lodgings = lodgings.order_by('start_datetime')
+        else:
+            lodgings = lodgings.order_by('-timestamp')
+
+
+        context['current_sort'] = self.request.GET.get('sort', 'created')
+        context['current_filter'] = self.request.GET.get('filter', 'all')
         context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['destination'] = destination
+        context['lodgings'] = lodgings
         context['back_url'] = reverse('destination', args=[destination.pk])
         context['current_view'] = self.request.GET.get('view', 'gallery')
+        context['search_icon'] = reverse('search')
 
         return context
     
@@ -1166,6 +1253,7 @@ class LodgingDetailView(ProfileRequiredMixin, DetailView):
         context['lodging'] = lodging
         context['back_url'] = reverse('destination', args=[lodging.destination.pk])
         context['pfp'] = profile.profile_image
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1205,6 +1293,7 @@ class CreateLodgingView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1250,6 +1339,7 @@ class UpdateLodgingView(ProfileRequiredMixin, UpdateView):
         context['profile'] = profile
         context['back_url'] = reverse('lodging', args=[lodging.pk])
         context['lodging'] = lodging
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1275,6 +1365,7 @@ class DeleteLodgingView(ProfileRequiredMixin, DeleteView):
         context['profile'] = profile
         context['lodging'] = lodging
         context['back_url'] = reverse('destination', args=[lodging.destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1283,6 +1374,9 @@ class DeleteLodgingView(ProfileRequiredMixin, DeleteView):
         lodging = Lodging.objects.get(pk=pk)
         return reverse('destination', args=[lodging.destination.pk])
     
+
+
+
 #activity views
 class ActivityListView(ProfileRequiredMixin, ListView):
     '''show all activity associated with a destination'''
@@ -1302,12 +1396,39 @@ class ActivityListView(ProfileRequiredMixin, ListView):
         pk = self.kwargs['pk']
         profile = self.get_profile()
         destination = Destination.objects.get(pk=pk)
+        activities = destination.get_all_activities()
 
+
+        filter_by = self.request.GET.get('filter', 'all')
+
+
+        today = date.today()
+
+        # filters
+        #filter by departure date
+        if filter_by == 'passed':
+            activities = activities.filter(start_datetime__date__lte=today)
+        if filter_by == 'upcoming':
+            activities = activities.filter(start_datetime__date__gt=today)
+
+
+        sort_by = self.request.GET.get('sort', 'created')
+        #sorting
+        if sort_by == 'start':
+            activities = activities.order_by('start_datetime')
+        else:
+            activities = activities.order_by('-timestamp')
+
+
+        context['current_sort'] = self.request.GET.get('sort', 'created')
+        context['current_filter'] = self.request.GET.get('filter', 'all')
         context['profile'] = profile
         context['pfp'] = profile.profile_image
         context['destination'] = destination
+        context['activities'] = activities
         context['back_url'] = reverse('destination', args=[destination.pk])
         context['current_view'] = self.request.GET.get('view', 'gallery')
+        context['search_icon'] = reverse('search')
 
         return context
     
@@ -1329,6 +1450,7 @@ class ActivityDetailView(ProfileRequiredMixin, DetailView):
         context['activity'] = activity
         context['back_url'] = reverse('destination', args=[activity.destination.pk])
         context['pfp'] = profile.profile_image
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1368,6 +1490,7 @@ class CreateActivityView(ProfileRequiredMixin, CreateView):
         context['profile'] = profile
         context['destination'] = destination
         context['back_url'] = reverse('destination', args=[destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1376,7 +1499,7 @@ class CreateActivityView(ProfileRequiredMixin, CreateView):
         destination = Destination.objects.get(pk=pk)
         return reverse('destination', args=[destination.pk])
 
-    
+  
 class UpdateActivityView(ProfileRequiredMixin, UpdateView):
     '''view to handle activity updates'''
 
@@ -1414,6 +1537,7 @@ class UpdateActivityView(ProfileRequiredMixin, UpdateView):
         context['profile'] = profile
         context['back_url'] = reverse('activity', args=[activity.pk])
         context['activity'] = activity
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1439,6 +1563,7 @@ class DeleteActivityView(ProfileRequiredMixin, DeleteView):
         context['profile'] = profile
         context['activity'] = activity
         context['back_url'] = reverse('destination', args=[activity.destination.pk])
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1505,6 +1630,8 @@ class PackingListView(ProfileRequiredMixin, ListView):
         context['back_url'] = reverse('adventure', args=[adventure.pk]) #back to the adventure page
         context['current_view'] = self.request.GET.get('view', 'gallery')
         context['current_filter'] = self.request.GET.get('filter', 'all')
+        context['search_icon'] = reverse('search')
+
         return context
     
 class PackingDetailView(ProfileRequiredMixin, DetailView):
@@ -1525,6 +1652,7 @@ class PackingDetailView(ProfileRequiredMixin, DetailView):
         context['transportation'] = packing
         context['back_url'] = reverse('adventure', args=[packing.adventure.pk])
         context['pfp'] = profile.profile_image
+        context['search_icon'] = reverse('search')
 
         return context
 
@@ -1552,6 +1680,7 @@ class UpdatePackingView(ProfileRequiredMixin, UpdateView):
         context['profile'] = profile
         context['back_url'] = reverse('packing_item', args=[item.pk])
         context['adventure'] = adventure
+        context['search_icon'] = reverse('search')
         context['item'] = item
 
         return context
@@ -1588,6 +1717,7 @@ class CreatePackingView(ProfileRequiredMixin, CreateView):
         context['pfp'] = profile.profile_image
         context['profile'] = profile
         context['back_url'] = reverse('adventure', args=[adventure.pk])
+        context['search_icon'] = reverse('search')
         context['adventure'] = adventure
 
         return context
@@ -1618,6 +1748,7 @@ class DeletePackingView(ProfileRequiredMixin, DeleteView):
         context['pfp'] = profile.profile_image
         context['profile'] = profile
         context['item'] = item
+        context['search_icon'] = reverse('search')
         context['back_url'] = reverse('adventure', args=[item.adventure.pk])     
 
         return context
@@ -1628,3 +1759,55 @@ class DeletePackingView(ProfileRequiredMixin, DeleteView):
         packing = PackingItem.objects.get(pk=pk)
         return reverse('adventure', args=[packing.adventure.pk])
     
+
+#search view 
+class SearchView(ProfileRequiredMixin, ListView):
+    '''allow user to input text to search adventures, destinations, transportations, journal entries, activities, and lodgings'''
+    template_name = 'project/search_results.html'
+    context_object_name = 'destinations'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.profile = self.get_profile()
+
+        # check for query in GET
+        self.results = self.request.GET.get('results')
+
+        if not self.results:
+            context = {}
+            context['profile'] = self.profile
+            context['pfp'] = self.profile.profile_image
+            context['back_url'] = reverse('home') 
+            context['search_icon'] = reverse('search')
+            return render(request, 'project/search.html', context)
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        res = self.results
+        return Destination.objects.filter(location__icontains=res).order_by('-timestamp')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        #nav
+        context['profile'] = self.profile
+        context['pfp'] = self.profile.profile_image
+        context['back_url'] = reverse('home')
+        context['search_icon'] = reverse('search')
+
+        #posts
+        context['results'] = self.results
+        context['destinations'] = self.get_queryset()
+
+        #matching others
+        res = self.results
+        context['adventures'] = Adventure.objects.filter(title__icontains=res).order_by('-date_created')
+        context['activities'] = Activity.objects.filter(location__icontains=res).order_by('-timestamp')
+        context['lodgings'] = Lodging.objects.filter(location__icontains=res).order_by('-timestamp')
+        context['transportations'] = (
+            Transportation.objects.filter(location__icontains=res) |
+            Transportation.objects.filter(final_location__icontains=res)
+        ).distinct()
+        context['journals'] = JournalEntry.objects.filter(title__icontains=res).order_by('-timestamp')
+
+        return context
