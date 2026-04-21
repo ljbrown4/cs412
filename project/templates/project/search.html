@@ -1,0 +1,23 @@
+<!-- # File: search.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/21/2026
+# Description: scriptlet code to display form for user to input search criteria -->
+
+{% extends 'project/base.html' %}
+ 
+{% block content %}
+<main class="container" style="align-items: center;">
+    <br>
+    <h3 style="text-align: center;">Search</h3>
+     <div class="log-card" style="align-items: center; align-content: center; max-width: 800px;">
+        <form class="login-form" action="{% url 'search' %}" method="GET" > 
+            <div>
+                <label for="searchtext" style="text-align: center;"> Search your database: </label>
+                <textarea id = "searchtext" type="text" name="results"></textarea>
+                <br>
+                <button class="login-button" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    
+</main>
+{% endblock %}
