@@ -1,0 +1,237 @@
+<!-- # File: search_results.html
+# Author: Leigh Brown (ljbrown4@bu.edu), 4/21/2026
+# Description: scriptlet code to display results from search-->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+<main class="container">
+
+    <div class="section-header">
+        <h3 class="section-title">Search Results for "{{results}}"</h3>
+    </div>
+
+    <!-- adventures -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Adventures</h3>
+        </div>
+
+        {% if adventures %}
+        <div class="list-wrapper">
+            {% for a in adventures %}
+            <a href="{% url 'adventure' a.pk %}" class="list-row">
+
+                <div>
+                    {% if a.cover_image %}
+                    <img class="list-image" src="{{a.cover_image.url}}">
+                    {% endif %}
+                </div>
+
+                <div class="list-main">
+                    <h4 class="list-title">{{a.title}}</h4>
+
+                    {% if a.start_date or a.end_date %}
+                    <p class="list-text">{{a.start_date}} - {{a.end_date}}</p>
+                    {% endif %}
+
+                    {% if a.budget %}
+                    <p class="list-text">Budget: ${{a.budget}}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if a.date_created %}
+                    <p class="card-text">created: {{a.date_created}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching adventures.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- destinations -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Destinations</h3>
+        </div>
+
+        {% if destinations %}
+        <div class="list-wrapper">
+            {% for d in destinations %}
+            <a href="{% url 'destination' d.pk %}" class="list-row">
+
+                <div>
+                    {% if d.cover_image %}
+                    <img class="list-image" src="{{d.cover_image.url}}">
+                    {% endif %}
+                </div>
+
+
+                <div class="list-main">
+                    <h4 class="list-title">{{d.location}}</h4>
+
+                    {% if d.adventure %}
+                    <p class="list-text">
+                        Adventure:
+                        <span class="card-text">{{d.adventure.title}}</span>
+                    </p>
+                    {% endif %}
+
+                    {% if d.arrival_date or d.departure_date %}
+                    <p class="list-text">{{d.arrival_date}} - {{d.departure_date}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching destinations.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- activities -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Activities</h3>
+        </div>
+
+        {% if activities %}
+        <div class="list-wrapper">
+            {% for act in activities %}
+            <a href="{% url 'activity' act.pk %}" class="transp-list-row">
+
+                <div class="list-main">
+                    <h4 class="list-title">{{act.location}}</h4>
+
+                    {% if act.destination %}
+                    <p class="list-text">Destination: {{act.destination.location}}</p>
+                    {% endif %}
+
+                    {% if act.notes %}
+                    <p class="list-text">{{act.notes}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching activities.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- lodgings -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Lodgings</h3>
+        </div>
+
+        {% if lodgings %}
+        <div class="list-wrapper">
+            {% for l in lodgings %}
+            <a href="{% url 'lodging' l.pk %}" class="transp-list-row">
+
+                <div class="list-main">
+                    <h4 class="list-title">{{l.location}}</h4>
+
+                    {% if l.destination %}
+                    <p class="list-text">Destination: {{l.destination.location}}</p>
+                    {% endif %}
+
+                    {% if l.notes %}
+                    <p class="list-text">{{l.notes}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching lodgings.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- transportation -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Transportation</h3>
+        </div>
+
+        {% if transportations %}
+        <div class="list-wrapper">
+            {% for t in transportations %}
+            <a href="{% url 'transportation' t.pk %}" class="transp-list-row">
+
+                <div class="list-main">
+                    <h4 class="list-title">{{t.location}} → {{t.final_location}}</h4>
+
+                    {% if t.destination %}
+                    <p class="list-text">Destination: {{t.destination.location}}</p>
+                    {% endif %}
+
+                    {% if t.notes %}
+                    <p class="list-text">{{t.notes}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching transportation.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- journals -->
+    <section>
+        <div class="section-header">
+            <h3 style="text-align: center; margin-bottom: 15px;">Journal Entries</h3>
+        </div>
+
+        {% if journals %}
+        <div class="list-wrapper">
+            {% for j in journals %}
+            <a href="{% url 'journal' j.pk %}" class="transp-list-row">
+
+                <div class="list-main">
+                    <h4 class="list-title">{{j.title}}</h4>
+
+                    {% if j.destination %}
+                    <p class="list-text">Destination: {{j.destination.location}}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if j.timestamp %}
+                    <p class="card-text">{{j.timestamp}}</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h4>No matching journal entries.</h4>
+        </div>
+        {% endif %}
+    </section>
+
+</main>
+{% endblock %}
