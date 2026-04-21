@@ -26,7 +26,7 @@
                 <div class="log-card" style="align-items: center; align-content: center;">
                     <h3 style="text-align: center;"> Create Adventure</h3>
                     <br>
-                    <form class="login-form" action="{% url 'create_adventure' profile.pk %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
+                    <form class="login-form" action="{% url 'create_adventure' %}" method="POST" enctype="multipart/form-data"> <!--- this is for image upload-->  
                         {%csrf_token%}
                         
                         {{form.as_table}}
@@ -40,5 +40,3 @@
         </section>
 </main>
 {% endblock %} 
-
- 
