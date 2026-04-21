@@ -5,22 +5,41 @@
 
 <html>
     <head>
-        <title>AdventureArchive</title>
+        <title>Adventure Archive</title>
         <link rel="stylesheet" href="{% static 'project-styles.css' %}">
     </head>
     <body>
         <header class="header">
             <div class="row-style-center">
-                <img id="home" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3JtNjYxLWVsZW1lbnQtcmMtMDE1LXAucG5n.png">
-                <h4>AdventureArchive</h4>
+                <a href="{% url 'home' %}" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
+                    <img id="home" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3JtNjYxLWVsZW1lbnQtcmMtMDE1LXAucG5n.png">
+                    <h4 class="header-link" style="color: black; margin: 0;">Adventure Archive</h4>
+                </a>
 
                 {% if request.user.is_authenticated %}
-                    <form method="post" action="{% url 'logout' %}" style="margin: 0;">
-                        {% csrf_token %}
-                        <button class="toolbar-button" type="submit">Logout</button>
-                    </form>
+                <div style="display: flex; flex-direction: column;">
+                    <!-- added this so it doesn't automatically log out user in case it was pressed on accident -->
+                    <button class="toolbar-button" style="max-width: 70px;" onclick="toggleContent()">Logout</button>
+                    <div id="hiddenInclude" style="display: none;">
+                        <form method="post" action="{% url 'logout' %}" style="margin: 0; display: flex; flex-direction: column;">
+                            {% csrf_token %}
+                            <p> Are you sure you want to log out? </p>
+                            <button class="toolbar-button" style="max-width: 70px;" type="submit">Logout</button>
+                        </form>
+                        <script>
+                            function toggleContent() {
+                                var x = document.getElementById("hiddenInclude");
+                                if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                } else {
+                                    x.style.display = "none";
+                                }
+                                }
+                        </script>
+                    </div>
+                </div>
                 {% endif %}
-            </div>
+            </div> 
 
             {% if request.user.is_authenticated %}
                 <nav class="header-nav">
@@ -32,9 +51,6 @@
 
             <div class="row-style-center">
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'home' %}">
-                        <img id="home" src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png">
-                    </a>
 
                     {% if profile %}
                         <a href="{% url 'profile' %}" class="row-style-center profile-link">
@@ -45,6 +61,9 @@
                         </a>
                     {% endif %}
                 {% endif %}
+                {% if search_icon %}
+                    <a href="{{ search_icon }}"><img id="home" src="https://cdn-icons-png.freepik.com/512/7828/7828884.png"></a>
+                {% endif %} 
 
                 {% if back_url %}
                     <a href="{{ back_url }}">
