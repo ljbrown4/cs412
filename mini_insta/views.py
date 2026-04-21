@@ -349,7 +349,7 @@ class PostFeedListView(ProfileRequiredMixin, ListView):
         return context
 
 
-class SearchView(ProfileRequiredMixin, ListView):
+class SearchView(ProfileRequiredMixin, ListView): 
     ''' allow users to input text to search profiles + captions and then display the results'''
     template_name = 'mini_insta/search_results.html'
     context_object_name = 'posts'
@@ -807,4 +807,3 @@ class LoginAPIView(APIView):
             return Response({ 'token': token.key, 'username': user.username,}, status=status.HTTP_200_OK)
 
         return Response({'error': 'invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
-
