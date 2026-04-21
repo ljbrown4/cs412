@@ -29,11 +29,10 @@
                     <section class="section-header">
                         <h3 class="section-title">Journal Entry</h3>
                     </section>
-                        {% if journal.notes %}
-                            <p><b>Notes:</b></p>
-                            <div class="notes-box">
-                                <p>{{ journal.notes }}</p>
-                            </div>
+                        {% if journal.text %}
+                        <br>
+                        <p>{{ journal.text }}</p>
+                         
                         {% else %}
                             <p>No notes added.</p>
                         {% endif %}
