@@ -71,12 +71,12 @@ class Adventure (models.Model):
     
     def get_packing_list(self):
         '''get 5 packing list items'''
-        packing_list = PackingItem.objects.filter(adventure=self).order_by('timestamp')
+        packing_list = PackingItem.objects.filter(adventure=self).order_by('-timestamp')
         return packing_list[:5]
     
     def get_all_packing_list(self):
-        '''get all packing list items'''
-        packing_list = PackingItem.objects.filter(adventure=self).order_by('timestamp')
+        '''get all packing list items''' 
+        packing_list = PackingItem.objects.filter(adventure=self).order_by('-timestamp')
         return packing_list
 
 class Destination (models.Model):
@@ -164,7 +164,8 @@ class Media (models.Model):
         validators=[FileExtensionValidator(allowed_extensions=['mp4', 'avi', 'mov', 'jpg', 'png', 'jpeg'])]
     )
     caption = models.TextField(blank=True)
-    entry = models.ForeignKey(JournalEntry, on_delete=models.CASCADE) 
+    entry = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    timestamp = models.DateField(auto_now_add=True) 
 
     def __str__(self):
         '''return string rep of this destination'''
@@ -191,6 +192,7 @@ class ItineraryItem (models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE) 
     start_datetime = models.DateTimeField() 
     end_datetime = models.DateTimeField()
+    timestamp = models.DateField(auto_now_add=True)
 
     class Meta: #for more simplicity
         abstract = True
@@ -254,5 +256,3 @@ class PackingItem(models.Model):
     def __str__(self):
         '''return string rep of this destination'''
         return f'{self.item} for {self.adventure.title}'
-
-
