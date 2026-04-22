@@ -688,3 +688,204 @@ h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 700px) {
+
+  body {
+    font-size: 16px;
+  }
+
+  .container,
+  .wide-container,
+  .login {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 18px;
+  }
+
+  .header {
+    max-width: 100%;
+    margin: 0;
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .header-nav {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header-link {
+    font-size: 14px;
+  }
+
+  #home {
+    width: 34px;
+    height: 26px;
+  }
+
+  #small {
+    width: 28px;
+    height: 28px;
+  }
+
+  .banner {
+    height: 160px;
+  }
+
+  .profile-card {
+    margin-top: -28px;
+    padding: 16px;
+    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pfp {
+    width: 82px;
+    height: 82px;
+  }
+
+  .profile-text {
+    gap: 6px;
+  }
+
+  .profile-subtext,
+  .section-text,
+  .card-text,
+  .list-text,
+  p {
+    font-size: 15px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .toolbar {
+    padding: 12px;
+  }
+
+  .toolbar-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .toolbar-button,
+  .toolbar-select,
+  .toolbar-chip,
+  .search-input,
+  .login-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .gallery-image {
+    aspect-ratio: 16 / 10;
+  }
+
+  .list-row,
+  .transp-list-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .list-image {
+    height: 170px;
+  }
+
+  .list-side {
+    justify-self: start;
+  }
+
+  .list-title,
+  .card-title {
+    font-size: 20px;
+  }
+
+  .row-style-center,
+  .row-style-just,
+  .list-main-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .double {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .double-left {
+    display: none;
+  }
+
+  .double-right {
+    padding: 20px 14px;
+  }
+
+  .log-card {
+    max-width: 100%;
+    padding: 22px 18px;
+  }
+
+  .triple,
+  .triple2,
+  .double-info,
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .itinerary-panel {
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .transport-main,
+  .profile-info,
+  .profile-images,
+  .info-side-card,
+  .white-card,
+  .notes-box {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-media {
+    height: 220px;
+  }
+
+  .empty {
+    padding: 28px 18px;
+  }
+}
