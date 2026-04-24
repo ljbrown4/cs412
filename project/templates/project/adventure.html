@@ -36,7 +36,11 @@
                                 {% with i=e.item%}
                                 <div>
                                     <span class="badge progress-badge"> {{e.item_type}}</span>
-                                    <p> <b>location:</b> {{i.location}}</p>
+                                    {% if e.item_type == 'Activity' %}
+                                        <p> <b>activity:</b> {{i.location}}</p>
+                                    {% else %}
+                                        <p> <b>location:</b> {{i.location}}</p>
+                                    {% endif %}
                                     <p> {{i.start_datetime}} - {{i.end_datetime}}</p>
                                     {% if e.item_type == 'Transportation' %}
                                         <p> <b>traveling by: </b>{{ i.travel_type }} <b>to</b> {{ i.final_location }}</p>
