@@ -625,7 +625,7 @@ class CreateDestinationView(ProfileRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('adventure', args=[self.object.adventure.pk])
+        return reverse('destination', args=[self.object.pk])
 
 class DeleteDestinationView(ProfileRequiredMixin, DeleteView):
     ''' view to handle destination deletion '''
@@ -838,9 +838,7 @@ class CreateJournalView(ProfileRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        pk = self.kwargs['pk']
-        destination = Destination.objects.get(pk=pk)
-        return reverse('destination', args=[destination.pk])
+        return reverse('journal', kwargs={'pk': self.object.pk})
 
 
 class DeleteJournalView(ProfileRequiredMixin, DeleteView):
