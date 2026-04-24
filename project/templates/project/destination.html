@@ -47,10 +47,6 @@
 
                                     <p>Travel times: {{ t.start_datetime }} — {{ t.end_datetime }}</p>
                                     <p>Price: ${{ t.price }}</p>
-
-                                    {% if t.notes %}
-                                        <p>{{ t.notes }}</p>
-                                    {% endif %}
                                 </div>
                             </a>
                         {% endfor %}
@@ -80,14 +76,7 @@
                                     <h4 class="list-title">{{ a.location }}</h4>
                                     <p><b>planned from:</b></p>
                                     <p>{{ a.start_datetime }} - {{ a.end_datetime }}</p>
-
-                                    {% if a.price %}
-                                        <p>Price: ${{ a.price }}</p>
-                                    {% endif %}
-
-                                    {% if a.notes %}
-                                        <p>{{ a.notes }}</p>
-                                    {% endif %}
+                                    <p>Price: ${{ a.price }}</p>
                                 </div>
                             </a>
                         {% endfor %}
