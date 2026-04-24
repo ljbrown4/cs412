@@ -5,12 +5,12 @@
 
 {% block content %}
     {% if cover %}
-        <img class="banner" src="{{ cover.url }}">
+        <img class="banner" src="{{ cover.url }}" alt="Profile cover image">
     {% endif %}
+    <br>
     <br> 
-
     <main class="wide-container">
-        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}">
+        <section class="profile-card {% if not cover %}profile-card-no-cover{% endif %}" style="justify-content: space-between;">
             <div class="destination-title">
                 <h2>{{ destination.location }} Dashboard</h2>
                 <p class="section-text">{{ destination.arrival_date }} — {{ destination.departure_date }} </p>
