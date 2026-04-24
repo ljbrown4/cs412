@@ -271,6 +271,7 @@ class CreateActivityForm(forms.ModelForm):
         labels = {
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
+            'location': 'activity',
         }
         widgets = {
             'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -298,6 +299,7 @@ class UpdateActivityForm(forms.ModelForm):
         labels = {
             'start_datetime': 'Start date/time',
             'end_datetime': 'End date/time',
+            'location': 'activity',
         }
         widgets = {
             'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
