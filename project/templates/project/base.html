@@ -19,9 +19,9 @@
                 {% if request.user.is_authenticated %}
                 <div style="display: flex; flex-direction: column;">
                     <!-- added this so it doesn't automatically log out user in case it was pressed on accident -->
-                    <button class="toolbar-button" style="max-width: 70px;" onclick="toggleContent()">Logout</button>
+                    <button class="toolbar-button" style="max-width: 70px; display: inline;" onclick="toggleContent()">Logout</button>
                     <div id="hiddenInclude" style="display: none;">
-                        <form method="post" action="{% url 'logout' %}" style="margin: 0; display: flex; flex-direction: column;">
+                        <form method="post" action="{% url 'logout' %}" style="margin: 0; display: inline; gap: 20px; justify-content: center;">
                             {% csrf_token %}
                             <p> Are you sure you want to log out? </p>
                             <button class="toolbar-button" style="max-width: 70px;" type="submit">Logout</button>
