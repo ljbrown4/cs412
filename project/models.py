@@ -53,7 +53,7 @@ class Adventure (models.Model):
     def get_destinations(self):
         '''get all destinations associated with this adventure'''
         destinations = Destination.objects.filter(adventure=self).order_by('timestamp')
-        return destinations[:6]
+        return destinations[:4]
     
     def get_all_destinations(self):
         '''get all destinations associated with this adventure'''
@@ -99,11 +99,11 @@ class Destination (models.Model):
     #cut offs
     def get_transportation(self):
         '''get all activities for this destination'''
-        return Transportation.objects.filter(destination=self).order_by('start_datetime')[:5]
+        return Transportation.objects.filter(destination=self).order_by('start_datetime')[:4]
 
     def get_activities(self):
         '''get all activities for this destination'''
-        return Activity.objects.filter(destination=self).order_by('start_datetime')[:6]
+        return Activity.objects.filter(destination=self).order_by('start_datetime')[:4]
 
     def get_lodging(self):
         '''get all lodging for this destination'''
@@ -250,7 +250,7 @@ class PackingItem(models.Model):
     item = models.TextField()
     isPacked = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-    notes = models.TextField()
+    notes = models.TextField(blank=True)
     adventure = models.ForeignKey(Adventure, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -25,6 +25,7 @@
             <div class="itinerary-panel"> <!-- itinerary-->
                 <section class="section-header">
                     <h3 class="section-title">Itinerary</h3>
+                    <a class="login-button" href="{% url 'print_itinerary' adventure.pk %}"> Print Itinerary </a>
                 </section>
                 <br>
                 {% if itinerary%}
@@ -69,7 +70,7 @@
                 <div class="white-card">
                     <div class="card-body">
                         <h4 class="card-title"> Adventure Budget</h4>
-                        <p><i>${{adventure.budget}}</i></p>
+                        <p><i>${{adventure.budget|floatformat:2}}</i></p>
                         <h4 class="card-title"> Total Expenses</h4>
                         <p><i>${{ expenses|floatformat:2 }}</i></p>
                     </div>

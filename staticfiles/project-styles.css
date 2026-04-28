@@ -647,7 +647,64 @@ h2, h3, h4, h5, h6 {
   gap: 18px;
 }
 
+/* print page css */
+.print-page {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: white;
+    color: black;
+}
 
+.print-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.print-header h1 {
+    margin-bottom: 5px;
+}
+
+.print-button {
+    margin-top: 20px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+
+.print-card {
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+
+.print-card h2 {
+    margin-top: 0;
+}
+
+@media print {
+    header,
+    nav,
+    footer,
+    .print-button {
+        display: none;
+    }
+
+    .print-page {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+    }
+
+    .print-card {
+        box-shadow: none;
+    }
+}
 
 /* smaller screens */
 @media (max-width: 1000px) {

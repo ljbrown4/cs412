@@ -76,6 +76,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='project_login'), name='logout'),
 
     #miscellaneous
-    path('information/', views.InformationView.as_view(), name='information'),
+    path('information/', InformationView.as_view(), name='information'),
     path('search', SearchView.as_view(), name="search"),
+    path('adventure/<int:pk>/print/',PrintItineraryView.as_view(), name='print_itinerary'),
 ]

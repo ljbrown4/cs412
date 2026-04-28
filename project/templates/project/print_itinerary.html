@@ -1,0 +1,49 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+
+<div class="wide-container">
+
+    <div class="print-header">
+        <h1>{{ adventure.title }} Itinerary</h1>
+        <p><b>{{ adventure.start_date }} - {{ adventure.end_date }}</b></p>
+
+        <button class="login-button" onclick="window.print()"> <!-- looked up how to print -->
+            Save as PDF / Print
+        </button>
+    </div>
+
+    <hr>
+
+    {% for day, items in itinerary.items %}
+
+        <h2 class="date-header">{{ day }}</h2>
+
+        {% for item in items %}
+            <div class="print-card">
+
+                <h2>{{ item.location }}</h2>
+
+                <p><strong>Start:</strong> {{ item.start_datetime }}</p>
+                <p><strong>End:</strong> {{ item.end_datetime }}</p>
+
+                {% if item.price %}
+                    <p><strong>Price:</strong> ${{ item.price|floatformat:2 }}</p>
+                {% endif %}
+
+                {% if item.notes %}
+                    <p><strong>Notes:</strong> {{ item.notes }}</p>
+                {% endif %}
+
+                {% if item.final_location %}
+                    <p><strong>Arrive At:</strong> {{ item.final_location }}</p>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

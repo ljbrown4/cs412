@@ -46,7 +46,7 @@
                                     </div>
 
                                     <p>Travel times: {{ t.start_datetime }} — {{ t.end_datetime }}</p>
-                                    <p>Price: ${{ t.price }}</p>
+                                    <p>Price: ${{ t.price|floatformat:2 }}</p>
                                 </div>
                             </a>
                         {% endfor %}
@@ -74,9 +74,8 @@
                             <a class="transp-list-row" href="{% url 'activity' a.pk %}">
                                 <div class="list-main">
                                     <h4 class="list-title">{{ a.location }}</h4>
-                                    <p><b>planned from:</b></p>
-                                    <p>{{ a.start_datetime }} - {{ a.end_datetime }}</p>
-                                    <p>Price: ${{ a.price }}</p>
+                                    <p> <b>planned from:</b> {{ a.start_datetime }} - {{ a.end_datetime }}</p>
+                                    <p>Price: ${{ a.price|floatformat:2 }}</p>
                                 </div>
                             </a>
                         {% endfor %}

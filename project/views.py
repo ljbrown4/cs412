@@ -11,6 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.contrib.auth import login
 from django.http import HttpRequest, HttpResponse 
+from django.views import View
 from datetime import date
 
 from collections import OrderedDict #looked this up
@@ -170,8 +171,10 @@ class AdventureListView(ProfileRequiredMixin, ListView):
         # sorting
         if sort_by == 'start':
             adventures = adventures.order_by('start_date')
-        else:
+        elif sort_by == 'created':
             adventures = adventures.order_by('-date_created')
+        elif sort_by == 'start_d':
+            adventures = adventures.order_by('-start_date')
 
         return adventures
     
@@ -389,8 +392,10 @@ class AdventureDestinationListView(ProfileRequiredMixin, ListView):
         # sorting
         if sort_by == 'start':
             destinations = destinations.order_by('arrival_date')
-        else:
+        elif sort_by == 'created':
             destinations = destinations.order_by('-timestamp')
+        else:
+            destinations = destinations.order_by('-arrival_date')
 
         return destinations
     
@@ -1022,8 +1027,10 @@ class TransportationListView(ProfileRequiredMixin, ListView):
         #sorting
         if sort_by == 'start':
             transportations = transportations.order_by('start_datetime')
-        else:
+        elif sort_by == 'created':
             transportations = transportations.order_by('-timestamp')
+        else:
+            transportations = transportations.order_by('-start_datetime')
 
         context['current_sort'] = self.request.GET.get('sort', 'created')
         context['current_filter'] = self.request.GET.get('filter', 'all')
@@ -1217,8 +1224,10 @@ class LodgingListView(ProfileRequiredMixin, ListView):
         #sorting
         if sort_by == 'start':
             lodgings = lodgings.order_by('start_datetime')
-        else:
+        elif sort_by == 'created':
             lodgings = lodgings.order_by('-timestamp')
+        else:
+            lodgings = lodgings.order_by('-start_datetime')
 
 
         context['current_sort'] = self.request.GET.get('sort', 'created')
@@ -1414,8 +1423,10 @@ class ActivityListView(ProfileRequiredMixin, ListView):
         #sorting
         if sort_by == 'start':
             activities = activities.order_by('start_datetime')
-        else:
+        elif sort_by == 'created':
             activities = activities.order_by('-timestamp')
+        else:
+            activities = activities.order_by('-start_datetime')
 
 
         context['current_sort'] = self.request.GET.get('sort', 'created')
@@ -1809,3 +1820,36 @@ class SearchView(ProfileRequiredMixin, ListView):
         context['journals'] = JournalEntry.objects.filter(title__icontains=res).order_by('-timestamp')
 
         return context
+
+#miscellaneous
+class PrintItineraryView(ProfileRequiredMixin, TemplateView):
+    '''allow users to export the items in their itinerary'''
+    template_name = 'project/print_itinerary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        adventure = Adventure.objects.get(pk=self.kwargs['pk'])
+        itinerary = adventure.get_all_itinerary_items()
+
+        grouped_itinerary = OrderedDict()
+
+        for item in itinerary:
+            day = item.start_datetime.date()
+
+            if day not in grouped_itinerary:
+                grouped_itinerary[day] = []
+
+            grouped_itinerary[day].append(item)
+
+        profile = self.get_profile()
+
+        context['adventure'] = adventure
+        context['itinerary'] = grouped_itinerary
+        context['profile'] = profile
+        context['pfp'] = profile.profile_image
+        context['back_url'] = reverse('adventure', args=[adventure.pk])
+        context['search_icon'] = reverse('search')
+
+        return context
+

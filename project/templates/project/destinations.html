@@ -30,6 +30,7 @@
                 <select name="sort" id="sort" class="toolbar-select" onchange="this.form.submit()">
                     <option value="created" {% if current_sort == 'created' %}selected{% endif %}>Date created</option>
                     <option value="start" {% if current_sort == 'start' %}selected{% endif %}>Arrival date</option>
+                    <option value="start_d" {% if current_sort == 'start_d' %}selected{% endif %}>Arrival date (descending) </option>
                 </select>
 
                 <label for="filter">Filter:</label>

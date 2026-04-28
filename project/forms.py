@@ -13,10 +13,13 @@ class CreateAdventureForm(forms.ModelForm):
     class Meta:
         '''assoc thsi form with adventure model from the database'''
         model = Adventure
-        fields = ['title', 'start_date', 'end_date', 'budget', 'cover_image']
+        fields = ['title', 'start_date', 'end_date', 'budget', 'cover_image', 'isCompleted']
         widgets = { #looked up online how to get the calendar for this
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'isCompleted': 'Adventure Completed',
         }
 
     def clean(self):

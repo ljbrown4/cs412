@@ -44,7 +44,7 @@
 
                 <div class="transport-info-block">
                     <h4>Additional Information</h4>
-                    <p><b>Price:</b> ${{ activity.price }}</p>
+                    <p><b>Price:</b> ${{ activity.price|floatformat:2 }}</p>
                     <br>
                     {% if activity.notes %}
                         <p><b>Notes:</b></p>

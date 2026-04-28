@@ -19,7 +19,7 @@
                 </div>
             {% endif %}
 
-            {{ form.as_p }}
+            {{ form.as_table }}
             <input class="login-button" type="submit" value="Update Destination">
         </form>
         <form action="{% url 'destination' destination.pk %}" style="width: 100px;" method='GET'>

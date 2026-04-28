@@ -11,7 +11,7 @@
         <br>
         <form class="login-form" action="{% url 'update_lodging' lodging.pk %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.as_table }}
             <input class="login-button" type="submit" value="Update Lodging">
         </form>
         <form action="{% url 'lodging' lodging.pk %}" style="width: 100px;" method='GET'>
