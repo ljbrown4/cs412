@@ -53,7 +53,7 @@ class Adventure (models.Model):
     def get_destinations(self):
         '''get all destinations associated with this adventure'''
         destinations = Destination.objects.filter(adventure=self).order_by('timestamp')
-        return destinations[:4]
+        return destinations[:3]
     
     def get_all_destinations(self):
         '''get all destinations associated with this adventure'''
