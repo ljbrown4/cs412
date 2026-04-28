@@ -134,7 +134,7 @@ h2, h3, h4, h5, h6 {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
 }
 .profile-card-no-cover { /* fix issues with overlap on header when there is no image*/
-  margin-top: 5;
+  margin-top: 0;
 }
 .pfp {
   width: 120px;
@@ -705,6 +705,7 @@ h2, h3, h4, h5, h6 {
         box-shadow: none;
     }
 }
+
 
 /* smaller screens */
 @media (max-width: 1000px) {
