@@ -134,6 +134,7 @@
                                         <h4 class="list-title">{{ l.location }}</h4>
                                         <p><b>staying from:</b></p>
                                         <p>{{ l.start_datetime }} - {{ l.end_datetime }}</p>
+                                        <p>Price: ${{ l.price|floatformat:2 }}</p>
                                     </div>
                                 </a>
                             {% endfor %}
