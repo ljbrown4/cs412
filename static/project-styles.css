@@ -648,13 +648,6 @@ h2, h3, h4, h5, h6 {
 }
 
 /* print page css */
-.print-page {
-    max-width: 850px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: white;
-    color: black;
-}
 
 .print-header {
     text-align: center;
@@ -663,16 +656,6 @@ h2, h3, h4, h5, h6 {
 
 .print-header h1 {
     margin-bottom: 5px;
-}
-
-.print-button {
-    margin-top: 20px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 10px;
-    background-color: black;
-    color: white;
-    cursor: pointer;
 }
 
 .print-card {
@@ -689,13 +672,18 @@ h2, h3, h4, h5, h6 {
 
 @media print {
     header,
+    .header,
     nav,
-    footer,
-    .print-button {
-        display: none;
+    .header-nav,
+    .row-style-center,
+    .print-button,
+    button,
+    .login-button {
+        display: none !important;
+        visibility: hidden !important;
     }
 
-    .print-page {
+    .wide-container {
         margin: 0;
         padding: 0;
         max-width: none;
@@ -703,6 +691,7 @@ h2, h3, h4, h5, h6 {
 
     .print-card {
         box-shadow: none;
+        page-break-inside: avoid;
     }
 }
 

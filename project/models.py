@@ -64,7 +64,7 @@ class Adventure (models.Model):
         '''get all itinerary items for this adventure'''
         items = []
 
-        for destination in self.get_destinations():
+        for destination in self.get_all_destinations():
             items.extend(destination.get_itinerary_items())
 
         return sorted(items, key=lambda x: x.start_datetime)
