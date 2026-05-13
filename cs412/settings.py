@@ -67,7 +67,7 @@ ROOT_URLCONF = 'cs412.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'string_if_invalid': 'WARNING: {{%s}} not a valid context variable',

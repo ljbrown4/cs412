@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leigh Brown cs412 Portfolio</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+
+        .projects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: black;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Leigh Brown</h1>
+    <p>Computer Science @ Boston University</p>
+
+    <div class="projects">
+
+        <a class="card" href="project/">
+            <h2>Adventure Archive</h2>
+            <p>Travel planning + memory journal app</p>
+        </a>
+
+        <a class="card" href="mini_insta/">
+            <h2>Mini Insta</h2>
+            <p>Instagram-style social media app</p>
+        </a>
+
+        <a class="card" href="dadjokes/">
+            <h2>Dad Jokes API</h2>
+            <p>Django REST API project</p>
+        </a>
+
+    </div>
+
+</body>
+</html>
