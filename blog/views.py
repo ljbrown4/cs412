@@ -64,7 +64,7 @@ class CreateArticleView(LoginRequiredMixin, CreateView):
     template_name = 'blog/create_article_form.html'
 
     def get_login_url(self): #module 6
-        return reverse('login')
+        return reverse('blog_login')
 
     def form_valid(self, form):
         print(f'CreateArticleView.form_valid(): {form.cleaned_data}')
@@ -147,7 +147,7 @@ class UserRegistrationView(CreateView):
     
     def get_success_url(self):
         '''The URL to redirect to after creating a new User.'''
-        return reverse('login')
+        return reverse('blog_login')
     
 
 class ArticleListAPIView(generics.ListCreateAPIView):

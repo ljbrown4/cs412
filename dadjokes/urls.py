@@ -4,8 +4,8 @@ from . import views
 from .views import *
 
 urlpatterns = [
-    path('', RandomView.as_view(), name='home'),
-    path('random', RandomView.as_view(), name='random'),
+    path('', RandomView.as_view(), name='dad_home'),
+    path('random', RandomView.as_view(), name='dad_random'),
     path('jokes', AllJokesView.as_view(), name="jokes"),
     path('joke/<int:pk>', JokeDetailView.as_view(), name="joke"),
     path('pictures', AllPicturesView.as_view(), name="pictures"),

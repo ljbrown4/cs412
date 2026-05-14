@@ -32,6 +32,7 @@ from rest_framework.authentication import TokenAuthentication
 class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     """Custom mixin that requires auth and returns user profile as need """
    
+
     def get_profile(self): 
         """ get profile of current user"""
         return Profile.objects.get(user=self.request.user)

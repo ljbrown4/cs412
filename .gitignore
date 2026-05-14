@@ -1,4 +1,4 @@
 __pycache__/
 *.pyc
-
+.vscode/
 # so they don't keep getting pushed to github
