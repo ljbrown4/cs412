@@ -1,27 +1,50 @@
 <!-- # File: login.html
 # Author: Leigh Brown (ljbrown4@bu.edu), 3/01/2026
-# Description: scriptlet code to allow for user login -->
+# Description: display the login form -->
+
 {% extends 'mini_insta/base.html' %}
 
 {% block content %}
-<main class="container">
 
-    <h3 style="text-align: center;">Log in</h3>
+<main class="container auth-page">
+    <div class="auth-card">
+        <div class="auth-heading">
+            <h2>Log in</h2>
+        </div>
 
+        <form
+            class="form"
+            action="{% url 'login_mini' %}"
+            method="POST"
+        >
+            {% csrf_token %}
 
-    <form action = "{% url 'login_mini' %}" method="POST">
-        {% csrf_token %}
-        {{form.as_table}}
+            <table>
+                {{form.as_table}}
+            </table>
 
-        <input type="submit" value="Login">
+            {% if next %}
+                <input type="hidden" name="next" value="{{next}}">
+            {% else %}
+                <input
+                    type="hidden"
+                    name="next"
+                    value="{% url 'my_profile' %}"
+                >
+            {% endif %}
 
-        {% if request.GET.next %} 
-            <input type="hidden" name="next" value="{{request.GET.next}}">
-        {% else %}
-            <input type="hidden" name="next" value="{% url 'my_profile' %}">
-        {% endif %}
-    </form>
+            <button class="submit-btn" type="submit">
+                Log in
+            </button>
+        </form>
 
-<hr>
+        <p class="auth-footer">
+            Don't have an account?
+            <a href="{% url 'create_profile_mini' %}">
+                Create one
+            </a>
+        </p>
+    </div>
 </main>
+
 {% endblock %}

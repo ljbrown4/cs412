@@ -19,7 +19,7 @@ urlpatterns = [
     path('profile/create_post', CreatePostView.as_view(), name="create_post"), #assignment 6
 
     # path('profile/<int:pk>/update', UpdateProfileView.as_view(), name="update_profile"), #assignment 5
-    path('profile/update', UpdateProfileView.as_view(), name="update_profile"), #assignment 6
+    path('profile/update', UpdateProfileView.as_view(), name="update_profile_mini"), #assignment 6
 
     # path('profile/<int:pk>/feed', PostFeedListView.as_view(), name="show_feed"), #assignment 5
     path('profile/feed', PostFeedListView.as_view(), name="show_feed"), #assignment 6
@@ -34,7 +34,7 @@ urlpatterns = [
     path('profile/search', SearchView.as_view(), name='search_mini'), #assignment 6
 
     path('login/', auth_views.LoginView.as_view(template_name="mini_insta/login.html"), name="login_mini"), #assignment 6
-    path('logout/', auth_views.LogoutView.as_view(next_page='logout_confirmation'), name='logout_mini'), #assignment 6
+    path('logout/', auth_views.LogoutView.as_view(next_page='show_all_profiles'), name='logout_mini'), #assignment 6
     path("confirmation/", LogOutComfirmationView.as_view(), name="logout_confirmation"), #assignment 6
 
     path('create_profile/', CreateProfileView.as_view(), name="create_profile_mini"), #assignment 6

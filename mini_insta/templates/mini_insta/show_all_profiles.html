@@ -21,7 +21,7 @@
         {% endif %}
         
         <div>
-        <h2>{{p.display_name}}</h2>
+        <a href="{% url 'profile_mini' p.pk %}"><h2>{{p.display_name}}</h2></a>
         <a href="{% url 'profile_mini' p.pk %}"> <h5>@{{p.username}}</h5> </a>
         </div>
         <hr> 

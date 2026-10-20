@@ -1,94 +1,194 @@
 <!-- # File: show_post.html
-# Author: Leigh Brown (ljbrown4@bu.edu), 2/12/2026 + 2/24/2026
-# Description: scriptlet code to display an individual post in the database and the associated data -->
+# Author: Leigh Brown (ljbrown4@bu.edu)
+# Description: display an individual post and its associated data -->
 
 {% extends 'mini_insta/base.html' %}
- 
+
 {% block content %}
 
 <main class="container">
     <div class="double2">
-        <div class="imgside2">
-            {% if post.get_all_photos %}
-                    {% for a in post.get_all_photos %}
-                        <img class="post-page-image" src="{{a.get_image_url}}">
-                    {% endfor %}
-            {% endif%}
+        <div class="imgside2 post-photos">
+            {% for a in post.get_all_photos %}
+                <img
+                    class="post-page-image"
+                    src="{{a.get_image_url}}"
+                    alt="Photo {{forloop.counter}} by {{post.profile.username}}"
+                    {% if not forloop.first %}loading="lazy"{% endif %}
+                >
+            {% empty %}
+                <p class="post-muted">No photos attached.</p>
+            {% endfor %}
         </div>
-         <!-- showcase post info-->
+
         <div class="post-info">
-            <div style="display: flex; gap: 30px; align-items: center;">
-                <h4> {{post.profile.display_name}}</h4> 
-                <a href="{% url 'profile_mini' post.profile.pk %}"><p> @{{post.profile.username}} </p></a>
+            {% if request.user.is_authenticated and is_owner %}
+                <div class="post-owner-actions">
+                    <a
+                        class="submit-btn-small"
+                        href="{% url 'update_post' post.pk %}"
+                        hx-get="{% url 'update_post' post.pk %}"
+                        hx-target="#post-modal-content"
+                        hx-swap="innerHTML"
+                        aria-haspopup="dialog"
+                        aria-controls="post-modal"
+                    >
+                        Update post
+                    </a>
+
+                    <a
+                        class="post-delete-link"
+                        href="{% url 'delete_post' post.pk %}"
+                        hx-get="{% url 'delete_post' post.pk %}"
+                        hx-target="#post-modal-content"
+                        hx-swap="innerHTML"
+                        aria-haspopup="dialog"
+                        aria-controls="post-modal"
+                    >
+                        Delete post
+                    </a>
+                </div>
+            {% endif %}
+            <div class="post-author">
+                <h4>{{post.profile.display_name}}</h4>
+
+                <a href="{% url 'profile_mini' post.profile.pk %}">
+                    @{{post.profile.username}}
+                </a>
             </div>
-            <hr>
-            <br>
+
             {% if post.caption %}
-                <p> <b>@{{post.profile.username}}: </b>{{post.caption}}</p>
+                <p class="post-caption">{{post.caption}}</p>
             {% endif %}
 
-            <p style="color:rgb(167, 167, 167)"> timestamp: {{post.timestamp}}</p>
+            <p class="post-muted">
+                {{post.timestamp|date:"M j, Y · g:i A"}}
+            </p>
 
-
-            <div style="display: flex; gap: 15px;">
-                <!-- liking and unliking post-->
+            <div class="post-engagement">
                 {% if request.user.is_authenticated and not is_owner %}
                     {% if liked %}
-                        <a href="{% url 'delete_like' post.pk %}"> <!-- unlike post -->
-                        <img id="like" src="https://img.freepik.com/premium-psd/png-heart-symbol-shape-black-ai-generated-image-by-rawpixel_53876-205951.jpg?semt=ais_hybrid&w=740&q=80">
+                        <a
+                            href="{% url 'delete_like' post.pk %}"
+                            aria-label="Unlike post"
+                        >
+                            <img
+                                id="like"
+                                src="https://img.freepik.com/premium-psd/png-heart-symbol-shape-black-ai-generated-image-by-rawpixel_53876-205951.jpg?semt=ais_hybrid&w=740&q=80"
+                                alt=""
+                            >
                         </a>
                     {% else %}
-                        <a href="{% url 'like' post.pk %}"> <!-- like post -->
-                        <img id="like" src="https://static.vecteezy.com/system/resources/thumbnails/054/679/611/small/simple-black-heart-silhouette-for-versatile-use-png.png">
+                        <a
+                            href="{% url 'like' post.pk %}"
+                            aria-label="Like post"
+                        >
+                            <img
+                                id="like"
+                                src="https://static.vecteezy.com/system/resources/thumbnails/054/679/611/small/simple-black-heart-silhouette-for-versatile-use-png.png"
+                                alt=""
+                            >
                         </a>
                     {% endif %}
-                {% endif %}
 
-                <!-- comment creation-->
-                {% if request.user.is_authenticated and not is_owner %}
-                    <a href="{% url 'create_comment' post.pk %}">
-                        <img id="like" src="https://icons.veryicon.com/png/o/miscellaneous/2px-common-icons/message-63.png">
+                    <a
+                        href="{% url 'create_comment' post.pk %}"
+                        aria-label="Add a comment"
+                    >
+                        <img
+                            id="like"
+                            src="https://icons.veryicon.com/png/o/miscellaneous/2px-common-icons/message-63.png"
+                            alt=""
+                        >
                     </a>
                 {% endif %}
 
-                <!-- display likes on post-->
-                {%if post.get_likes %}
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        {% with a=post.get_first_like %}
-                            <p> Liked by <b>{{a.profile.username}}</b></p>
-                        {% endwith %}
+                {% if post.get_likes %}
+                    {% with a=post.get_first_like %}
+                        <p>
+                            Liked by <b>{{a.profile.username}}</b>
 
-                        {%if post.get_num_likes >= 1 %}
-                            <p> <b> and {{post.get_num_likes}} others</b></p>
-                        {% endif %}
-                    </div>
+                            {% if post.get_num_likes > 1 %}
+                                and
+                                <b>
+                                    {{post.get_num_likes|add:"-1"}}
+                                    other{{post.get_num_likes|add:"-1"|pluralize}}
+                                </b>
+                            {% endif %}
+                        </p>
+                    {% endwith %}
                 {% endif %}
             </div>
-            
 
-            <br>
-            {% for c in post.get_all_comments%}
-                <div style="display: flex; gap: 30px; align-items: center;">
-                    <h5><b>@{{c.profile.username}}</b></h5>
-                    <p>{{c.text}}</p>
+            <section class="post-comments" aria-labelledby="comments-title">
+                <h3 id="comments-title">Comments</h3>
 
-                    {% if request.user.is_authenticated %}
-                        {% if c.profile == current or is_owner %}
-                            <a href="{% url 'delete_comment' c.pk %}"> <p>delete</p> </a>
+                {% for c in post.get_all_comments %}
+                    <div class="post-comment">
+                        <p>
+                            <b>@{{c.profile.username}}</b>
+                            {{c.text}}
+                        </p>
+
+                        {% if request.user.is_authenticated %}
+                            {% if c.profile == current or is_owner %}
+                                <a
+                                    class="post-comment-delete"
+                                    href="{% url 'delete_comment' c.pk %}"
+                                    aria-label="Delete comment by {{c.profile.username}}"
+                                >
+                                    Delete
+                                </a>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                </div>
-            {% endfor %}
+                    </div>
+                {% empty %}
+                    <p class="post-muted">No comments yet.</p>
+                {% endfor %}
+            </section>
         </div>
     </div>
-        <br>
-
-    <div style="display: flex; justify-content: flex-start; gap: 15px; margin: auto; margin-top: 15px;">
-        {% if is_owner %}
-        <a href="{% url 'delete_post' post.pk %}"><button class="submit-btn"> delete post</button></a>
-        <a href="{% url 'update_post' post.pk %}"><button class="submit-btn"> update post</button></a>
-        {% endif %}
-     </div>
 </main>
+
+{% if request.user.is_authenticated and is_owner %}
+    <dialog id="post-modal" aria-labelledby="post-modal-title">
+        <div id="post-modal-content"></div>
+    </dialog>
+
+    <script>
+        const postModal = document.getElementById("post-modal");
+        const postModalContent = document.getElementById(
+            "post-modal-content"
+        );
+
+        // open after htmx loads the update or delete form
+        document.body.addEventListener("htmx:afterSwap", function(event) {
+            if (event.detail.target === postModalContent) {
+                if (!postModal.open) {
+                    postModal.showModal();
+                }
+
+                const field = postModalContent.querySelector(
+                    '[aria-invalid="true"], textarea, input:not([type="hidden"]), [data-close-post-modal]'
+                );
+
+                if (field) {
+                    field.focus();
+                }
+            }
+        });
+
+        // handle cancel and close buttons
+        postModal.addEventListener("click", function(event) {
+            if (event.target.closest("[data-close-post-modal]")) {
+                postModal.close();
+            }
+        });
+
+        postModal.addEventListener("close", function() {
+            postModalContent.replaceChildren();
+        });
+    </script>
+{% endif %}
+
 {% endblock %}
- 

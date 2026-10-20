@@ -3,112 +3,186 @@
 
 {% load static %}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <title>Mini Insta</title>
+
         <link rel="stylesheet" href="{% static 'styles-blog.css' %}">
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js"
+            defer
+        ></script>
     </head>
+
     <body>
         <header>
-            <div style="gap: 40px; display: flex; align-items: center;">
-                <h1><i>Mini Instagram</i></h1>
-                    {% if request.user.is_authenticated %}  
-                       <a href="{% url 'my_profile' %}"><p> <b><i>{{request.user}}</i></b> </p></a>
-                        <form method="post" action="{% url 'logout_mini' %}" >
-                            {% csrf_token %}
-                            <button class="submit-btn-small" type="submit">Logout</button>
-                        </form>               
-                        
-                    {% else %}
-                        {% url 'login_mini' as login_url %}
-                        {% if request.path != login_url %} <!-- don't show login button on login page-->
-                            <button class="submit-btn-small"><a href="{% url 'login_mini' %}">Log in</a></button>
-                            <button class="submit-btn-small"><a href="{% url 'create_profile_mini' %}">Create Profile</a></button>
-                        {% endif %}
+            <div style="display: flex; align-items: center; gap: 18px;">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'my_profile' %}">
+                        <h1><i>Mini Instagram</i></h1>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login_mini' %}">
+                        <h1><i>Mini Instagram</i></h1>
+                    </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                    <button
+                        class="submit-btn-small"
+                        id="logout-button"
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-controls="logout-modal"
+                    >
+                        Logout
+                    </button>
+                {% else %}
+                    {% url 'login_mini' as login_url %}
+
+                    {% if request.path != login_url %}
+                        <a
+                            class="submit-btn-small"
+                            href="{% url 'login_mini' %}"
+                        >
+                            Log in
+                        </a>
+
+                        <a
+                            class="submit-btn-small"
+                            href="{% url 'create_profile_mini' %}"
+                        >
+                            Create Profile
+                        </a>
                     {% endif %}
-            </div>
-            <div style="width: 25%; display: flex; gap: 30px; justify-content: flex-end; margin-left: 35px; align-items: center;">
-
-    {% if request.user.is_authenticated %}
-
-        {% if create_post_img %}
-            <a href="{{ create_post_img }}">
-                <img
-                    id="home"
-                    src="https://cdn.creazilla.com/icons/3217168/plus-circle-icon-lg.png"
-                    alt="Create post"
-                >
-            </a>
-        {% endif %}
-
-        {% if back_url %}
-            <a href="{{ back_url }}">
-                <img
-                    id="home"
-                    src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg"
-                    alt="Go back"
-                >
-            </a>
-        {% endif %}
-
-        <a href="{% url 'my_profile' %}">
-            <img
-                id="personalprofileheader"
-                src="{{ header_profile_img }}"
-                alt="My profile"
-            >
-        </a>
-
-        <a href="{% url 'show_feed' %}">
-            <img
-                id="home"
-                src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"
-                alt="Feed"
-            >
-        </a>
-
-        <a href="{% url 'search_mini' %}">
-            <img
-                id="home"
-                src="https://png.pngtree.com/png-clipart/20190903/original/pngtree-magnifying-glass-icon-png-image_4419957.jpg"
-                alt="Search"
-            >
-        </a>
-
-    {% else %}
-
-        {% if back_url %}
-            <a href="{{ back_url }}">
-                <img
-                    id="home"
-                    src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg"
-                    alt="Go back"
-                >
-            </a>
-        {% endif %}
-
-        {% if header_profile_img %}
-            <a href="{{ back_url }}">
-                <img
-                    id="personalprofileheader"
-                    src="{{ header_profile_img }}"
-                    alt="Profile pic"
-                >
-            </a>
-        {% endif %}
-
-    {% endif %}
-
-    <a href="{% url 'show_all_profiles' %}">
-        <b>All</b>
-    </a>
-</div>
+                {% endif %}
             </div>
 
+            <div style="display: flex; gap: 20px; justify-content: flex-end; align-items: center;">
+                {% if back_url %}
+                    <a href="{{back_url}}">
+                        <img
+                            id="home"
+                            src="https://media.lordicon.com/icons/wired/outline/2753-arrow-big-left.svg"
+                            alt="Go back"
+                        >
+                    </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                    {% if create_post_img %}
+                        <a href="{{create_post_img}}">
+                            <img
+                                id="home"
+                                src="https://cdn.creazilla.com/icons/3217168/plus-circle-icon-lg.png"
+                                alt="Create post"
+                            >
+                        </a>
+                    {% endif %}
+
+                    {% if header_profile_img %}
+                        <a href="{% url 'my_profile' %}">
+                            <img
+                                id="personalprofileheader"
+                                src="{{header_profile_img}}"
+                                alt="My profile"
+                            >
+                        </a>
+                    {% else %}
+                     <a href="{% url 'my_profile' %}"> Profile</a>
+                    {% endif %}
+
+                    <a href="{% url 'show_feed' %}">
+                        <img
+                            id="home"
+                            src="https://www.iconpacks.net/icons/2/free-home-icon-2502-thumb.png"
+                            alt="Feed"
+                        >
+                    </a>
+
+                    <a href="{% url 'search_mini' %}">
+                        <img
+                            id="home"
+                            src="https://png.pngtree.com/png-clipart/20190903/original/pngtree-magnifying-glass-icon-png-image_4419957.jpg"
+                            alt="Search"
+                        >
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'show_all_profiles' %}">
+                    <b>All</b>
+                </a>
+            </div>
         </header>
-    
-    {% block content %}
-    {% endblock %}    
-  
+
+        {% block content %}
+        {% endblock %}
+
+        {% if request.user.is_authenticated %}
+            <!-- logout confirmation -->
+            <dialog
+                id="logout-modal"
+                aria-labelledby="logout-modal-title"
+                aria-describedby="logout-modal-description"
+            >
+                <div class="modal-heading">
+                    <h2 id="logout-modal-title">Log out?</h2>
+
+                    <button
+                        class="modal-close"
+                        type="button"
+                        data-close-logout-modal
+                        aria-label="Close logout confirmation"
+                    >
+                        &times;
+                    </button>
+                </div>
+
+                <p id="logout-modal-description">
+                    Are you sure you want to log out?
+                </p>
+
+                <form method="POST" action="{% url 'logout_mini' %}">
+                    {% csrf_token %}
+
+                    <div class="modal-actions">
+                        <button
+                            id="cancel"
+                            type="button"
+                            data-close-logout-modal
+                            autofocus
+                        >
+                            Cancel
+                        </button>
+
+                        <button class="submit-btn" type="submit">
+                            Log out
+                        </button>
+                    </div>
+                </form>
+            </dialog>
+
+            <script>
+                const logoutModal = document.getElementById("logout-modal");
+                const logoutButton = document.getElementById("logout-button");
+
+                // open the confirmation without logging out
+                logoutButton.addEventListener("click", function() {
+                    logoutModal.showModal();
+                });
+
+                // close using cancel or the close button
+                logoutModal.addEventListener("click", function(event) {
+                    if (event.target.closest("[data-close-logout-modal]")) {
+                        logoutModal.close();
+                    }
+                });
+            </script>
+        {% endif %}
     </body>
 </html>

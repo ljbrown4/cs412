@@ -42,6 +42,7 @@ class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     def is_owner(self, profile):
         '''check user is user of current profile being viewed'''
         return self.request.user.is_authenticated and profile.user == self.request.user
+    
 
 class ProfileListView(ListView):
     ''' show all the profiles stored in the database'''
@@ -187,6 +188,30 @@ class UpdateProfileView(ProfileRequiredMixin, UpdateView):
     def get_object(self):
         return self.get_profile()
 
+    def get_template_names(self):
+        '''return the modal form for htmx requests'''
+
+        if self.request.headers.get('HX-Request') == 'true':
+            return ['mini_insta/update_profile_modal.html']
+
+        return [self.template_name]
+
+    def get_success_url(self):
+        '''return to the current user's profile after saving'''
+
+        return reverse('my_profile')
+
+    def form_valid(self, form):
+        '''save the profile and refresh the page for htmx requests'''
+
+        response = super().form_valid(form)
+
+        if self.request.headers.get('HX-Request') == 'true':
+            response = HttpResponse(status=200)
+            response['HX-Redirect'] = self.get_success_url()
+
+        return response
+
     def get_context_data(self, **kwargs):
         '''return the dict of context variables for use in the template'''
         
@@ -207,18 +232,29 @@ class UpdateProfileView(ProfileRequiredMixin, UpdateView):
 
 class DeletePostView(ProfileRequiredMixin, DeleteView):
     ''' view to handle post deletion '''
+
     model = Post
     template_name = "mini_insta/delete_post_form.html"
+
+    def get_queryset(self):
+        ''' only allow users to delete their own posts '''
+
+        return super().get_queryset().filter(profile=self.get_profile())
+
+    def get_template_names(self):
+        ''' use the modal template for htmx requests '''
+
+        if self.request.headers.get('HX-Request') == 'true':
+            return ['mini_insta/delete_post_modal.html']
+
+        return [self.template_name]
 
     def get_context_data(self, **kwargs):
         #call super
         context = super().get_context_data(**kwargs)
 
-        #get pk
-        pk = self.kwargs['pk']
-
-        #find comm obj
-        post = Post.objects.get(pk=pk)
+        #get the post already retrieved by the view
+        post = self.object
         profile = post.profile
 
         #add to context data
@@ -226,38 +262,62 @@ class DeletePostView(ProfileRequiredMixin, DeleteView):
         context['post'] = post
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('profile_mini', args=[post.profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[profile.pk])
         context['feed'] = reverse('show_feed')
-        
 
         return context
 
     def get_success_url(self):
-        ''' return to profile page upon successful deletion'''
+        ''' return to profile page upon successful deletion '''
 
-        #find pk 
-        pk = self.kwargs['pk']
-        #find comm obj
-        post = Post.objects.get(pk=pk)
-        profile = post.profile
-        return reverse('profile_mini', kwargs={'pk':profile.pk})
-    
+        return reverse(
+            'profile_mini',
+            kwargs={'pk': self.object.profile_id}
+        )
+
+    def form_valid(self, form):
+        ''' delete the post and redirect after a successful submission '''
+
+        #get the destination before deleting
+        success_url = self.get_success_url()
+
+        #delegate deletion to superclass
+        response = super().form_valid(form)
+
+        #tell htmx to navigate to the profile page
+        if self.request.headers.get('HX-Request') == 'true':
+            response = HttpResponse(status=200)
+            response['HX-Redirect'] = success_url
+
+        return response
+
 
 class UpdatePostView(ProfileRequiredMixin, UpdateView):
     ''' view to handle post updates '''
+
     model = Post
-    form_class= UpdatePostForm
+    form_class = UpdatePostForm
     template_name = "mini_insta/update_post_form.html"
+
+    def get_queryset(self):
+        ''' only allow users to update their own posts '''
+
+        return super().get_queryset().filter(profile=self.get_profile())
+
+    def get_template_names(self):
+        ''' use the modal template for htmx requests '''
+
+        if self.request.headers.get('HX-Request') == 'true':
+            return ['mini_insta/update_post_modal.html']
+
+        return [self.template_name]
 
     def get_context_data(self, **kwargs):
         #call super
         context = super().get_context_data(**kwargs)
 
-        #get pk
-        pk = self.kwargs['pk']
-
-        #find comm obj
-        post = Post.objects.get(pk=pk)
+        #get the post already retrieved by the view
+        post = self.object
 
         #add to context data
         context['is_owner'] = True
@@ -270,13 +330,22 @@ class UpdatePostView(ProfileRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        ''' return to profile page upon successful deletion '''
+        ''' return to the post upon successful update '''
 
-        #find pk 
-        pk = self.kwargs['pk']
-        #find comm obj
-        post = Post.objects.get(pk=pk)
-        return reverse('post', kwargs={'pk':post.pk})
+        return reverse('post', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        ''' save the post and redirect after a successful submission '''
+
+        #delegate saving to superclass
+        response = super().form_valid(form)
+
+        #tell htmx to reload the updated post page
+        if self.request.headers.get('HX-Request') == 'true':
+            response = HttpResponse(status=200)
+            response['HX-Redirect'] = self.get_success_url()
+
+        return response
     
 class ShowFollowersDetailView(DetailView):
     ''' view to show all followers '''

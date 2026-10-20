@@ -1,88 +1,177 @@
 <!-- # File: show_profile.html
-# Author: Leigh Brown (ljbrown4@bu.edu), 2/12/2026 + 2/24/2026 + 3/5/2026
-# Description: scriptlet code to display an individual profile and its associated posts in the database and the associated data -->
+# Author: Leigh Brown (ljbrown4@bu.edu)
+# Description: display an individual profile and its associated posts -->
 
 {% extends 'mini_insta/base.html' %}
- 
+
 {% block content %}
 
 <main class="container">
     <div class="double">
         <div class="imgside2">
             {% if profile.profile_image_url %}
-                <img id="personalprofile" src="{{profile.profile_image_url}}" alt="{{p.profile_image_url}}">
+                <img
+                    id="personalprofile"
+                    src="{{profile.profile_image_url}}"
+                    alt="{{profile.display_name}}"
+                >
             {% endif %}
 
-            <h5>{{profile.username}}</h5>
+            <h5>@{{profile.username}}</h5>
         </div>
+
         <div class="profile-info">
-            <h2><i>{{profile.display_name}}</i></h2>
-            <p> {{profile.bio_text}}</p>
+            <div class="profile-heading">
+                <h2>{{profile.display_name}}</h2>
+
+                {% if request.user.is_authenticated and is_owner %}
+                    <a
+                        class="submit-btn-small"
+                        href="{% url 'update_profile_mini' %}"
+                        hx-get="{% url 'update_profile_mini' %}"
+                        hx-target="#profile-modal-content"
+                        hx-swap="innerHTML"
+                        aria-haspopup="dialog"
+                        aria-controls="profile-modal"
+                    >
+                        Update profile
+                    </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated and not is_owner %}
+                    {% if follows %}
+                        <a
+                            class="submit-btn-small"
+                            href="{% url 'delete_follow' profile.pk %}"
+                        >
+                            Unfollow
+                        </a>
+                    {% else %}
+                        <a
+                            class="submit-btn-small"
+                            href="{% url 'follow' profile.pk %}"
+                        >
+                            Follow
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            {% if profile.bio_text %}
+                <p>{{profile.bio_text}}</p>
+            {% endif %}
 
             <div class="triple">
-                <div style="text-align: center;">
-                    <a href="{% url 'profile_mini' profile.pk %}"><h5><b> Posts</b></h5></a>
-                    <p> {{profile.get_num_posts}}</p>
+                <div>
+                    <a href="{% url 'profile_mini' profile.pk %}">
+                        <p>{{profile.get_num_posts}}</p>
+                        <h5>Posts</h5>
+                    </a>
                 </div>
-                <div style="text-align: center;">
-                    <a href="{% url 'followers' profile.pk %}"><h5><b> Followers</b></h5></a>
-                    <p> {{profile.get_num_followers}}</p>
+
+                <div>
+                    <a
+                        href="{% url 'followers' profile.pk %}"
+                        hx-get="{% url 'followers' profile.pk %}"
+                        hx-target="#profile-modal-content"
+                        hx-swap="innerHTML"
+                        aria-haspopup="dialog"
+                        aria-controls="profile-modal"
+                    >
+                        <p>{{profile.get_num_followers}}</p>
+                        <h5>Followers</h5>
+                    </a>
                 </div>
-                <div style="text-align: center;">
-                    <a href="{% url 'following' profile.pk %}"><h5><b> Following</b></h5></a>
-                    <p> {{profile.get_num_following}}</p>
+
+                <div>
+                    <a
+                        href="{% url 'following' profile.pk %}"
+                        hx-get="{% url 'following' profile.pk %}"
+                        hx-target="#profile-modal-content"
+                        hx-swap="innerHTML"
+                        aria-haspopup="dialog"
+                        aria-controls="profile-modal"
+                    >
+                        <p>{{profile.get_num_following}}</p>
+                        <h5>Following</h5>
+                    </a>
                 </div>
             </div>
+
+            <p class="profile-joined">
+                User since {{profile.join_date}}
+            </p>
         </div>
     </div>
 
-    {% if request.user.is_authenticated and is_owner %} <!-- only show this if the person viewing is logged in + is the user who created this profile-->
-    <a href="{% url 'update_profile' %}"><button class="submit-btn">update profile</button></a>
-    {% endif %}
-    
-    {% if request.user.is_authenticated and not is_owner %} <!--- only show this if the person viewing is looged in and is not the user who created this prof -->
-        {% if follows %}
-            <a href="{% url 'delete_follow' profile.pk %}">
-                <button class="submit-btn-small">unfollow</button>
-            </a>
-        {% else %}
-            <a href="{% url 'follow' profile.pk %}">
-                <button class="submit-btn-small">follow</button>
-            </a>
-        {% endif %}
-    {% endif %}
-
-
-    <p style="color:gray; font-size: 12px;"> user since: {{profile.join_date}}</p>
-
-    <hr>
     <div class="post">
-        <h3> Posts </h3>
-        <img src="https://toppng.com/uploads/preview/grid-2-icon-icon-11553414040ugsieibfpj.png" id="postlogo">
+        <h3>Posts</h3>
     </div>
     <hr>
- 
-    <!-- showcase posts by user-->
-     {% if profile.get_all_posts %}
-     <div>
-            {% for p in profile.get_all_posts%}
 
+    <!-- showcase posts by user -->
+    {% if profile.get_all_posts %}
+        <div>
+            {% for p in profile.get_all_posts %}
                 {% if p.get_all_photos %}
                     {% with a=p.get_first_photo %}
-                     <a href="{% url 'post' p.pk %}"> 
-                        <img class="post-image" src="{{a.get_image_url}}">
-                    </a>
+                        <a href="{% url 'post' p.pk %}">
+                            <img
+                                class="post-image"
+                                src="{{a.get_image_url}}"
+                                alt="Post by {{profile.username}}"
+                            >
+                        </a>
                     {% endwith %}
-                {% endif%}
+                {% endif %}
             {% endfor %}
-     </div>
-     
-     {% else %}
+        </div>
+    {% else %}
         <div class="noposts">
-            <img id="cam" src="https://www.shutterstock.com/image-vector/no-photography-sign-camera-crossed-600nw-2642188343.jpg">
-            <h2> No posts yet.</h2>
+            <h2>No posts yet.</h2>
         </div>
     {% endif %}
 </main>
+
+{% if request.user.is_authenticated and is_owner %}
+    <dialog id="profile-modal" aria-labelledby="profile-modal-title">
+        <div id="profile-modal-content"></div>
+    </dialog>
+
+    <script>
+        const profileModal = document.getElementById("profile-modal");
+        const profileModalContent = document.getElementById(
+            "profile-modal-content"
+        );
+
+        // open after htmx loads the form
+        document.body.addEventListener("htmx:afterSwap", function(event) {
+            if (event.detail.target === profileModalContent) {
+                if (!profileModal.open) {
+                    profileModal.showModal();
+                }
+
+                const field = profileModalContent.querySelector(
+                    '[aria-invalid="true"], input:not([type="hidden"]), textarea, select'
+                );
+
+                if (field) {
+                    field.focus();
+                }
+            }
+        });
+
+        // handle cancel and close buttons, including after validation errors
+        profileModal.addEventListener("click", function(event) {
+            if (event.target.closest("[data-close-profile-modal]")) {
+                profileModal.close();
+            }
+        });
+
+        profileModal.addEventListener("close", function() {
+            profileModalContent.replaceChildren();
+        });
+    </script>
+{% endif %}
+
 {% endblock %}
- 

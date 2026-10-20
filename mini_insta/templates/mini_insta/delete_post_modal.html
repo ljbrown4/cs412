@@ -1,0 +1,48 @@
+<!-- # File: delete_post_modal.html
+# Description: post deletion confirmation displayed inside a modal -->
+
+<div class="modal-heading">
+    <h2 id="post-modal-title">Delete post?</h2>
+
+    <button
+        class="modal-close"
+        type="button"
+        data-close-post-modal
+        aria-label="Close delete post"
+    >
+        &times;
+    </button>
+</div>
+
+<p>
+    This will permanently delete this post and its associated photos.
+    This cannot be undone.
+</p>
+
+<form
+    class="form"
+    action="{% url 'delete_post' post.pk %}"
+    method="POST"
+    hx-post="{% url 'delete_post' post.pk %}"
+    hx-target="#post-modal-content"
+    hx-swap="innerHTML"
+    hx-disabled-elt="find button[type='submit']"
+>
+    {% csrf_token %}
+
+    {{form.non_field_errors}}
+
+    <div class="modal-actions">
+        <button
+            id="cancel"
+            type="button"
+            data-close-post-modal
+        >
+            Cancel
+        </button>
+
+        <button class="submit-btn delete-btn" type="submit">
+            Delete post
+        </button>
+    </div>
+</form>
