@@ -17,12 +17,12 @@
             <div class="double">
                 <div class="imgside2">
                     {% if p.profile_image_url%}
-                    <a href="{% url 'profile' p.pk %}"><img id="personalprofile" src="{{p.profile_image_url}}"></a>
+                    <a href="{% url 'profile_mini' p.pk %}"><img id="personalprofile" src="{{p.profile_image_url}}"></a>
                     {% endif %}
                     <br>
                 </div>
                 <div class="post-info">
-                    <a href="{% url 'profile' p.pk %}"><h5><i>{{p.display_name}}</i></h5></a>
+                    <a href="{% url 'profile_mini' p.pk %}"><h5><i>{{p.display_name}}</i></h5></a>
                     <p> {{p.username}}</p>
                     <br>
                     <p> {{p.bio_text}}</p>

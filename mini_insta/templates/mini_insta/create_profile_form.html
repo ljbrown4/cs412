@@ -6,7 +6,7 @@
 {% block content%}
 <main class="container">
 
-    <form action="{% url 'create_profile' %}" method="POST" > 
+    <form action="{% url 'create_profile_mini' %}" method="POST" > 
         {% csrf_token %}
         <h3 style="text-align: center;">Please Fill Out Both Forms</h3>
         <div class="form">

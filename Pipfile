@@ -5,9 +5,9 @@ name = "pypi"
 
 [packages]
 pillow = "*"
-djangorestframework = "*"
 plotly = "*"
 django = "*"
+djangorestframework = "*"
 
 [dev-packages]
 

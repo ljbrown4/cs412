@@ -1,0 +1,18 @@
+<!-- show_all.html -->
+
+<h1>My Journal</h1>
+
+
+{% for j in journals %}
+        <h3>{{ j.title }}</h3>
+
+        <p>{{ j.entry }}</p>
+    </div>
+
+{% empty %}
+    <p>No journal entries yet.</p>
+{% endfor %}
+
+<a href="">
+    <button>Create New Entry</button>
+</a>

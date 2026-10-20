@@ -31,7 +31,6 @@ from rest_framework.authentication import TokenAuthentication
 
 class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     """Custom mixin that requires auth and returns user profile as need """
-   
 
     def get_profile(self): 
         """ get profile of current user"""
@@ -39,7 +38,6 @@ class ProfileRequiredMixin(LoginRequiredMixin):#loginreqmixin sub class
     
     def get_login_url(self):
         return reverse('login')
-
     
     def is_owner(self, profile):
         '''check user is user of current profile being viewed'''
@@ -50,6 +48,20 @@ class ProfileListView(ListView):
     model = Profile
     template_name = 'mini_insta/show_all_profiles.html'
     context_object_name = 'profiles'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            profile = Profile.objects.filter(
+                user=self.request.user
+            ).first()
+
+            if profile:
+                context['header_profile_img'] = profile.profile_image_url
+                
+
+        return context
 
 
 class ProfileDetailView(DetailView):
@@ -80,7 +92,7 @@ class ProfileDetailView(DetailView):
             context['header_profile_img'] = profile.profile_image_url
             context['create_post_img'] = reverse('create_post')
             context['feed'] = reverse('show_feed')
-            context['search_icon'] = reverse('search')
+            context['search_icon'] = reverse('search_mini')
 
         return context
 
@@ -102,7 +114,7 @@ class PostDetailView(DetailView):
         profile = post.profile
 
         # add to ctxt data, used to display page specific nav icons
-        context['back_url'] = reverse('profile', args=[post.profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[post.profile.pk])
         context['header_profile_img'] = post.profile.profile_image_url
 
         #for like and follow
@@ -117,7 +129,7 @@ class PostDetailView(DetailView):
         if context['is_owner']:
             context['create_post_img'] = reverse('create_post')
             context['feed'] = reverse('show_feed')
-            context['search_icon'] = reverse('search')
+            context['search_icon'] = reverse('search_mini')
 
         return context
 
@@ -160,7 +172,7 @@ class CreatePostView(ProfileRequiredMixin, CreateView):
         # add to ctxt data, used to display page specific nav icons
         context['back_url'] = reverse('my_profile')
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[profile.pk])
         context['feed'] = reverse('show_feed')
         context['is_owner'] = True
 
@@ -214,7 +226,7 @@ class DeletePostView(ProfileRequiredMixin, DeleteView):
         context['post'] = post
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('profile', args=[post.profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[post.profile.pk])
         context['feed'] = reverse('show_feed')
         
 
@@ -228,7 +240,7 @@ class DeletePostView(ProfileRequiredMixin, DeleteView):
         #find comm obj
         post = Post.objects.get(pk=pk)
         profile = post.profile
-        return reverse('profile', kwargs={'pk':profile.pk})
+        return reverse('profile_mini', kwargs={'pk':profile.pk})
     
 
 class UpdatePostView(ProfileRequiredMixin, UpdateView):
@@ -284,12 +296,12 @@ class ShowFollowersDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[profile.pk])
         context['is_owner'] = (self.request.user.is_authenticated and profile.user == self.request.user)
         if context['is_owner']:
             context['create_post_img'] = reverse('create_post')
             context['feed'] = reverse('show_feed')
-            context['search_icon'] = reverse('search')
+            context['search_icon'] = reverse('search_mini')
 
         return context
 
@@ -312,12 +324,12 @@ class ShowFollowingDetailView(DetailView):
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[profile.pk])
         context['is_owner'] = (self.request.user.is_authenticated and profile.user == self.request.user)
         if context['is_owner']:
             context['create_post_img'] = reverse('create_post')
             context['feed'] = reverse('show_feed')
-            context['search_icon'] = reverse('search')
+            context['search_icon'] = reverse('search_mini')
 
         return context
 
@@ -341,11 +353,11 @@ class PostFeedListView(ProfileRequiredMixin, ListView):
         # add to ctxt data, used to display page specific nav icons
         context['profile'] = profile
         context['is_owner'] = True
-        context['back_url'] = reverse('profile', args=[profile.pk])
+        context['back_url'] = reverse('profile_mini', args=[profile.pk])
         context['header_profile_img'] = profile.profile_image_url
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
-        context['search_icon'] = reverse('search')
+        context['search_icon'] = reverse('search_mini')
 
         return context
 
@@ -365,10 +377,10 @@ class SearchView(ProfileRequiredMixin, ListView):
             context = {}
             context['profile'] = self.profile
             context['header_profile_img'] = self.profile.profile_image_url
-            context['back_url'] = reverse('profile', args=[self.profile.pk])
+            context['back_url'] = reverse('profile_mini', args=[self.profile.pk])
             context['create_post_img'] = reverse('create_post')
             context['feed'] = reverse('show_feed')
-            context['search_icon'] = reverse('search')
+            context['search_icon'] = reverse('search_mini')
             return render(request, 'mini_insta/search.html', context)
 
 
@@ -389,7 +401,7 @@ class SearchView(ProfileRequiredMixin, ListView):
         context['back_url'] = reverse('my_profile')
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
-        context['search_icon'] = reverse('search')
+        context['search_icon'] = reverse('search_mini')
 
         #matching posts
         context['results'] = self.results
@@ -424,7 +436,7 @@ class MyProfileDetailView(ProfileRequiredMixin, DetailView):
         context['is_owner'] = True
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
-        context['search_icon'] = reverse('search')
+        context['search_icon'] = reverse('search_mini')
 
         return context
     
@@ -496,7 +508,7 @@ class CreateFollowView(ProfileRequiredMixin, TemplateView):
                     profile=other,
                     follower_profile=current)
 
-        return redirect('profile', pk=other.pk) #reverse wouldn't work here for some reason, looked this up
+        return redirect('profile_mini', pk=other.pk) #reverse wouldn't work here for some reason, looked this up
     
 class DeleteFollowView(ProfileRequiredMixin, TemplateView):
     '''allow logged in user to unfollow another profile'''
@@ -509,7 +521,7 @@ class DeleteFollowView(ProfileRequiredMixin, TemplateView):
             profile=other,
             follower_profile=current).delete()
 
-        return redirect('profile', pk=other.pk)
+        return redirect('profile_mini', pk=other.pk)
     
 class CreateLikeView(ProfileRequiredMixin, TemplateView):
     '''allow logged in user to follow another profile'''
@@ -574,7 +586,7 @@ class CreateCommentView(ProfileRequiredMixin, CreateView):
         context['back_url'] = reverse('post', args=[post.pk])
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
-        context['search_icon'] = reverse('search')
+        context['search_icon'] = reverse('search_mini')
         context['is_owner'] = True
 
         return context
@@ -613,7 +625,7 @@ class DeleteCommentView(ProfileRequiredMixin, DeleteView):
         context['back_url'] = reverse('post', args=[comment.post.pk])
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
-        context['search_icon'] = reverse('search')
+        context['search_icon'] = reverse('search_mini')
         context['is_owner'] = True
 
         return context

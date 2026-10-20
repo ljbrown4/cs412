@@ -15,14 +15,14 @@
     <profile class="feed-profile">
  
         {% if p.profile_image_url %}
-         <a href="{% url 'profile' p.pk %}">
+         <a href="{% url 'profile_mini' p.pk %}">
             <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
          </a>
         {% endif %}
         
         <div>
         <h2>{{p.display_name}}</h2>
-        <a href="{% url 'profile' p.pk %}"> <h5>@{{p.username}}</h5> </a>
+        <a href="{% url 'profile_mini' p.pk %}"> <h5>@{{p.username}}</h5> </a>
         </div>
         <hr> 
     </profile>

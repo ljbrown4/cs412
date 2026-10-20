@@ -5,7 +5,7 @@ from .forms import CreateArticleForm, CreateCommentForm, UpdateArticleForm
 from django.urls import reverse #allows us to create url from an url pattern name
 import random
  
-#module 6
+#module 6 
 from django.contrib.auth.mixins import LoginRequiredMixin #for auth
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User

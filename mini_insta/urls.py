@@ -11,7 +11,7 @@ from django.contrib.auth import views as auth_views
  
 urlpatterns = [
     path('', ProfileListView.as_view(), name="show_all_profiles"),
-    path('profile/<int:pk>', ProfileDetailView.as_view(), name='profile'),
+    path('profile/<int:pk>', ProfileDetailView.as_view(), name='profile_mini'),
     path('profile/', MyProfileDetailView.as_view(), name='my_profile'),
     path('post/<int:pk>', PostDetailView.as_view(), name='post'),
 
@@ -31,13 +31,13 @@ urlpatterns = [
     path('profile/<int:pk>/following', ShowFollowingDetailView.as_view(), name="following"), #assignment 5 
 
     # path('profile/<int:pk>/search', SearchView.as_view(), name='search'), #assignment 5
-    path('profile/search', SearchView.as_view(), name='search'), #assignment 6
+    path('profile/search', SearchView.as_view(), name='search_mini'), #assignment 6
 
-    path('login/', auth_views.LoginView.as_view(template_name="mini_insta/login.html"), name="login"), #assignment 6
-    path('logout/', auth_views.LogoutView.as_view(next_page='logout_confirmation'), name='logout'), #assignment 6
+    path('login/', auth_views.LoginView.as_view(template_name="mini_insta/login.html"), name="login_mini"), #assignment 6
+    path('logout/', auth_views.LogoutView.as_view(next_page='logout_confirmation'), name='logout_mini'), #assignment 6
     path("confirmation/", LogOutComfirmationView.as_view(), name="logout_confirmation"), #assignment 6
 
-    path('create_profile/', CreateProfileView.as_view(), name="create_profile"), #assignment 6
+    path('create_profile/', CreateProfileView.as_view(), name="create_profile_mini"), #assignment 6
 
     path('profile/<int:pk>/follow', CreateFollowView.as_view(), name='follow'), #assignment 6
     path('profile/<int:pk>/delete_follow', DeleteFollowView.as_view(), name='delete_follow'), #assignment 6
