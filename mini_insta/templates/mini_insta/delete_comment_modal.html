@@ -1,0 +1,50 @@
+<!-- # File: delete_comment_modal.html
+# Description: confirm comment deletion inside a modal -->
+
+<div class="modal-heading">
+    <h2 id="post-modal-title">Delete comment?</h2>
+
+    <button
+        class="modal-close"
+        type="button"
+        data-close-post-modal
+        aria-label="Close delete comment"
+    >
+        &times;
+    </button>
+</div>
+
+<p class="delete-comment-description">
+    Are you sure you want to delete this comment?
+    This cannot be undone.
+</p>
+
+<blockquote class="delete-comment-preview">
+    {{comment.text}}
+</blockquote>
+
+<form
+    class="form"
+    action="{% url 'delete_comment' comment.pk %}"
+    method="POST"
+    hx-post="{% url 'delete_comment' comment.pk %}"
+    hx-target="#post-modal-content"
+    hx-swap="innerHTML"
+    hx-disabled-elt="find button[type='submit']"
+>
+    {% csrf_token %}
+
+    <div class="modal-actions">
+        <button
+            id="cancel"
+            type="button"
+            data-close-post-modal
+        >
+            Cancel
+        </button>
+
+        <button class="submit-btn delete-btn" type="submit">
+            Delete comment
+        </button>
+    </div>
+</form>

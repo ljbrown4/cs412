@@ -11,6 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.contrib.auth import login
 from django.http import HttpRequest, HttpResponse 
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 #api imports
@@ -630,74 +631,132 @@ class CreateCommentView(ProfileRequiredMixin, CreateView):
     form_class = CreateCommentForm
     template_name = 'mini_insta/create_comment_form.html'
 
+    def get_template_names(self):
+        '''use the inline comments template for htmx requests'''
+
+        if self.request.headers.get('HX-Request') == 'true':
+            return ['mini_insta/post_comments.html']
+
+        return [self.template_name]
+
     def get_success_url(self):
         pk = self.kwargs['pk']
         return reverse('post', kwargs={'pk': pk})
 
     def form_valid(self, form):
+        #retrieve the post and current user's profile
         post = Post.objects.get(pk=self.kwargs['pk'])
         profile = self.get_profile()
 
+        #connect the comment to the post and its author
         form.instance.post = post
         form.instance.profile = profile
 
-        return super().form_valid(form)
+        #save the comment
+        response = super().form_valid(form)
+
+        #return the updated comments and an empty form
+        if self.request.headers.get('HX-Request') == 'true':
+            context = {
+                'post': post,
+                'comment_form': CreateCommentForm(),
+                'is_owner': post.profile == profile,
+            }
+
+            return render(
+                self.request,
+                'mini_insta/post_comments.html',
+                context
+            )
+
+        return response
 
     def get_context_data(self, **kwargs):
+        #call super
         context = super().get_context_data(**kwargs)
 
         post = Post.objects.get(pk=self.kwargs['pk'])
         profile = self.get_profile()
 
+        #add to context data
         context['post'] = post
         context['profile'] = profile
+        context['comment_form'] = context['form']
         context['header_profile_img'] = profile.profile_image_url
         context['back_url'] = reverse('post', args=[post.pk])
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
         context['search_icon'] = reverse('search_mini')
-        context['is_owner'] = True
+        context['is_owner'] = post.profile == profile
 
         return context
     
     
 class DeleteCommentView(ProfileRequiredMixin, DeleteView):
-    '''view to handle comment deletion. this is allowed by profile who made the post and profile who wrote the comment'''
+    '''view to handle comment deletion by the comment author or post owner'''
 
     model = Comment
     template_name = 'mini_insta/delete_comment_form.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        comment = self.get_object()
+    def get_object(self, queryset=None):
+        '''retrieve the comment and check permission to delete it'''
+
+        comment = super().get_object(queryset)
         current = self.get_profile()
 
-        # allow deletion if current user wrote comment OR owns the post
+        #allow deletion if current user wrote comment OR owns the post
         if comment.profile != current and comment.post.profile != current:
-            return HttpResponse("You cannot delete this comment.")
+            raise PermissionDenied("You cannot delete this comment.")
 
-        return super().dispatch(request, *args, **kwargs)
+        return comment
+
+    def get_template_names(self):
+        '''use the modal template for htmx requests'''
+
+        if self.request.headers.get('HX-Request') == 'true':
+            return ['mini_insta/delete_comment_modal.html']
+
+        return [self.template_name]
 
     def get_success_url(self):
-        comment = self.get_object()
-        return reverse('post', kwargs={'pk': comment.post.pk})
+        '''return to the post after deletion'''
+
+        return reverse('post', kwargs={'pk': self.object.post_id})
 
     def get_context_data(self, **kwargs):
+        #call super
         context = super().get_context_data(**kwargs)
 
-        comment = self.get_object()
+        comment = self.object
         profile = self.get_profile()
 
+        #add to context data
         context['comment'] = comment
         context['post'] = comment.post
         context['profile'] = profile
         context['header_profile_img'] = profile.profile_image_url
-        context['back_url'] = reverse('post', args=[comment.post.pk])
+        context['back_url'] = reverse('post', args=[comment.post_id])
         context['create_post_img'] = reverse('create_post')
         context['feed'] = reverse('show_feed')
         context['search_icon'] = reverse('search_mini')
-        context['is_owner'] = True
+        context['is_owner'] = comment.post.profile == profile
 
         return context
+
+    def form_valid(self, form):
+        '''delete the comment and redirect after confirmation'''
+
+        #get the destination before deleting
+        success_url = self.get_success_url()
+
+        #delegate deletion to superclass
+        response = super().form_valid(form)
+
+        if self.request.headers.get('HX-Request') == 'true':
+            response = HttpResponse(status=200)
+            response['HX-Redirect'] = success_url
+
+        return response
     
 
 #api views

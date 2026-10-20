@@ -1,0 +1,81 @@
+<!-- # File: post_comments.html
+# Description: display comments and the inline comment form -->
+
+<section
+    id="post-comments"
+    class="post-comments"
+    aria-labelledby="comments-title"
+>
+    <h3 id="comments-title">Comments</h3>
+
+    <div class="comment-list">
+        {% for c in post.get_all_comments %}
+            <div class="post-comment">
+                <p>
+                    <b>@{{c.profile.username}}</b>
+                    {{c.text}}
+                </p>
+
+                {% if request.user.is_authenticated %}
+    {% if c.profile.user == request.user or is_owner %}
+        <a
+            class="post-comment-delete"
+            href="{% url 'delete_comment' c.pk %}"
+            hx-get="{% url 'delete_comment' c.pk %}"
+            hx-target="#post-modal-content"
+            hx-swap="innerHTML"
+            aria-haspopup="dialog"
+            aria-controls="post-modal"
+            aria-label="Delete comment by {{c.profile.username}}"
+        >
+            Delete
+        </a>
+    {% endif %}
+{% endif %}
+            </div>
+        {% empty %}
+            <p class="post-muted">No comments yet.</p>
+        {% endfor %}
+    </div>
+
+    {% if request.user.is_authenticated %}
+        {% if comment_form %}
+            <form
+                class="form comment-form"
+                action="{% url 'create_comment' post.pk %}"
+                method="POST"
+                hx-post="{% url 'create_comment' post.pk %}"
+                hx-target="#post-comments"
+                hx-swap="outerHTML"
+                hx-disabled-elt="find button[type='submit']"
+            >
+                {% csrf_token %}
+
+                <table>
+                    {{comment_form.as_table}}
+                </table>
+
+                <button class="submit-btn-small" type="submit">
+                    Post comment
+                </button>
+            </form>
+        {% else %}
+            <a
+                class="comment-open"
+                href="{% url 'create_comment' post.pk %}"
+                hx-get="{% url 'create_comment' post.pk %}"
+                hx-target="#post-comments"
+                hx-swap="outerHTML"
+            >
+                Add a comment
+            </a>
+        {% endif %}
+    {% else %}
+        <p class="comment-login">
+            <a href="{% url 'login_mini' %}?next={{request.path|urlencode}}">
+                Log in
+            </a>
+            to leave a comment.
+        </p>
+    {% endif %}
+</section>

@@ -1135,6 +1135,111 @@ li {
 .auth-card-wide .double3 {
     gap: 60px;
 }
+/* inline comment form */
+.comment-open {
+    display: inline-block;
+    margin-top: 16px;
+    color: #684653;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.comment-open:hover {
+    color: #503440;
+    text-decoration: underline;
+}
+
+.post-comments .comment-form {
+    width: 100%;
+    max-width: none;
+    margin: 18px 0 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.comment-form table {
+    width: 100%;
+}
+
+.comment-form table tr {
+    margin-bottom: 10px;
+}
+
+.comment-form table th {
+    font-size: 13px;
+}
+
+/* override the default large textarea */
+.post-comments .comment-form textarea {
+    width: 100%;
+    min-height: 65px;
+    height: 65px;
+    padding: 9px 10px;
+    border: 1px solid #d9d1d5;
+    border-radius: 5px;
+    background: #faf9fa;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.comment-form .submit-btn-small {
+    width: auto;
+    align-self: flex-end;
+    margin: 0;
+    padding: 8px 14px;
+}
+
+.comment-form .submit-btn-small:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.comment-login {
+    margin-top: 16px;
+    color: #756b71;
+    font-size: 13px;
+}
+
+.comment-login a {
+    color: #684653;
+    font-weight: 600;
+}
+/* smaller delete link beside comments */
+.post-comments .post-comment-delete {
+    flex-shrink: 0;
+    color: #996573;
+    font-size: 13px;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.post-comments .post-comment-delete:hover {
+    color: #842f3b;
+    text-decoration: underline;
+}
+
+/* comment deletion confirmation */
+.delete-comment-description {
+    margin: 0 0 16px;
+    color: #756b71;
+    font-size: 13px;
+}
+
+.delete-comment-preview {
+    max-height: 160px;
+    margin: 0 0 20px;
+    padding: 12px 14px;
+    background: #faf8f9;
+    border-left: 3px solid #ded5d9;
+    color: #503440;
+    font-size: 13px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-y: auto;
+}
 
 @media screen and (max-width: 760px) {
     .auth-card-wide .double3 {

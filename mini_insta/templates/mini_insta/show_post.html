@@ -90,17 +90,6 @@
                             >
                         </a>
                     {% endif %}
-
-                    <a
-                        href="{% url 'create_comment' post.pk %}"
-                        aria-label="Add a comment"
-                    >
-                        <img
-                            id="like"
-                            src="https://icons.veryicon.com/png/o/miscellaneous/2px-common-icons/message-63.png"
-                            alt=""
-                        >
-                    </a>
                 {% endif %}
 
                 {% if post.get_likes %}
@@ -119,8 +108,9 @@
                     {% endwith %}
                 {% endif %}
             </div>
-
-            <section class="post-comments" aria-labelledby="comments-title">
+            
+            {% include 'mini_insta/post_comments.html' %}
+            <!-- <section class="post-comments" aria-labelledby="comments-title">
                 <h3 id="comments-title">Comments</h3>
 
                 {% for c in post.get_all_comments %}
@@ -145,12 +135,12 @@
                 {% empty %}
                     <p class="post-muted">No comments yet.</p>
                 {% endfor %}
-            </section>
+            </section> -->
         </div>
     </div>
 </main>
 
-{% if request.user.is_authenticated and is_owner %}
+{% if request.user.is_authenticated %}
     <dialog id="post-modal" aria-labelledby="post-modal-title">
         <div id="post-modal-content"></div>
     </dialog>
